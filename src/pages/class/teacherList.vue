@@ -19,6 +19,9 @@
     // box-shadow:3px 3px 20px 3px rgba(0,0,0,0.5);
     border: 1px solid #D6D6D6;
     border-radius: 10px;
+    .margR{
+      margin-right: 4px;
+    }
     table.thisTable{
       width: 900px;
       border: 1px solid $tableBorderColor;
@@ -62,6 +65,8 @@
         font-size: 15px;
         color: #585858;
         padding: 12px 6px 12px 10px;
+        color: $mainColor;
+        font-weight: bold;
       }
       .close{
         font-size: 18px;
@@ -101,7 +106,7 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%" @row-click="rowClick">
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column
           prop="en_name"
           label="英文名称">
@@ -140,6 +145,12 @@
           prop="school_id"
           label="所在校区">
         </el-table-column>
+        <el-table-column label="操作" width="180" fixed="right">
+          <template slot-scope="scope">
+            <el-button @click="selectFreeTimeClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">选择空闲时间</el-button>
+            <el-button @click="setClassClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">排课</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- <div class="tableBottom" v-show="showPageTag">
         <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[4,6,8]" layout="total, sizes, prev, pager, next, jumper" :total="total">
@@ -148,7 +159,8 @@
     </div>
     <div class="dialogBoxOuter" v-if="dialogBoxVisible">
       <div class="cardHeader">
-        <label class="headerTitle left">选择空余时间</label>
+        <template v-if="!isSetClass"><label class="headerTitle left">选择空余时间</label></template>
+        <template v-if="isSetClass"><label class="headerTitle left">给当前教师的空余时间排课</label></template>
         <i class="el-icon-circle-close right close" @click="closeCard"></i>
       </div>
       <div class="functionBox">
@@ -183,8 +195,8 @@
       </table>
       <div class="functionBox">
         <div class="element">
-          <el-button type="primary" size="medium" @click="showThisDay">批量钩选班次</el-button>
-          <div class="inline" v-show="isShowDaySelect">
+          <el-button type="primary" size="medium" @click="showThisDay" v-if="!isSetClass">批量钩选班次</el-button>
+          <div class="inline" v-show="isShowDaySelect" v-if="!isSetClass">
             <label class="inline">日期：</label>
             <el-select class="width100" v-model="thisDay" size="medium" placeholder="请选择" @change="thisDayChange">
               <el-option
@@ -206,8 +218,9 @@
           </div>
           <!-- <el-button type="primary" size="medium" @click="lastTeacher">上一位教师</el-button>
           <el-button type="primary" size="medium" @click="nextTeacher">下一位教师</el-button> -->
-          <el-button type="primary" size="medium" @click="addBan">加班</el-button>
-          <el-button type="primary" class="right" size="medium" @click="saveBtn">保存</el-button>
+          <el-button type="primary" size="medium" @click="addBan" v-if="!isSetClass">加班</el-button>
+          <el-button type="primary" class="right" size="medium" @click="saveBtn" v-if="!isSetClass">保存</el-button>
+          <el-button type="primary" class="right margR" size="medium" @click="setClass" v-if="isSetClass">给选中排课</el-button>
         </div>
       </div>
     </div>
@@ -215,7 +228,7 @@
   </div>
 </template>
 <script>
-import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,ERR_OK } from '@/api/index'
+import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,setClassMoreUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime } from '@/common/js/utils'
 import mTime from '../../components/time.vue'
 var coordinatesAttr = new Array(); //先声明一维 
@@ -260,6 +273,8 @@ export default {
       weekth:'',
       // thisDate: '',
       thisDay: '',
+      room_id:"",
+      lesson_id:"",
       coordinates: [],
       teacher_id:'',
       schoole_id: localStorage.getItem("_school_id"),
@@ -267,7 +282,8 @@ export default {
       bancisOption:[{label:'09:00~12:00',value:'9~12'},{label:'12:00~18:00',value:'12~18'},{label:'18:00~21:00',value:'18~21'}],
       banci:'',
       days:[{name:'时间'},{name:'周一'},{name:'周二'},{name:'周三'},{name:'周四'},{name:'周五'},{name:'周六'},{name:'周日'}],
-      list:list2
+      list:list2,
+      isSetClass:false
     }
   },
   created() {
@@ -279,6 +295,63 @@ export default {
     mTime
   },
   methods: {
+    setClass() {
+      
+      let that = this;
+      if(this.weekth==""){
+        this.$message('请先选择排课周期');
+        return;
+      }
+      // if(this.coordinates==""){
+      //   this.$message('请选择空余时间');
+      //   return;
+      // }
+      // console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
+      var params = {
+        weekth: this.weekth,//ok
+        coordinates: JSON.stringify(this.coordinates),
+        room_id:this.room_id,
+        lesson_id:this.lesson_id,
+        teacher_id: this.teacherValue,//ok
+        // school_id: this.schoole_id
+      }
+      var url = setClassMoreUrl;
+      console.log(params,"params")
+      // this.$axios.post(url,params).then((res)=>{
+      //   var result = res.data;
+      //   console.log(result.status_code,'--res.status_code--')
+      //   if(result.status_code == ERR_OK){
+      //     // that.tableData = result.data;
+      //     // this.$message({
+      //     //   message: '保存成功',
+      //     //   type: 'success'
+      //     // });
+      //     // this.dialogBoxVisible = false;
+      //     // this.maskIsShow = false;
+      //     // that.clearTable();
+      //   }
+      // });
+    },
+    setClassClick(row){
+
+      // if(this.coordinates==""){
+      //   this.$message('请选择空余时间');
+      //   return;
+      // }
+      this.isSetClass = true
+      console.log("row.id:",row.id)
+      this.teacher_id = row.id
+      this.teacherValue = row.id
+      this.dialogBoxVisible = true;
+      this.maskIsShow = true;
+    },
+    selectFreeTimeClick(row){
+      console.log("row.id:",row.id)
+      this.teacher_id = row.id
+      this.teacherValue = row.id
+      this.dialogBoxVisible = true;
+      this.maskIsShow = true;
+    },
     maskHide(){
       this.maskIsShow = false
     },
@@ -330,7 +403,7 @@ export default {
       console.log(this.weekth,"this.weekth")
       let that = this;
       if(this.weekth==""){
-        this.$message('请选择排课周期');
+        this.$message('请先选择排课周期');
         return;
       }
       if(this.coordinates==""){
@@ -409,16 +482,10 @@ export default {
       });
     },
     closeCard() {
+      this.isSetClass = false;
       this.dialogBoxVisible = false;
       this.maskIsShow = false;
       this.clearTable()
-    },
-    rowClick(row, event, column){
-      console.log("row.id:",row.id)
-      this.teacher_id = row.id
-      this.teacherValue = row.id
-      this.dialogBoxVisible = true;
-      this.maskIsShow = true;
     },
     getList(){
       let that = this;

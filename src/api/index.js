@@ -46,10 +46,12 @@ export const lessonListUrl = host + 'api/admin/lesson/list';
 export const lessonEditUrl = host + 'api/admin/lesson/edit';
 // 话题删除
 export const lessonDeleteUrl = host + 'api/admin/lesson/delete';
+// // 话题删除
+// export const lessonDeleteUrl = host + 'api/admin/lesson/delete';
 
-export const host2 = 'https://test.dtc233.com'
-// 课表列表
-export const userListUrl = host2 + '/api/admin/user/list';
+// 教师批量排课
+export const setClassMoreUrl = host + 'api/admin/arranging/batch-edit';
+
 
 
 
