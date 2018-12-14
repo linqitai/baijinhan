@@ -1,4 +1,7 @@
 <style lang="scss" scoped>
+.labelWidth{
+  width: 80px;
+}
 .apply{
   .operateTableBox{
     .functionBox{
@@ -65,8 +68,6 @@
         </el-table-column>
         <el-table-column prop="name" label="CSA">
         </el-table-column>
-        <el-table-column prop="status" label="状态">
-        </el-table-column>
         <el-table-column prop="cn_name" label="中文名">
         </el-table-column>
         <el-table-column prop="en_name" label="英文名">
@@ -78,9 +79,7 @@
         </el-table-column>
         <el-table-column prop="mobile" label="手机" width="120">
         </el-table-column>
-        <el-table-column
-          prop="home_phone"
-          label="家庭电话">
+        <el-table-column prop="home_phone" label="家庭电话" width="120">
         </el-table-column>
         <el-table-column
           prop="begin_level"
@@ -110,7 +109,7 @@
         </el-pagination>
       </div> -->
     </div>
-    <el-dialog class="changeStatusDialog" title="修改状态" :visible.sync="isShowStatusDialog"  :modal="false"  width="40%">
+    <el-dialog class="changeStatusDialog" title="修改状态" :visible.sync="isShowStatusDialog"  :modal="true" :append-to-body="true"  width="400px">
       <div class="lineBox">
         <el-radio-group v-model="status">
           <el-radio :label="1">未签</el-radio>
@@ -123,6 +122,44 @@
         <el-button @click="isShowStatusDialog = false">取 消</el-button>
         <el-button type="primary" @click="sureBtn">确 定</el-button>
       </span>
+    </el-dialog>
+    <el-dialog title="编辑学生信息" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
+      <div class="dialogBody">
+        <div class="element">
+          <label class="inline labelWidth">中文名：</label>
+          <div class="inline">
+             <el-input v-model="form.cn_name" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline labelWidth">英文名：</label>
+          <div class="inline">
+             <el-input v-model="form.en_name" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline labelWidth">性别：</label>
+          <div class="inline">
+             <el-input v-model="form.sex" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline labelWidth">手机号：</label>
+          <div class="inline">
+             <el-input v-model="form.mobile" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline labelWidth">家庭电话：</label>
+          <div class="inline">
+             <el-input v-model="form.home_phone" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureEditBtn">确 定</el-button>
+      </div>
     </el-dialog>
     <!-- <div class='mask' v-show="maskIsShow" @click="maskHide"></div> -->
   </div>
@@ -149,9 +186,19 @@ export default {
         label:"中文名"
       }],
       value:"",
-      isShowStatusDialog: false,
+      isShowStatusDialog: false,//编辑状态
+      dialogFormVisible: false,//编辑学生信息
       maskIsShow: false,
-      status: ""
+      status: "",
+      form:{
+        user_id:"",
+        cn_name:"",
+        en_name:"",
+        sex:"",
+        mobile:"",
+        home_phone:"",
+        contract_type:"",
+      }
     }
   },
   filters:{
@@ -169,22 +216,78 @@ export default {
     this.getList()
   },
   methods: {
+    sureEdit(){
+      let that = this;
+      var params = {
+        course_id: this.form.course_id,
+        name: this.form.name,
+        serial: this.form.serial,
+        introduce: this.form.introduce
+      }
+      var url = lessonEditUrl;
+      console.log(params,"params")
+      // this.$axios.post(url,params).then((res)=>{
+      //   var result = res.data;
+      //   console.log(result.status_code,'--res.status_code--')
+      //   if(result.status_code == ERR_OK){
+      //     // that.tableData = result.data.lesson;
+      //     // that.$message("修改成功")
+      //     that.$message({
+      //       showClose: true,
+      //       message: '修改成功',
+      //       type: 'success'
+      //     });
+      //     that.dialogFormVisible = false;        
+      //     that.form =  {
+      //       course_id:"",
+      //       name:"",
+      //       serial:"",
+      //       introduce:""
+      //     }
+      //   }
+      // });
+    },
     maskHide(){
       this.isShowStatusDialog = false;
       this.maskIsShow = false
     },
     handleEditClick(row) {
-
+      this.dialogFormVisible = true;
+      this.form = {
+        user_id:row.id,
+        cn_name:row.cn_name,
+        en_name:row.en_name,
+        sex:row.sex,
+        mobile:row.mobile,
+        home_phone:row.home_phone,
+        contract_type:row.contract_type,
+      }
+    },
+    sureEditBtn() {
+      this.dialogFormVisible = false;
+      var that = this;
+      var params = that.form
+      var url = editStudentInfoUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.$alert('修改成功');
+          that.getList();
+        }
+      })
     },
     handleEditStatusClick(row) {
       this.isShowStatusDialog = true;
-      this.maskIsShow = true;
+      this.form.user_id = row.id
     },
     sureBtn() {
       this.isShowStatusDialog = false;
       this.maskIsShow = false;
       var that = this;
       var params = {
+        user_id: this.form.user_id,
         status: that.status
       }
       var url = editStudentInfoUrl;
@@ -193,7 +296,8 @@ export default {
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.$alert('修改成功')
+          that.$alert('修改成功');
+          that.getList();
         }
       })
     },

@@ -191,7 +191,7 @@ $height:40px;
   </div>
 </template>
 <script>
-import { classListUrl,teacherFreeUrl,getRoomsUrl,teacherListUrl,getTeacherCourseUrl,getCourseListUrl,editClassUrl,ERR_OK } from '@/api/index'
+import { classListUrl,teacherFreeUrl,getRoomsUrl,teacherListUrl,getTeacherCourseUrl,getCourseListUrl,editClassUrl,userListUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth } from '@/common/js/utils'
 // 一天有多少毫秒
 var oneDayTime = 24*60*60*1000
@@ -223,8 +223,29 @@ export default {
   created() {
     this.getTime1Option();
     this.getRooms();
+    // this.getDemo();
   },
   methods: {
+    getDemo() {
+      var that = this;
+      var params = {
+        pageindex:1,
+        callbackcount:8
+      }
+      var url = userListUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          // that.tableData = result.data.category;
+          // that.rooms = result.data.rooms;
+          // console.log(that.rooms,"that.rooms")
+          // that.initList();
+          // console.log(that.list,"that.list")
+        }
+      })
+    },
     courseChange(e) {
       this.course_id = e.split(',')[0]
       this.lession_id = e.split(',')[1]

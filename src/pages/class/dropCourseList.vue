@@ -35,15 +35,15 @@
       </div>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column
-          prop="drop_people.serial"
+          prop="user.serial"
           label="学号">
         </el-table-column>
         <el-table-column
-          prop="drop_people.en_name"
+          prop="user.en_name"
           label="学生姓名">
         </el-table-column>
         <el-table-column
-          prop="drop_people.mobile"
+          prop="user.mobile"
           label="手机号码"
           width="120">
         </el-table-column>

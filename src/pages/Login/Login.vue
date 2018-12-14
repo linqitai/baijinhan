@@ -98,7 +98,7 @@
   <div class="loginWrap container" id="particles-js">
     <div class="login_form">
       <div class="headButton">白金汉</div>
-      <img class="logo" src="./logo.png" width="60" height="60">
+      <img class="logo" src="../../images/logo.jpg" width="60" height="60">
       <div class="title">欢迎登录</div>
       <div class="inputWrapper">
         <div class="inputBox">

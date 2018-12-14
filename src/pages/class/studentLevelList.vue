@@ -1,16 +1,8 @@
 <style lang="scss" scoped>
 .apply{
-  padding:12px 20px;
-  background-color: white;
   .operateTableBox{
-    margin-top: 10px;
-    padding-bottom: 10px;
-    border: 1px solid #F3F2F2;
-    background-color: #F2F2F2;
     .functionBox{
-      padding: 18px;
       .status{
-        width: 120px;
       }
     }
   }
@@ -26,7 +18,7 @@
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>话题列表</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span>学生等级列表</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
@@ -43,15 +35,17 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="name" label="话题名称" width="180">
+        <el-table-column prop="name" label="等级名称" width="180">
         </el-table-column>
-        <el-table-column prop="serial" label="话题编号">
+        <el-table-column prop="serial" label="级别">
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
+        <el-table-column prop="created_at" label="校区" width="160">
         </el-table-column>
-        <el-table-column prop="introduce" label="话题简介">
+        <el-table-column prop="introduce" label="地区" width="120">
         </el-table-column>
-        <el-table-column prop="sort" label="话题顺序">
+        <el-table-column prop="sort" label="创建时间">
+        </el-table-column>
+        <el-table-column prop="sort" label="修改时间">
         </el-table-column>
         <el-table-column prop="name" label="操作" width="200">
           <template slot-scope="scope">
@@ -64,19 +58,25 @@
     <el-dialog title="修改话题" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
         <div class="element">
-          <label class="inline">话题名称：</label>
+          <label class="inline">等级名称：</label>
           <div class="inline">
              <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
-          <label class="inline">话题编号：</label>
+          <label class="inline">级别：</label>
           <div class="inline">
              <el-input v-model="form.serial" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
-          <label class="inline">话题介绍：</label>
+          <label class="inline">校区：</label>
+          <div class="inline">
+             <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline">地区：</label>
           <div class="inline">
              <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
           </div>
@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,ERR_OK } from '@/api/index'
+import { lessonListUrl,lessonEditUrl,ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
 export default {
   data() {
@@ -101,7 +101,6 @@ export default {
       formLabelWidth: '120px',
       tableData:[],
       form: {
-        lesson_id:"",
         course_id:"",
         name:"",
         serial:"",
@@ -114,35 +113,7 @@ export default {
     this.getList();
   },
   methods: {
-    delete() {
-      let that = this;
-      var params = {
-        lesson_id: this.form.lesson_id,
-        is_deleted: 1
-      }
-      var url = lessonDeleteUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
-        var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.getList();
-          that.$message({
-            showClose: true,
-            message: '修改成功',
-            type: 'success'
-          });
-          that.dialogFormVisible = false;        
-          that.form =  {
-            course_id:"",
-            name:"",
-            serial:"",
-            introduce:""
-          }
-        }
-      });
-    },
-    sureEdit() {
+    sureEdit(){
       let that = this;
       var params = {
         course_id: this.form.course_id,
@@ -152,11 +123,12 @@ export default {
       }
       var url = lessonEditUrl;
       console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      /*this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.getList();
+          // that.tableData = result.data.lesson;
+          // that.$message("修改成功")
           that.$message({
             showClose: true,
             message: '修改成功',
@@ -170,7 +142,7 @@ export default {
             introduce:""
           }
         }
-      });
+      });*/
     },
     getList() {
       let that = this;
@@ -199,23 +171,8 @@ export default {
       this.dialogFormVisible = true;
     },
     handleDeleteClick(row) {
-      var that = this
-      this.form.lesson_id = row.id
-      this.$confirm(`此操作将永久删除话题${row.name}, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          that.delete();
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
+
     },
   }
 }
 </script>
-
-

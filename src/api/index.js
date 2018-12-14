@@ -40,6 +40,16 @@ export const studentBookListUrl = host + 'api/admin/user/arrangings';
 export const courseListUrl = host + 'api/admin/course/list';
 // 编辑学生信息（修改/新增）
 export const editStudentInfoUrl = host + 'api/admin/user/edit';
+// 话题列表
+export const lessonListUrl = host + 'api/admin/lesson/list';
+// 话题修改/添加
+export const lessonEditUrl = host + 'api/admin/lesson/edit';
+// 话题删除
+export const lessonDeleteUrl = host + 'api/admin/lesson/delete';
+
+export const host2 = 'https://test.dtc233.com'
+// 课表列表
+export const userListUrl = host2 + '/api/admin/user/list';
 
 
 

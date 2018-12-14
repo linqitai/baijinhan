@@ -46,6 +46,24 @@ export default new Router({
           }
         },
         {
+          path: '/classLevelList',
+          name: '课程等级列表',
+          component: (resolve) => {
+            import('../pages/class/classLevelList').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/studentLevelList',
+          name: '学生等级列表',
+          component: (resolve) => {
+            import('../pages/class/studentLevelList').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
           path: '/studentBookList',
           name: '学生订课表',
           component: (resolve) => {
