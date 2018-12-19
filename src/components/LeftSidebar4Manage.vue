@@ -75,19 +75,25 @@
 
 <script>
 var menu = [
-            {icon:'fa-navicon',title:'教学部',
+            {icon:'fa-navicon',title:'课程',
             subs:[{id:0,text:'课程安排',path:'/classplan'},
                   {id:1,text:'课程列表',path:'/classList'},
                   {id:2,text:'课程等级列表',path:'/classLevelList'},
                   {id:3,text:'话题列表',path:'/lessonList'},
-                  {id:4,text:'教师列表',path:'/teacherList'},
-                  {id:5,text:'教师排班明细表',path:'/teachersArranging'},
-                  {id:6,text:'学生列表',path:'/studentList'},
-                  {id:7,text:'学生等级列表',path:'/studentLevelList'},
-                  {id:8,text:'学生订课列表',path:'/studentBookList'},
-                  {id:9,text:'退课列表',path:'/dropCourseList'}
+                  {id:4,text:'退课列表',path:'/dropCourseList'},
+                  {id:5,text:'订课总览',path:'/orderClassList'},
+                  {id:6,text:'代退课',path:'/studentBookList'}
              ]},
-            {icon:'fa-navicon',title:'行政部',subs:[{id:0,text:'行政新闻',path:'/classplan2'},{id:1,text:'我的任务',path:'/classplan3'}]}
+            {icon:'fa-navicon',title:'教师',
+            subs:[
+                  {id:0,text:'教师列表',path:'/teacherList'},
+                  {id:1,text:'教师排班明细表',path:'/teachersArranging'}
+            ]},
+            {icon:'fa-navicon',title:'学生',
+            subs:[
+                  {id:0,text:'学生列表',path:'/studentList'},
+                  {id:1,text:'学生等级列表',path:'/studentLevelList'}
+            ]}
            ]
 
 export default {

@@ -8,20 +8,23 @@ $mSidebarWidth:150px;
 $colorBtnHover:#69c;
 $menuHoverColor:#69c;
 $tableBorderColor:#c7c7c7;
+$headerColor:#434B7E;
 // 长度单位
 $headerTop:50px;
 .width80{width: 80px;}.width100{width: 100px;}.width120{width: 120px;}.width140{width: 140px;}.width160{width: 160px;}.width220{width: 220px;}.width240{width: 240px;}
 .width260{width: 260px;}.width280{width: 280px;}
 .margint{margin-top: 6px;}.marginb{margin-bottom: 6px;}
 .margR20{margin-right: 20px;}
-.margT3{margin-top: 3px;}.margT6{margin-top: 6px;}.margT8{margin-top: 8px;}.margT20{margin-top: 20px;}
+.margT3{margin-top: 3px;}.margT6{margin-top: 6px;}.margT8{margin-top: 8px;}.margT10{margin-top: 10px;}.margT20{margin-top: 20px;}
 .margL10{margin-left: 10px;}.margL20{margin-left: 20px;}.margL40{margin-left: 40px;}
 .margL100{margin-left: 100px;}.margL200{margin-left: 200px;}
+.gray{color: #787878}
 .blue{color: #409EFF;}
 .green{color: green;}
 .inline{
   display: inline-block;
 }
+.opacity0{opacity: 0}
 .hidden{overflow: hidden;}
 .left{float: left;}
 .right{float: right;}
@@ -130,6 +133,42 @@ $headerTop:50px;
     margin-top: 24px;
   }
 }
+.freeColor{
+  background-color: #2564A5;
+}
+table.thisTableCheck{
+    width: 900px;
+    border: 1px solid $tableBorderColor;
+    border-right:none;
+    background-color: white;
+    margin-top: 10px;
+    .header{
+      background-color: $mainColor;
+      color: white;
+    }
+    tr{
+      white-space:nowrap;
+      text-align: center;
+      border-bottom: 1px solid $tableBorderColor;
+      &:nth-child(2),&:nth-child(5),&:nth-child(11){
+        background-color: #B1F1FF;
+      }
+    }
+    tr>th,tr>td{
+      display: inline-block;
+      width: 120px;
+      height: 50px;
+      line-height: 50px;
+      border-right:1px solid $tableBorderColor;
+      // vertical-align: inherit;
+    }
+    th:first-child{
+      width: 200px;
+    }
+    tr>td:first-child{
+      width: 200px;
+    }
+  }
 // 表格样式
 // .tableList {
 //   width: 100%;

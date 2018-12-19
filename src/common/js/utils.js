@@ -52,6 +52,13 @@ export function getFullTime(t){
   var hour = time.getHours()
   return `${hour}:00~${hour+1}:00`
 }
+
+export function getTodayDate(value) {
+  var time = new Date(value)
+  var d = time.getDate()
+  return d;
+}
+
 export function getSex(t){
   return t==1?"男":"女"
 }

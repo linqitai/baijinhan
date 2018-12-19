@@ -46,11 +46,14 @@ export const lessonListUrl = host + 'api/admin/lesson/list';
 export const lessonEditUrl = host + 'api/admin/lesson/edit';
 // 话题删除
 export const lessonDeleteUrl = host + 'api/admin/lesson/delete';
-// // 话题删除
-// export const lessonDeleteUrl = host + 'api/admin/lesson/delete';
-
 // 教师批量排课
 export const setClassMoreUrl = host + 'api/admin/arranging/batch-edit';
+// 发布课表
+export const arrangingReleaseUrl = host + 'api/admin/arranging/release';
+// 代退课
+export const dropArrangingUrl = host + 'api/admin/teacher/drop-arranging';
+// 订课总览
+export const bookCourseListUrl = host + 'api/admin/arranging/book-list';
 
 
 

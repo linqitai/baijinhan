@@ -28,6 +28,15 @@ export default new Router({
       },
       children: [
         {
+          path: '/orderClassList',
+          name: '订课总览',
+          component: (resolve) => {
+            import('../pages/class/orderClassList').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
           path: '/classplan',
           name: '课程安排',
           component: (resolve) => {
@@ -65,7 +74,7 @@ export default new Router({
         },
         {
           path: '/studentBookList',
-          name: '学生订课表',
+          name: '代退课',
           component: (resolve) => {
             import('../pages/class/studentBookList').then((module) => {
               resolve(module)

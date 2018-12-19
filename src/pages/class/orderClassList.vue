@@ -75,8 +75,8 @@ $height:50px;
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>课程安排</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span>订课总览</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
@@ -110,8 +110,8 @@ $height:50px;
         </div>
         <div style="margin-top: 10px;">
           <!-- <el-button type="primary" size="medium" @click="preparePublish">预发布课程</el-button> -->
-          <el-button type="primary" size="medium" @click="publish">发布课程</el-button>
-          <el-button type="primary" size="medium">上周未定课程统计</el-button>
+          <!-- <el-button type="primary" size="medium" @click="publish">发布课程</el-button>
+          <el-button type="primary" size="medium">上周未定课程统计</el-button> -->
         </div>
         <div style="margin-top: 18px;">
           <el-radio-group v-model="week" @change="changeweek">
@@ -161,7 +161,7 @@ $height:50px;
         </div>
       </div>
     </div>
-    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="40%">
+    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :modal="false" width="40%">
       <div class="lineBox">
         <b class="icon">*</b>
         <b class="text">教师</b>
@@ -194,7 +194,7 @@ $height:50px;
   </div>
 </template>
 <script>
-import { classListUrl,teacherFreeUrl,getRoomsUrl,teacherListUrl,getTeacherCourseUrl,getCourseListUrl,editClassUrl,arrangingReleaseUrl,ERR_OK } from '@/api/index'
+import { bookCourseListUrl,classListUrl,teacherFreeUrl,getRoomsUrl,teacherListUrl,getTeacherCourseUrl,getCourseListUrl,editClassUrl,arrangingReleaseUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth,getTodayDate } from '@/common/js/utils'
 // 一天有多少毫秒
 var oneDayTime = 24*60*60*1000
@@ -343,8 +343,6 @@ export default {
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           console.log("success")
-          that.teacherValue = "";
-          that.courseValue ="";
           that.getList();
           that.isShowPaikeDialog = false
         }else if(result.status_code == 433) {
@@ -383,17 +381,16 @@ export default {
       var that = this;
       var params = {
         weekth: that.weekth,
-        week:that.week,
-        is_released: 0,
+        week:that.week
       }
-      var url = classListUrl;
+      var url = bookCourseListUrl;
       console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result,'--result--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data.category;
-          var arranging = result.data.arranging;
+          var arranging = result.data;
           console.log(arranging,"arranging");
           console.log(Object.keys(arranging),"keys");
           var keys = Object.keys(arranging);
@@ -405,7 +402,6 @@ export default {
               var item = {
                 week:obj[j].week,
                 hour:obj[j].hour,
-                courseSerial:obj[j].lesson.course.serial,
                 lessonSerial:obj[j].lesson.serial,
                 lessonName:obj[j].lesson.name,
                 teacherName:obj[j].teacher.en_name,
@@ -424,7 +420,6 @@ export default {
               if(list[j].hour==arr[i].hour){
                 for(var k=0;k<list[j].blocks.length;k++){
                   if(list[j].blocks[k].roomName==arr[i].roomName){
-                    list[j].blocks[k].courseSerial = arr[i].courseSerial;
                     list[j].blocks[k].lessonSerial = arr[i].lessonSerial;
                     list[j].blocks[k].lessonName = arr[i].lessonName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
@@ -435,7 +430,7 @@ export default {
             }
           }
           that.list = list;
-          console.log(that.list,"list==================================")
+          console.log(arr,"arr")
         }
       });
     },
@@ -451,8 +446,7 @@ export default {
       let that = this;
       var params = {
         // arranging_id:"",
-        weekth: this.weekth,
-        week: this.week
+        weekth: this.weekth
       }
       // Object.assign(params, params, p);
       var url = arrangingReleaseUrl;
@@ -461,7 +455,6 @@ export default {
         var result = res.data;
         console.log(result.code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.getList();
           that.$message({
             type: 'success',
             message: '操作成功!'
@@ -513,8 +506,6 @@ export default {
             console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
             if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
               that.time2 = range
-              console.log(that.time2,"that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2")
-              console.log(isGetList,"isGetList")
               if(isGetList == false) {
                 that.time2Change(that.time2)
                 isGetList = true
@@ -541,7 +532,6 @@ export default {
       that.weekth = w.join(',') //"1542946667,1543030763";
       console.log(that.weekth,"weekth")
       that.week = 1
-      console.log("intoGetList==============================================")
       that.getList()
     },
     getTime1Option() {
@@ -580,5 +570,3 @@ export default {
   }
 }
 </script>
-
-

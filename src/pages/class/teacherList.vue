@@ -6,6 +6,31 @@
      
     }
   }
+  .margR{
+    margin-right: 4px;
+  }
+  
+  .functionBox{
+    padding: 6px 10px;
+  }
+  .cardHeader{
+    justify-content: space-between;
+    border-bottom: 1px solid #c7c7c7;
+    overflow: hidden;
+    .headerTitle{
+      font-size: 15px;
+      color: #585858;
+      padding: 12px 6px 12px 10px;
+      color: $mainColor;
+      font-weight: bold;
+    }
+    .close{
+      font-size: 18px;
+      margin-right: 4px;
+      margin-top: 4px;
+    }
+  }
+  
   .dialogBoxOuter{
     position:absolute;
     left: 50%;
@@ -19,61 +44,7 @@
     // box-shadow:3px 3px 20px 3px rgba(0,0,0,0.5);
     border: 1px solid #D6D6D6;
     border-radius: 10px;
-    .margR{
-      margin-right: 4px;
-    }
-    table.thisTable{
-      width: 900px;
-      border: 1px solid $tableBorderColor;
-      border-right:none;
-      background-color: white;
-      margin-left: 10px;
-      .header{
-        background-color: $mainColor;
-        color: white;
-      }
-      tr{
-        white-space:nowrap;
-        text-align: center;
-        border-bottom: 1px solid $tableBorderColor;
-        &:nth-child(2),&:nth-child(5),&:nth-child(11){
-          background-color: #B1F1FF;
-        }
-      }
-      tr>th,tr>td{
-        display: inline-block;
-        width: 100px;
-        height: 30px;
-        line-height: 30px;
-        border-right:1px solid $tableBorderColor;
-      }
-      th:first-child{
-        width: 200px;
-      }
-      tr>td:first-child{
-        width: 200px;
-      }
-    }
-    .functionBox{
-      padding: 6px 10px;
-    }
-    .cardHeader{
-      justify-content: space-between;
-      border-bottom: 1px solid #c7c7c7;
-      overflow: hidden;
-      .headerTitle{
-        font-size: 15px;
-        color: #585858;
-        padding: 12px 6px 12px 10px;
-        color: $mainColor;
-        font-weight: bold;
-      }
-      .close{
-        font-size: 18px;
-        margin-right: 4px;
-        margin-top: 4px;
-      }
-    }
+    
   }
   .el-card__body{
     padding: 0px;
@@ -157,12 +128,58 @@
         </el-pagination>
       </div> -->
     </div>
-    <div class="dialogBoxOuter" v-if="dialogBoxVisible">
-      <div class="cardHeader">
-        <template v-if="!isSetClass"><label class="headerTitle left">选择空余时间</label></template>
-        <template v-if="isSetClass"><label class="headerTitle left">给当前教师的空余时间排课</label></template>
-        <i class="el-icon-circle-close right close" @click="closeCard"></i>
+    <el-dialog title="排课" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
+      <div class="dialogBody">
+        <div class="element">
+          <label class="inline">选择课程：</label>
+          <div class="inline">
+             <!-- <el-input v-model="lesson_id" size="medium" placeholder="请输入内容"></el-input> -->
+             <el-select class="width140" size="medium" v-model="course_id" @change="courseChange" placeholder="请选择">
+              <el-option
+                v-for="item in courseList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline">选择话题：</label>
+          <div class="inline">
+             <!-- <el-input v-model="lesson_id" size="medium" placeholder="请输入内容"></el-input> -->
+             <el-select class="width200" size="medium" v-model="lesson_id" @change="lessonChange" placeholder="请选择">
+              <el-option
+                v-for="item in lessonList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline">选择教室：</label>
+          <div class="inline">
+             <!-- <el-input v-model="room_id" size="medium" placeholder="请输入内容"></el-input> -->
+             <el-select class="width140" size="medium" v-model="room_id" @change="roomChange" placeholder="请选择">
+              <el-option
+                v-for="item in rooms"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
       </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setClassEvent">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="设置空余时间" :visible.sync="isShowTableSetFreeDialog" :append-to-body="true" :fullscreen="true" :before-close="handleClose">
       <div class="functionBox">
         <div class="element">
           <label class="inline">教师名称：</label>
@@ -176,13 +193,10 @@
               </el-option>
             </el-select>
           </div>
-          <!-- <m-time></m-time> -->
           <m-time @getTimeData="getTimeData"></m-time>
-          
-          <!-- <label class="inline" v-if="thisDate">{{thisDate}}</label> -->
         </div>
       </div>
-      <table class="thisTable">
+      <table class="thisTableCheck">
         <tr class="header">
           <td v-for="(item,index) in days">{{item.name}}</td>
         </tr>
@@ -193,10 +207,10 @@
           </td>
         </tr>
       </table>
-      <div class="functionBox">
-        <div class="element">
-          <el-button type="primary" size="medium" @click="showThisDay" v-if="!isSetClass">批量钩选班次</el-button>
-          <div class="inline" v-show="isShowDaySelect" v-if="!isSetClass">
+      <div class="functionBox margT10">
+         <div class="element">
+          <el-button type="primary" size="medium" @click="showThisDay">批量钩选班次</el-button>
+          <div class="inline" v-show="isShowDaySelect">
             <label class="inline">日期：</label>
             <el-select class="width100" v-model="thisDay" size="medium" placeholder="请选择" @change="thisDayChange">
               <el-option
@@ -218,17 +232,55 @@
           </div>
           <!-- <el-button type="primary" size="medium" @click="lastTeacher">上一位教师</el-button>
           <el-button type="primary" size="medium" @click="nextTeacher">下一位教师</el-button> -->
-          <el-button type="primary" size="medium" @click="addBan" v-if="!isSetClass">加班</el-button>
-          <el-button type="primary" class="right" size="medium" @click="saveBtn" v-if="!isSetClass">保存</el-button>
-          <el-button type="primary" class="right margR" size="medium" @click="setClass" v-if="isSetClass">给选中排课</el-button>
+          <!-- <el-button type="primary" size="medium" @click="addBan">加班</el-button> -->
+          <el-button type="primary" class="" size="medium" @click="saveBtn">保存</el-button>
         </div>
       </div>
-    </div>
-    <!-- <div class='mask' v-show="maskIsShow" @click="maskHide"></div> -->
+    </el-dialog>
+    <!-- ============================================================== -->
+    <el-dialog title="给此教师的空余时间排课" :visible.sync="isShowTableSetCourseDialog" :append-to-body="true" :fullscreen="true" :before-close="handleClose">
+      <div class="functionBox">
+        <div class="element">
+          <label class="inline">教师名称：</label>
+          <div class="inline">
+             <el-select class="width140" v-model="teacherValue" size="medium" placeholder="请选择">
+              <el-option
+                v-for="item in tableData"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <m-time @getTimeData="getTimeData"></m-time>
+        </div>
+      </div>
+      <table class="thisTableCheck">
+        <tr class="header">
+          <td v-for="(item,index) in days">{{item.name}}</td>
+        </tr>
+        <tr v-for="(item,index) in list">
+          <td>{{item.time}}</td>
+          <td style="text-align: left;" v-for="(checkeds,index) in item.checkeds" :data-week="checkeds.week" :data-hour="checkeds.hour" :class="[coordinatesAttr[checkeds.week][checkeds.hour]==true?'freeColor':'']">
+            <!-- <template v-if="coordinatesAttr[checkeds.week][checkeds.hour]">
+              <el-checkbox v-model="coordinatesAttr[checkeds.week][checkeds.hour]"></el-checkbox>
+            </template> -->
+            <div>
+              <el-checkbox style="margin-left: 10px;" :data-week="checkeds.week" :data-hour="checkeds.hour" v-if="coordinatesAttr[checkeds.week][checkeds.hour]" @change="clickCheckbox(checkeds.week,checkeds.hour)"></el-checkbox>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="functionBox margT10">
+        <div class="element">
+          <el-button type="primary" class="left margR" size="medium" @click="setClassBtn">给选中排课</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,setClassMoreUrl,ERR_OK } from '@/api/index'
+import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,setClassMoreUrl,getRoomsUrl,courseListUrl,lessonListUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime } from '@/common/js/utils'
 import mTime from '../../components/time.vue'
 var coordinatesAttr = new Array(); //先声明一维 
@@ -238,6 +290,14 @@ for ( var i = 0; i < 8; i++) { //一维长度为8
         coordinatesAttr[i][j] = false; // 赋值，每个数组元素的值为i+j
     }
 }
+var coordinatesAttr2 = new Array(); //先声明一维 
+for ( var i = 0; i < 8; i++) { //一维长度为8
+    coordinatesAttr[i] = new Array(); //再声明二维 
+    for ( var j = 0; j < 21; j++) { //二维长度为21
+        coordinatesAttr[i][j] = false; // 赋值，每个数组元素的值为i+j
+    }
+}
+var coordinates = []
 var oneDayTime = 24*60*60*1000
 var list2 = [
         {time:'09:00~10:00',checkeds:[{week:'1',hour:'9'},{week:'2',hour:'9'},{week:'3',hour:'9'},{week:'4',hour:'9'},{week:'5',hour:'9'},{week:'6',hour:'9'},{week:'7',hour:'9'}]},
@@ -266,10 +326,11 @@ export default {
       name: '',
       tableData: [],
       dialogVisible: false,
-      dialogBoxVisible: false,
+      isShowTableDialog: false,
       teachers:[],
       teacherValue:'',
       coordinatesAttr:coordinatesAttr,
+      coordinatesAttr2:coordinatesAttr2,
       weekth:'',
       // thisDate: '',
       thisDay: '',
@@ -283,11 +344,19 @@ export default {
       banci:'',
       days:[{name:'时间'},{name:'周一'},{name:'周二'},{name:'周三'},{name:'周四'},{name:'周五'},{name:'周六'},{name:'周日'}],
       list:list2,
-      isSetClass:false
+      dialogFormVisible: false,
+      rooms:'',
+      room_id:'',
+      courseList:'',
+      course_id:'',
+      lessonList:'',
+      title:'',
+      isShowTableSetCourseDialog:false,
+      isShowTableSetFreeDialog:false
     }
   },
   created() {
-    console.log("getSchoole_id：",localStorage.getItem("_school_id"))
+    // console.log("getSchoole_id：",localStorage.getItem("_school_id"))
     // this.getTime1Option()
     this.getList()
   },
@@ -295,68 +364,163 @@ export default {
     mTime
   },
   methods: {
-    setClass() {
-      
+    clickCheckbox(week,hour) {
+      console.log(`${week},${hour}`)
+      coordinates.push(`${week},${hour}`)
+    },
+    lessonChange(value) {
+      // console.log(this.lesson_id,"lesson_id")
+    },
+    courseChange(value) {
+      // console.log(this.course_id,"course_id")
+      this.getLessonList()
+    },
+    roomChange(value) {
+      // console.log(this.room_id,"room_id")
+    },
+    getLessonList() {
       let that = this;
+      var params = {
+        course_id:that.course_id
+        // offset: (that.pageIndex-1)*that.pageSize,
+        // limit: that.pageSize,
+      }
+      var url = lessonListUrl;
+      // console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.lessonList = result.data.lesson;
+          for(var i=0;i<that.lessonList.length;i++){
+            that.lessonList[i].label = that.lessonList[i].name
+            that.lessonList[i].value = that.lessonList[i].id
+          }
+        }
+      });
+    },
+    getRooms() {
+      var that = this;
+      var params = {
+        school_id: that.schoole_id
+      }
+      var url = getRoomsUrl;
+      // console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          // that.tableData = result.data.category;
+          that.rooms = result.data.rooms;
+          // console.log(that.rooms,"that.rooms")
+          for(var i=0;i<that.rooms.length;i++){
+            that.rooms[i].label = that.rooms[i].name
+            that.rooms[i].value = that.rooms[i].id
+          }
+          // that.initList();
+          // // console.log(that.list,"that.list")
+        }
+      })
+    },
+    getCourseList() {
+      let that = this;
+      var params = {
+        school_id: this.school_id,
+        // offset: (that.pageIndex-1)*that.pageSize,
+        // limit: that.pageSize,
+      }
+      var url = courseListUrl;
+      // console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.courseList = result.data.course;
+          for(var i=0;i<that.courseList.length;i++){
+            that.courseList[i].label = that.courseList[i].name
+            that.courseList[i].value = that.courseList[i].id
+          }
+        }
+      });
+    },
+    setClassBtn(){
+      this.getRooms();
+      this.getCourseList();
+      this.dialogFormVisible = true;
+      this.coordinates = coordinates;
+      console.log(coordinates,"coordinates")
+    },
+    setClassEvent() {
+      let that = this;
+      // var con = []
+      // for ( var i = 1; i < 8; i++) { //一维长度为8
+      //   for(var j=9;j<21;j++) {
+      //     if(this.coordinatesAttr[i][j] == true) {
+      //       con.push(`${i},${j}`)
+      //     }
+      //   }
+      // }
+      // this.coordinates = con;
+      // console.log("this.coordinates",this.coordinates)
       if(this.weekth==""){
         this.$message('请先选择排课周期');
         return;
       }
-      // if(this.coordinates==""){
-      //   this.$message('请选择空余时间');
-      //   return;
-      // }
+      if(this.coordinates==""){
+        this.$message('请选择空余时间');
+        return;
+      }
       // console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
       var params = {
         weekth: this.weekth,//ok
         coordinates: JSON.stringify(this.coordinates),
-        room_id:this.room_id,
-        lesson_id:this.lesson_id,
+        room_id:this.room_id,//ok
+        lesson_id:this.lesson_id,//ok
         teacher_id: this.teacherValue,//ok
         // school_id: this.schoole_id
       }
       var url = setClassMoreUrl;
-      console.log(params,"params")
-      // this.$axios.post(url,params).then((res)=>{
-      //   var result = res.data;
-      //   console.log(result.status_code,'--res.status_code--')
-      //   if(result.status_code == ERR_OK){
-      //     // that.tableData = result.data;
-      //     // this.$message({
-      //     //   message: '保存成功',
-      //     //   type: 'success'
-      //     // });
-      //     // this.dialogBoxVisible = false;
-      //     // this.maskIsShow = false;
-      //     // that.clearTable();
-      //   }
-      // });
+      // console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          // that.tableData = result.data;
+          that.getTeacherFree();
+          that.$message({
+            message: '操作成功',
+            type: 'success'
+          });
+          that.isShowTableDialog = false;
+          that.dialogFormVisible = false;
+          // that.clearTable();
+        }else{
+          that.$message({
+            message: result.message,
+            type: 'error'
+          });
+        }
+      });
     },
+    // 排课
     setClassClick(row){
-
-      // if(this.coordinates==""){
-      //   this.$message('请选择空余时间');
-      //   return;
-      // }
-      this.isSetClass = true
-      console.log("row.id:",row.id)
-      this.teacher_id = row.id
-      this.teacherValue = row.id
-      this.dialogBoxVisible = true;
-      this.maskIsShow = true;
+      var that = this;
+      this.teacher_id = row.id;
+      this.teacherValue = row.id;
+      this.isShowTableSetCourseDialog = true;
+      coordinates = []
+      this.getTimeData();
     },
     selectFreeTimeClick(row){
-      console.log("row.id:",row.id)
-      this.teacher_id = row.id
-      this.teacherValue = row.id
-      this.dialogBoxVisible = true;
-      this.maskIsShow = true;
+      this.teacher_id = row.id;
+      this.teacherValue = row.id;
+      this.isShowTableSetFreeDialog = true;
+      this.getTimeData();
     },
-    maskHide(){
-      this.maskIsShow = false
-    },
-    addBan() {
-
+    handleClose() {
+      this.isShowTableSetCourseDialog = false;
+      this.isShowTableSetFreeDialog = false;
+      // this.clearTable()
     },
     lastTeacher() {
 
@@ -369,22 +533,22 @@ export default {
     },
     banciChange(value) {
       var day = this.thisDay
-      console.log("周几：",this.thisDay)
-      console.log("班次：",value)
+      // console.log("周几：",this.thisDay)
+      // console.log("班次：",value)
       var start = parseInt(value.split('~')[0])
       var end = parseInt(value.split('~')[1])
-      console.log("start:",start)
-      console.log("end:",end)
+      // console.log("start:",start)
+      // console.log("end:",end)
       for(var i=start;i<end;i++){
         this.coordinatesAttr[day][i] = true
       }
     },
     thisDayChange(value) {
-      // console.log("this.thisDate:",this.thisDate)
+      // // console.log("this.thisDate:",this.thisDate)
       // var firstDate = this.$cookie.get("_firstDay")
       // var t = getTime(firstDate)+oneDayTime*(value-1)
       // this.thisDate = getFullDate(t)
-      // console.log("date:",getFullDate(t))
+      // // console.log("date:",getFullDate(t))
     },
     saveBtn() {
       var con = []
@@ -396,11 +560,10 @@ export default {
         }
       }
       this.coordinates = con;
-      console.log("this.coordinates",this.coordinates)
       this.save();
     },
     save(){
-      console.log(this.weekth,"this.weekth")
+      // console.log(this.weekth,"this.weekth")
       let that = this;
       if(this.weekth==""){
         this.$message('请先选择排课周期');
@@ -410,7 +573,7 @@ export default {
         this.$message('请选择空余时间');
         return;
       }
-      console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
+      // console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
       var params = {
         weekth: this.weekth,
         coordinates: JSON.stringify(this.coordinates),
@@ -418,24 +581,21 @@ export default {
         school_id: this.schoole_id
       }
       var url = teacherFreeEditUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data;
           this.$message({
             message: '保存成功',
             type: 'success'
           });
-          this.dialogBoxVisible = false;
-          this.maskIsShow = false;
-          that.clearTable();
+          // this.isShowTableDialog = false;
         }
       });
     },
     clearTable() {
-      // this.coordinatesAttr = coordinatesAttr;
       for ( var i = 1; i < 8; i++) { //一维长度为8
         for(var j=9;j<21;j++) {
           if(this.coordinatesAttr[i][j] == true) {
@@ -446,7 +606,7 @@ export default {
     },
     getTimeData() {
       this.weekth = this.$cookie.get("_weekth")
-      console.log(this.weekth,"this.weekth")
+      // console.log(this.weekth,"this.weekth")
       this.getTeacherFree()
       // 重置底部数据
       this.isShowDaySelect = false
@@ -461,10 +621,10 @@ export default {
         school_id: this.schoole_id
       }
       var url = teacherFreeUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           var list = result.data;
           if(list.length==0){
@@ -473,6 +633,7 @@ export default {
             that.clearTable()
             for(var i=0;i<list.length;i++){
               coordinatesAttr[list[i].week][list[i].hour] = true
+              /// 这里插入课程教师等信息
             } 
             that.coordinatesAttr = coordinatesAttr
           }
@@ -481,22 +642,16 @@ export default {
         }
       });
     },
-    closeCard() {
-      this.isSetClass = false;
-      this.dialogBoxVisible = false;
-      this.maskIsShow = false;
-      this.clearTable()
-    },
     getList(){
       let that = this;
       var params = {
         school_id: that.schoole_id
       }
       var url = teacherListUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           that.tableData = result.data.teachers;
           for(var i=0;i<that.tableData.length;i++) {
@@ -507,13 +662,13 @@ export default {
       });
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       // this.getList();
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
-      console.log(val);
+      // console.log(val);
       // this.getList();
     }
   }

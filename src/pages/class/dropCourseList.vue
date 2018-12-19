@@ -53,11 +53,6 @@
               {{scope.row.arranging.updated_at}}
           </template>
         </el-table-column>
-        <el-table-column prop="arranging.begin_time"  label="上课日期" width="120">
-          <template slot-scope="scope">
-              {{scope.row.arranging.begin_time | filterDate}}
-          </template>
-        </el-table-column>
         <el-table-column prop="arranging.begin_time" label="上课时间" width="120">
           <template slot-scope="scope">
               {{scope.row.arranging.begin_time | filterTime}}
@@ -79,6 +74,11 @@
         <el-table-column
           prop="drop_people.en_name"
           label="退课人">
+        </el-table-column>
+        <el-table-column label="操作" fixed="right">
+          <template slot-scope="scope">
+            <el-button @click="operate(scope.row)" type="text" size="small" icon="el-icon-edit-outline">同意</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <!-- <div class="tableBottom" v-show="showPageTag">
@@ -118,6 +118,9 @@ export default {
     this.getList()
   },
   methods: {
+    operate(row) {
+
+    },
     getList() {
       var that = this;
       var params = {

@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth } from '@/common/js/utils'
+import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth,getTodayDate } from '@/common/js/utils'
 // 一天有多少毫秒
 var oneDayTime = 24*60*60*1000
 var oneDaySecond = 24*60*60
@@ -44,11 +44,17 @@ export default {
   },
   methods: {
     getTime1Option() {
-      var datatime = new Date()
+      var that = this;
+      var datatime = new Date();
       var year = datatime.getFullYear();
-      var month = datatime.getMonth()
-      var arr = []
+      var month = datatime.getMonth();
+      var monthNow = datatime.getMonth()+1;
+      var arr = [];
       for(var i=month-1;i<12;i++){
+        if(monthNow == (i+1)){
+          that.time1 = `${year}/${i+1}`
+          that.time1Change(that.time1)
+        }
         var item = {label:`${year}/${i+1}`,value: `${year}/${i+1}`}
         arr.push(item)
       }
@@ -57,27 +63,39 @@ export default {
         var item = {label:`${year2}/${i+1}`,value: `${year2}/${i+1}`}
         arr.push(item)
       }
-      // console.log(arr,"arr")
+      // // console.log(arr,"arr")
       this.time1Options = arr
     },
     time1Change(value) {
+      var that = this;
+      var isGetList = false;
+      //获取目前的时间戳
+      var timeNow = new Date().getTime();
       var month = value.split('/')[1]
-      console.log("月份：" + month)
+      // console.log("月份：" + month)
       var firstDay = value.toString() + "/1"
       var arr = []
       var time  = getTime(firstDay)
       var days = getDaysInYearMonth(value.split('/')[0],month)
-      console.log(days,"天数")
+      // // console.log(days,"天数")
       for(var i=0;i<days;i++){
         var d = getDay(time)
         if(d==1){
           var lastRange = getFullDate(time)
           var m = getMonth(lastRange)
-          console.log("month:" + month + ",m:" + m)
+          // console.log("month:" + month + ",m:" + m)
           if(month == m) {
             var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
+            // console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
+            if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
+              that.time2 = range
+              if(isGetList == false) {
+                that.time2Change(that.time2)
+                isGetList = true
+              }
+            }
           }
         }
         time = time + oneDayTime
@@ -97,7 +115,7 @@ export default {
       w.push(timebegin)
       w.push(timeend)
       this.weekth = w.join(',')
-      console.log(this.weekth,"weekth")
+      // console.log(this.weekth,"weekth")
       //还是通过设置缓存的方式来获取数据吧
       this.$cookie.set("_weekth",this.weekth)
       this.$cookie.set("_firstDay",this.firstDay)

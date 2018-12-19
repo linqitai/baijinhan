@@ -45,7 +45,7 @@ $tableLeft:100px;
           line-height: $height2;
           border-top:1px solid $tableBorderColor;
           display: block;
-          box-sizing: border-box;
+          // box-sizing: border-box;
         }
       }
       .tableWrapper{
@@ -73,7 +73,6 @@ $tableLeft:100px;
           }
           tr{
             td{
-              width: 120px;
               height: $height2;
               border-right:1px solid $tableBorderColor;
               overflow: hidden;
@@ -148,7 +147,10 @@ $tableLeft:100px;
             <el-radio :label="0">全部</el-radio>
             <el-radio :label="2">外教</el-radio>
             <el-radio :label="1">中教</el-radio>
-          </el-radio-group>  
+          </el-radio-group> 
+          <div class="inline margL20">
+            <el-button type="primary" size="medium">导出</el-button> 
+          </div>
         </div>
       </div>
       <div class="tableBox">
@@ -206,9 +208,11 @@ export default {
     }
   },
   created() {
+    this.date = getFullDate(new Date().getTime())
+    this.time = Math.floor(new Date(this.date).getTime()/1000)
     // console.log("getSchoole_id：",localStorage.getItem("_school_id")) 
     // this.getTime1Option()
-    // this.getList()
+    this.getList()
   },
   components: {
     // mTime
@@ -252,7 +256,7 @@ export default {
           var arr = [];
           for(var i=0;i<keys.length;i++){
             var object = {}
-            object.teacher=resultObj[0].en_name 
+            object.teacher=resultObj[i].en_name 
             var obj = resultObj[keys[i]];
             var blocks = []
             for(var j=0;j<obj.arrangings.length;j++){
@@ -278,7 +282,7 @@ export default {
                         course:arr[i].blocks[k].lesson.name,
                         school:arr[i].blocks[k].school_id,
                         room:arr[i].blocks[k].room.name,
-                        users_count:arr[i].blocks[k].course.total
+                        users_count:arr[i].blocks[k].capacity
                       }
                     }
                   }

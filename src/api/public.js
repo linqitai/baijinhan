@@ -13,6 +13,12 @@ axios.defaults.timeout = 5000
 
 // 添加一个响应拦截器
 axios.interceptors.response.use(function (res) {
+  // console.log(res,"responseresponseresponseresponse")
+  // console.log(res.headers.authorization,"responseresponseresponseresponse")
+  if(res.headers.authorization){
+    localStorage.setItem('authorization',res.headers.authorization);
+    console.log('重置authorization成功')
+  }
   return res;
 }, function (err) {
   console.log(err,'axiosErr')

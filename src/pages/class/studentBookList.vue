@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import { studentBookListUrl,ERR_OK } from '@/api/index'
+import { studentBookListUrl,dropArrangingUrl,ERR_OK } from '@/api/index'
 import { getSex,getFullDate } from '@/common/js/utils'
 export default {
   data() {
@@ -117,7 +117,39 @@ export default {
   },
   methods: {
     handleDropClick(row) {
-      console.log(row.user_id,"user_id")
+      var that = this;
+      this.$confirm('此操作将发布课程, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.dropArrangingEvent(row)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
+    dropArrangingEvent(row) {
+      var that = this;
+      var params = {
+        user_id: row.user_id,
+        arranging_id: row.arranging_id
+      }
+      var url = dropArrangingUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.getList();
+          that.$message({
+            type: 'success',
+            message: '操作成功!'
+          });
+        }
+      })
     },
     search() {
       this.getList()
