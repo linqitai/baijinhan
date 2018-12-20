@@ -149,7 +149,8 @@ $tableLeft:100px;
             <el-radio :label="1">中教</el-radio>
           </el-radio-group> 
           <div class="inline margL20">
-            <el-button type="primary" size="medium">导出</el-button> 
+            <el-button type="primary" size="medium" @click="importTable">导出</el-button> 
+            <!-- <a :href="importTableUrl">导出</a> -->
           </div>
         </div>
       </div>
@@ -191,8 +192,10 @@ $tableLeft:100px;
   </div>
 </template>
 <script>
-import { teachersArrangingsListUrl,ERR_OK } from '@/api/index'
+import { teachersArrangingsListUrl,importTableUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime } from '@/common/js/utils'
+import qs from 'qs'
+import axios from 'axios'
 
 var list = []
 export default {
@@ -204,13 +207,19 @@ export default {
       date:"",
       time:"",
       type:"",
-      serial:""
+      serial:"",
+      schoole_id: localStorage.getItem("_school_id"),
+      importTableUrl:""
     }
   },
   created() {
+    var that = this;
     this.date = getFullDate(new Date().getTime())
     this.time = Math.floor(new Date(this.date).getTime()/1000)
-    // console.log("getSchoole_id：",localStorage.getItem("_school_id")) 
+    console.log("getSchoole_id：",localStorage.getItem("_school_id")) 
+    this.schoole_id = localStorage.getItem("_school_id")
+    var url = importTableUrl + `?time=${that.time}&school_id=${localStorage.getItem("_school_id")}`;
+    that.importTableUrl = url;
     // this.getTime1Option()
     this.getList()
   },
@@ -218,6 +227,59 @@ export default {
     // mTime
   },
   methods: {
+    importTable() {
+      let that = this;
+      var params = {
+        time:that.time,
+        school_id:localStorage.getItem("_school_id")
+      }
+      // http://bjh.chinaxywl.com/api/admin/excel/dayarrangings-export?time=1545235200&school_id=1
+      var url = importTableUrl + `?time=${that.time}&school_id=${localStorage.getItem("_school_id")}`;
+      // that.importTableUrl = url;
+      // var url = importTableUrl;
+      // console.log(params,"params")
+      axios.request({
+        url: url,
+        method:'post',
+        responseType:'blob'
+      }).then(function(res){
+        //这里res.data是返回的blob对象     
+    　　var blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+    　　var downloadElement = document.createElement('a');
+    　　var href = window.URL.createObjectURL(blob); //创建下载的链接
+    　　downloadElement.href = href;
+    　　downloadElement.download = 'xxx.xlsx'; //下载后文件名
+    　　document.body.appendChild(downloadElement);
+    　　downloadElement.click(); //点击下载
+    　　document.body.removeChild(downloadElement); //下载完成移除元素
+    　　window.URL.revokeObjectURL(href); //释放掉blob对象 
+      });
+      
+      // $.ajax({ 
+      //   url : url, 
+      //   type : 'GET', 
+      //   // data : qs.stringify(params), 
+      //   cache: false,
+      //   // 告诉jQuery不要去处理发送的数据
+      //   processData : false, 
+      //   // 告诉jQuery不要去设置Content-Type请求头
+      //   contentType : false,
+      //   beforeSend: function (XMLHttpRequest) {
+      //     // 'application/json'
+      //     XMLHttpRequest.setRequestHeader("authorization", localStorage.getItem('authorization'));
+      //     XMLHttpRequest.setRequestHeader("Content-Type", 'application/json');
+      //   },
+      //   complete: function( xhr,data ){
+          
+      //   },
+      //   success : function(res) { 
+      //     console.log("====成功===");
+      //   },
+      //   error : function(responseStr) { 
+          
+      //   } 
+      // });
+    },
     changeType() {
       if(!this.date){
         this.$alert('请先选择课程日期', '提示');

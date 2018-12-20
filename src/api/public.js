@@ -17,11 +17,9 @@ axios.interceptors.response.use(function (res) {
   // console.log(res.headers.authorization,"responseresponseresponseresponse")
   if(res.headers.authorization){
     localStorage.setItem('authorization',res.headers.authorization);
-    console.log('重置authorization成功')
   }
   return res;
 }, function (err) {
-  console.log(err,'axiosErr')
   if(err.response.data){
     if (err.response.data.status_code==401) {
       router.replace({
@@ -45,7 +43,9 @@ axios.interceptors.request.use(function (config) {
   // console.log(config.headers.authorization,'--config.headers.authorization--')
   // 参数格式转换
   if(config.method=="post"){
-      config.data = qs.stringify(config.data);
+    config.data = qs.stringify(config.data);
+  }else if(config.method=="get"){
+    config.data = JSON.stringify(config.data);
   }
   return config;
 }, function (error) {

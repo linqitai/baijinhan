@@ -104,6 +104,11 @@ $height:50px;
               </el-option>
             </el-select>
           </div>
+          <el-radio-group class="margL20" v-model="book_value" @change="changeBook">
+            <el-radio :label="2">全部</el-radio>
+            <el-radio :label="0">未定</el-radio>
+            <el-radio :label="1">已定</el-radio>
+          </el-radio-group> 
           <!-- <div class="inline">
             <el-button type="primary" size="">查询</el-button>
           </div> -->
@@ -147,10 +152,10 @@ $height:50px;
               <th v-for="(item,index) in rooms">{{item.name}}</th>
             </tr>
             <tr v-for="(items,index) in list">
-              <td v-for="(item,index) in items.blocks" @click="openDialogModel(item.room_id,item.hour)">
+              <td v-for="(item,index) in items.blocks">
                 <div style="min-width: 160px;">
-                  <div v-if="item.courseSerial" :class="[item.is_released==1?'blue':'gray']">
-                    <div class="margint">{{item.courseSerial}}.{{item.lessonSerial}}</div>
+                  <div :class="[item.is_released==1?'blue':'gray']">
+                    <div class="margint">{{item.lessonSerial}}</div>
                     <div class="">{{item.lessonName}}</div>
                     <div>{{item.teacherName}}</div>
                   </div>
@@ -220,7 +225,9 @@ export default {
       hour:'',
       room_id:'',
       lession_id:'',
-      course_id:''
+      course_id:'',
+      book_value:'',
+      book:'1',
     }
   },
   created() {
@@ -377,11 +384,21 @@ export default {
       }
       that.list = list
     },
+    changeBook() {
+      console.log(this.book,"book")
+      if(this.book_value==2){
+        this.book = "";
+      }else{
+        this.book = this.book_value;
+      }
+      this.getList();
+    },
     getList() {
       var that = this;
       var params = {
         weekth: that.weekth,
-        week:that.week
+        week:that.week,
+        book:that.book//0只显示未订课程  1只显示已定课程  不传全部都显示
       }
       var url = bookCourseListUrl;
       console.log(params,"params")

@@ -54,6 +54,18 @@ export const arrangingReleaseUrl = host + 'api/admin/arranging/release';
 export const dropArrangingUrl = host + 'api/admin/teacher/drop-arranging';
 // 订课总览
 export const bookCourseListUrl = host + 'api/admin/arranging/book-list';
+// 编辑与新增课程
+export const courseEditUrl = host + 'api/admin/course/edit';
+// 课程等级列表
+export const courseLevelListUrl = host + 'api/admin/course/level-list';
+// 课程类型列表
+export const courseTypeListUrl = host + 'api/admin/course/type-list';
+// 教师类型列表
+export const teacherTypeListUrl = host + 'api/admin/teacher/type-list';
+// 导出教师们的单日课程excel
+export const importTableUrl = host + 'api/admin/excel/dayarrangings-export';
+// 删除与恢复
+export const courseDeleteUrl = host + 'api/admin/course/delete';
 
 
 

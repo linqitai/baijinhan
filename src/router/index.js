@@ -119,9 +119,18 @@ export default new Router({
         },
         {
           path: '/lessonList',
-          name: '课程安排',
+          name: '话题列表',
           component: (resolve) => {
             import('../pages/class/lessonList').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/lessonOneList',
+          name: '课程之话题列表',
+          component: (resolve) => {
+            import('../pages/class/lessonOne').then((module) => {
               resolve(module)
             })
           }

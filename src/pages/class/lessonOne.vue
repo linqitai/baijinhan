@@ -1,8 +1,16 @@
 <style lang="scss" scoped>
 .apply{
+  padding:12px 20px;
+  background-color: white;
   .operateTableBox{
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #F3F2F2;
+    background-color: #F2F2F2;
     .functionBox{
+      padding: 18px;
       .status{
+        width: 120px;
       }
     }
   }
@@ -18,26 +26,32 @@
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>课程等级列表</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span>{{breadCrumb}}</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
     <div class="operateTableBox">
-      <!-- <div class="functionBox">
+      <div class="functionBox">
         <div class="element">
-          <label class="inline">姓名：</label>
+          <label class="inline">话题名称：</label>
           <div class="inline">
              <el-input v-model="name" size="medium" placeholder="请输入所要查询的姓名"></el-input>
           </div>
           <div class="inline">
-            <el-button type="primary" size="medium">查询</el-button>
+            <el-button type="primary" size="medium" @click="search">查询</el-button>
           </div>
         </div>
-      </div> -->
-      <el-table :data="tableData" border style="width: 100%;margin-top: 10px;">
-        <el-table-column prop="name" label="等级名称" width="180">
+      </div>
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column prop="name" label="话题名称" width="180">
         </el-table-column>
-        <el-table-column prop="level" label="级别">
+        <el-table-column prop="serial" label="话题编号">
+        </el-table-column>
+        <el-table-column prop="created_at" label="创建时间" width="160">
+        </el-table-column>
+        <el-table-column prop="introduce" label="话题简介">
+        </el-table-column>
+        <el-table-column prop="sort" label="话题顺序">
         </el-table-column>
         <el-table-column prop="name" label="操作" width="200">
           <template slot-scope="scope">
@@ -50,25 +64,19 @@
     <el-dialog title="修改话题" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
         <div class="element">
-          <label class="inline">等级名称：</label>
+          <label class="inline">话题名称：</label>
           <div class="inline">
              <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
-          <label class="inline">级别：</label>
+          <label class="inline">话题编号：</label>
           <div class="inline">
              <el-input v-model="form.serial" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
-          <label class="inline">校区：</label>
-          <div class="inline">
-             <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
-          </div>
-        </div>
-        <div class="element margT20">
-          <label class="inline">地区：</label>
+          <label class="inline">话题介绍：</label>
           <div class="inline">
              <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
           </div>
@@ -82,7 +90,7 @@
   </div>
 </template>
 <script>
-import { courseLevelListUrl,lessonEditUrl,ERR_OK } from '@/api/index'
+import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
 export default {
   data() {
@@ -93,34 +101,38 @@ export default {
       formLabelWidth: '120px',
       tableData:[],
       form: {
+        lesson_id:"",
         course_id:"",
         name:"",
         serial:"",
         introduce:""
       },
-      name:''
+      name:'',
+      coursename:this.$cookie.get('coursename'),
+      breadCrumb:''
     }
   },
   created() {
+  	this.breadCrumb = `课程${this.coursename}的话题列表`
     this.getList();
   },
   methods: {
-    sureEdit(){
+    search() {
+      this.getList();
+    },
+    delete() {
       let that = this;
       var params = {
-        course_id: this.form.course_id,
-        name: this.form.name,
-        serial: this.form.serial,
-        introduce: this.form.introduce
+        lesson_id: this.form.lesson_id,
+        is_deleted: 1
       }
-      var url = lessonEditUrl;
+      var url = lessonDeleteUrl;
       console.log(params,"params")
-      /*this.$axios.post(url,params).then((res)=>{
+      this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          // that.tableData = result.data.lesson;
-          // that.$message("修改成功")
+          that.getList();
           that.$message({
             showClose: true,
             message: '修改成功',
@@ -134,21 +146,53 @@ export default {
             introduce:""
           }
         }
-      });*/
+      });
     },
-    getList() {
+    sureEdit() {
       let that = this;
       var params = {
-        // offset: (that.pageIndex-1)*that.pageSize,
-        // limit: that.pageSize,
+        course_id: this.form.course_id,
+        name: this.form.name,
+        serial: this.form.serial,
+        introduce: this.form.introduce
       }
-      var url = courseLevelListUrl;
+      var url = lessonEditUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.tableData = result.data;
+          that.getList();
+          that.$message({
+            showClose: true,
+            message: '修改成功',
+            type: 'success'
+          });
+          that.dialogFormVisible = false;        
+          that.form =  {
+            course_id:"",
+            name:"",
+            serial:"",
+            introduce:""
+          }
+        }
+      });
+    },
+    getList() {
+      let that = this;
+      var params = {
+      	course_id:this.$cookie.get('course_id'),
+        name:that.name,
+        offset: (that.pageIndex-1)*that.pageSize,
+        limit: that.pageSize,
+      }
+      var url = lessonListUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.tableData = result.data.lesson;
           
         }
       });
@@ -163,7 +207,20 @@ export default {
       this.dialogFormVisible = true;
     },
     handleDeleteClick(row) {
-
+      var that = this
+      this.form.lesson_id = row.id
+      this.$confirm(`此操作将永久删除话题${row.name}, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.delete();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
   }
 }

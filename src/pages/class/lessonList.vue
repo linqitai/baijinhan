@@ -33,12 +33,12 @@
     <div class="operateTableBox">
       <div class="functionBox">
         <div class="element">
-          <label class="inline">姓名：</label>
+          <label class="inline">名称：</label>
           <div class="inline">
              <el-input v-model="name" size="medium" placeholder="请输入所要查询的姓名"></el-input>
           </div>
           <div class="inline">
-            <el-button type="primary" size="medium">查询</el-button>
+            <el-button type="primary" size="medium" @click="search">查询</el-button>
           </div>
         </div>
       </div>
@@ -114,6 +114,9 @@ export default {
     this.getList();
   },
   methods: {
+    search() {
+      this.getList();
+    },
     delete() {
       let that = this;
       var params = {
@@ -175,6 +178,7 @@ export default {
     getList() {
       let that = this;
       var params = {
+        name:that.name,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize,
       }

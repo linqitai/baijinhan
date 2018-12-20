@@ -151,7 +151,7 @@ $height:50px;
                 <div style="min-width: 160px;">
                   <div v-if="item.courseSerial" :class="[item.is_released==1?'blue':'gray']">
                     <div class="margint">{{item.courseSerial}}.{{item.lessonSerial}}</div>
-                    <div class="">{{item.lessonName}}</div>
+                    <div>{{item.lessonName}}</div>
                     <div>{{item.teacherName}}</div>
                   </div>
                 </div>

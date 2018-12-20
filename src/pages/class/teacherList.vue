@@ -198,12 +198,12 @@
       </div>
       <table class="thisTableCheck">
         <tr class="header">
-          <td v-for="(item,index) in days">{{item.name}}</td>
+          <td class="tablelineheight" v-for="(item,index) in days">{{item.name}}</td>
         </tr>
         <tr v-for="(item,index) in list">
-          <td>{{item.time}}</td>
-          <td v-for="(checkeds,index) in item.checkeds" :data-week="checkeds.week" :data-hour="checkeds.hour">
-            <el-checkbox v-model="coordinatesAttr[checkeds.week][checkeds.hour]"></el-checkbox>
+          <td class="tablelineheight">{{item.time}}</td>
+          <td class="tablelineheight" v-for="(checkeds,index) in item.checkeds" :data-week="checkeds.week" :data-hour="checkeds.hour">
+            <el-checkbox v-model="coordinatesAttr[checkeds.week][checkeds.hour].check"></el-checkbox>
           </td>
         </tr>
       </table>
@@ -257,16 +257,22 @@
       </div>
       <table class="thisTableCheck">
         <tr class="header">
-          <td v-for="(item,index) in days">{{item.name}}</td>
+          <td class="tablelineheight" v-for="(item,index) in days">{{item.name}}</td>
         </tr>
         <tr v-for="(item,index) in list">
-          <td>{{item.time}}</td>
-          <td style="text-align: left;" v-for="(checkeds,index) in item.checkeds" :data-week="checkeds.week" :data-hour="checkeds.hour" :class="[coordinatesAttr[checkeds.week][checkeds.hour]==true?'freeColor':'']">
+          <td class="tablelineheight">{{item.time}}</td>
+          <td style="text-align: left;" v-for="(checkeds,index) in item.checkeds" :data-week="checkeds.week" :data-hour="checkeds.hour" :class="[coordinatesAttr[checkeds.week][checkeds.hour].check==true?'freeColor':'']">
             <!-- <template v-if="coordinatesAttr[checkeds.week][checkeds.hour]">
               <el-checkbox v-model="coordinatesAttr[checkeds.week][checkeds.hour]"></el-checkbox>
             </template> -->
             <div>
-              <el-checkbox style="margin-left: 10px;" :data-week="checkeds.week" :data-hour="checkeds.hour" v-if="coordinatesAttr[checkeds.week][checkeds.hour]" @change="clickCheckbox(checkeds.week,checkeds.hour)"></el-checkbox>
+              <el-checkbox class="tablelineheight" style="margin-left: 10px; float: left;" v-if="coordinatesAttr[checkeds.week][checkeds.hour].check" v-model="coordinatesAttr2[checkeds.week][checkeds.hour].check"></el-checkbox>
+              <div v-if="coordinatesAttr[checkeds.week][checkeds.hour].arranging" style="float:left;color:white;margin-left: 6px;">
+                <div class="ellipsi width120">{{coordinatesAttr[checkeds.week][checkeds.hour].course}}</div>
+                <div class="ellipsis width120">{{coordinatesAttr[checkeds.week][checkeds.hour].lesson}}</div>
+                <div class="ellipsis  width120">{{coordinatesAttr[checkeds.week][checkeds.hour].room}}.{{coordinatesAttr[checkeds.week][checkeds.hour].teacher}}</div>
+              </div>
+              <!-- <label v-if="coordinatesAttr[checkeds.week][checkeds.hour].arranging"></label> -->
             </div>
           </td>
         </tr>
@@ -287,14 +293,16 @@ var coordinatesAttr = new Array(); //先声明一维
 for ( var i = 0; i < 8; i++) { //一维长度为8
     coordinatesAttr[i] = new Array(); //再声明二维 
     for ( var j = 0; j < 21; j++) { //二维长度为21
-        coordinatesAttr[i][j] = false; // 赋值，每个数组元素的值为i+j
+        coordinatesAttr[i][j] = {}; // 赋值，每个数组元素的值为i+j
+        coordinatesAttr[i][j].check = false;
     }
 }
 var coordinatesAttr2 = new Array(); //先声明一维 
 for ( var i = 0; i < 8; i++) { //一维长度为8
-    coordinatesAttr[i] = new Array(); //再声明二维 
+    coordinatesAttr2[i] = new Array(); //再声明二维 
     for ( var j = 0; j < 21; j++) { //二维长度为21
-        coordinatesAttr[i][j] = false; // 赋值，每个数组元素的值为i+j
+        coordinatesAttr2[i][j] = {}; // 赋值，每个数组元素的值为i+j
+        coordinatesAttr2[i][j].check = false;
     }
 }
 var coordinates = []
@@ -447,21 +455,21 @@ export default {
       this.getRooms();
       this.getCourseList();
       this.dialogFormVisible = true;
-      this.coordinates = coordinates;
-      console.log(coordinates,"coordinates")
+      // this.coordinates = coordinates;
+      // console.log(coordinates,"coordinates")
     },
     setClassEvent() {
       let that = this;
-      // var con = []
-      // for ( var i = 1; i < 8; i++) { //一维长度为8
-      //   for(var j=9;j<21;j++) {
-      //     if(this.coordinatesAttr[i][j] == true) {
-      //       con.push(`${i},${j}`)
-      //     }
-      //   }
-      // }
-      // this.coordinates = con;
-      // console.log("this.coordinates",this.coordinates)
+      var con = []
+      for ( var i = 1; i < 8; i++) { //一维长度为8
+        for(var j=9;j<21;j++) {
+          if(that.coordinatesAttr2[i][j].check == true) {
+            con.push(`${i},${j}`)
+          }
+        }
+      }
+      this.coordinates = con;
+      console.log("this.coordinates",this.coordinates)
       if(this.weekth==""){
         this.$message('请先选择排课周期');
         return;
@@ -509,6 +517,7 @@ export default {
       this.teacherValue = row.id;
       this.isShowTableSetCourseDialog = true;
       coordinates = []
+      this.clearTable();
       this.getTimeData();
     },
     selectFreeTimeClick(row){
@@ -540,7 +549,7 @@ export default {
       // console.log("start:",start)
       // console.log("end:",end)
       for(var i=start;i<end;i++){
-        this.coordinatesAttr[day][i] = true
+        this.coordinatesAttr[day][i].check = true
       }
     },
     thisDayChange(value) {
@@ -554,7 +563,7 @@ export default {
       var con = []
       for ( var i = 1; i < 8; i++) { //一维长度为8
         for(var j=9;j<21;j++) {
-          if(this.coordinatesAttr[i][j] == true) {
+          if(this.coordinatesAttr[i][j].check == true) {
             con.push(`${i},${j}`)
           }
         }
@@ -581,7 +590,7 @@ export default {
         school_id: this.schoole_id
       }
       var url = teacherFreeEditUrl;
-      // console.log(params,"params")
+      console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         // console.log(result.status_code,'--res.status_code--')
@@ -598,9 +607,13 @@ export default {
     clearTable() {
       for ( var i = 1; i < 8; i++) { //一维长度为8
         for(var j=9;j<21;j++) {
-          if(this.coordinatesAttr[i][j] == true) {
-            this.coordinatesAttr[i][j] = false;
-          }
+          this.coordinatesAttr2[i][j].check = false;
+          this.coordinatesAttr[i][j].check = false;
+          this.coordinatesAttr[i][j].arranging = '';
+          this.coordinatesAttr[i][j].course = '';
+          this.coordinatesAttr[i][j].lesson = '';
+          this.coordinatesAttr[i][j].room = '';
+          this.coordinatesAttr[i][j].teacher = '';
         }
       }
     },
@@ -621,7 +634,7 @@ export default {
         school_id: this.schoole_id
       }
       var url = teacherFreeUrl;
-      // console.log(params,"params")
+      console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         // console.log(result.status_code,'--res.status_code--')
@@ -632,10 +645,20 @@ export default {
           }else{
             that.clearTable()
             for(var i=0;i<list.length;i++){
-              coordinatesAttr[list[i].week][list[i].hour] = true
-              /// 这里插入课程教师等信息
+              coordinatesAttr[list[i].week][list[i].hour].check = true
+              // console.log(list[i].arranging,"list[i].arranging")
+              if(list[i].arranging==null){
+                console.log('null')
+              }else{
+                coordinatesAttr[list[i].week][list[i].hour].arranging = 1;
+                coordinatesAttr[list[i].week][list[i].hour].course = list[i].arranging.course.name
+                coordinatesAttr[list[i].week][list[i].hour].lesson = list[i].arranging.lesson.name
+                coordinatesAttr[list[i].week][list[i].hour].room = list[i].arranging.room.name
+                coordinatesAttr[list[i].week][list[i].hour].teacher = list[i].arranging.teacher.en_name
+              }
             } 
             that.coordinatesAttr = coordinatesAttr
+            console.log(that.coordinatesAttr,"that.coordinatesAttr")
           }
           that.list = [];
           that.list = list2;
