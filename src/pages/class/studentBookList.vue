@@ -16,8 +16,8 @@
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>学生订课列表</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span>代退课</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
@@ -60,9 +60,7 @@
           prop="arranging.course.name"
           label="课程类型名称">
         </el-table-column>
-        <el-table-column
-          prop="arranging.lesson.name"
-          label="话题">
+        <el-table-column prop="arranging.lesson.name" label="话题" width="200">
         </el-table-column>
         <el-table-column
           prop="arranging.begin_time"
@@ -118,7 +116,7 @@ export default {
   methods: {
     handleDropClick(row) {
       var that = this;
-      this.$confirm('此操作将发布课程, 是否继续?', '提示', {
+      this.$confirm(`此操作将帮学生${row.user.en_name}退课, 是否继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

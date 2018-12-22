@@ -12,14 +12,14 @@
     right: 0;
     bottom: 0;
     background-color: #F2F2F2;
-    width: 240px;
+    width: $mSidebarWidth;
     float: left;
     border-left:1px solid #F3F2F2 !important;
     .itemTitle{
       height: 50px;
       line-height: 50px;
       border-bottom: 1px solid #e8e8e8;
-      color: #B6B6B6;
+      color: #646464;
       cursor: pointer;
       .iconStyle{
         margin-left: 12px;
@@ -76,13 +76,15 @@
 <script>
 var menu = [
             {icon:'fa-navicon',title:'课程',
-            subs:[{id:0,text:'课程安排',path:'/classplan'},
-                  {id:1,text:'课程列表',path:'/classList'},
-                  {id:2,text:'课程等级列表',path:'/classLevelList'},
-                  {id:3,text:'话题列表',path:'/lessonList'},
-                  {id:4,text:'退课列表',path:'/dropCourseList'},
-                  {id:5,text:'订课总览',path:'/orderClassList'},
-                  {id:6,text:'代退课',path:'/studentBookList'}
+            subs:[
+                  {id:0,text:'订课总览',path:'/orderClassList'},
+                  {id:1,text:'课程安排',path:'/classplan'},
+                  {id:2,text:'课程列表',path:'/classList'},
+                  {id:3,text:'课程等级列表',path:'/classLevelList'},
+                  {id:4,text:'话题列表',path:'/lessonList'},
+                  {id:5,text:'退课列表',path:'/dropCourseList'},
+                  {id:6,text:'代退课',path:'/studentBookList'},
+                  {id:7,text:'代订课',path:'/alterSelectCourse'},
              ]},
             {icon:'fa-navicon',title:'教师',
             subs:[
@@ -118,17 +120,36 @@ export default {
     }
   },
   created(){
-    this.itemTitleLen = menu.length;//标题的长度
-    this.flex=this.initFlex();
+    var href = window.location.href;
+    console.log(window.location.href,"window.location.href")
+    console.log(href.split('#')[1],"href.split('#')[1]")
     var currentTitleId = this.$cookie.get('currentTitleId')||0;
-    var currentId = this.$cookie.get('currentId')||0;
-    console.log(currentTitleId + "," + currentId)
-    console.log("intoflexToggle")
-    if(currentTitleId == 'undefined'){
-      currentTitleId = 0;
-    }
     this.flexToggle(currentTitleId,"created")
-    console.log("outflexToggle")
+    this.$router.push({
+      path: href.split('#')[1]
+    })
+    // if(href.split('#')[1]){
+    //   // this.flex=this.initFlex();
+      
+    // }else{
+    //   // console.log(this.$router.options.routes[0].redirect,"this.$router")
+    //   this.flex=this.initFlex();
+    //   this.$router.push({
+    //     path: href.split('#')[1]
+    //   })
+    //   var currentTitleId = this.$cookie.get('currentTitleId')||0;
+    //   var currentId = this.$cookie.get('currentId')||0;
+    //   console.log(currentTitleId + "," + currentId)
+    //   if(currentTitleId == 'undefined'){
+    //     currentTitleId = 0;
+    //   }
+    //   var redirect = this.$router.options.routes[0].redirect;
+    //   if(redirect == '/classplan') {
+    //     currentTitleId = 0;
+    //     this.$cookie.set('currentId',0)
+    //   }
+    //   this.flexToggle(currentTitleId,"created")
+    // }
   },
   mounted() {
   },
@@ -165,12 +186,13 @@ export default {
           this.currentId = 0;
         }
       }
-      var currentTitleId = this.$cookie.get('currentTitleId');
+      // var currentTitleId = this.$cookie.get('currentTitleId');
       var currentId = this.$cookie.get('currentId');
-      console.log(currentTitleId + "," + currentId)
-      this.setRouter(currentTitleId,currentId);
+      console.log(index + "," + currentId)
+      this.setRouter(index,currentId);
     },
     initFlex() {
+      this.itemTitleLen = menu.length;//标题的长度
       var arr=[]
       for(var i = 0; i < this.itemTitleLen; i++) {
         if(i==0) {

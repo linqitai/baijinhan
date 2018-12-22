@@ -32,7 +32,7 @@
              <el-input v-model="name" size="medium" placeholder="请输入所要查询的课程名"></el-input>
           </div>
           <div class="inline">
-            <el-button type="primary" size="medium">查询</el-button>
+            <el-button type="primary" size="medium" @click="search">查询</el-button>
           </div>
         </div>
       </div>
@@ -47,11 +47,11 @@
            </template>
         </el-table-column>
         <el-table-column
-          prop="level_id"
+          prop="level.name"
           label="课程级别">
         </el-table-column>
         <el-table-column
-          prop="type_id"
+          prop="type.name"
           label="课程类型">
         </el-table-column>
         <el-table-column
@@ -59,8 +59,11 @@
           label="课程人数">
         </el-table-column>
         <el-table-column
-          prop=""
+          prop="reservation"
           label="无需预订">
+          <template slot-scope="scope">
+              {{scope.row.reservation==1?'是':'否'}}
+           </template>
         </el-table-column>
         <el-table-column prop="name" label="操作" width="200">
           <template slot-scope="scope">
@@ -205,6 +208,9 @@ export default {
     this.getTeacherTypeList();
   },
   methods: {
+    search() {
+      this.getList();
+    },
     handleEditClick(row) {
       this.isShowAddCourseDialog = true;
 
@@ -357,6 +363,7 @@ export default {
     getList() {
       let that = this;
       var params = {
+        name:this.name,
         school_id: this.form.school_id,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize

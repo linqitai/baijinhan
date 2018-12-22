@@ -42,7 +42,7 @@ export default {
     .content{
       overflow-y: scroll;
       position: fixed;
-      left: $lSidebarWidth+$mSidebarWidth;
+      left: $mSidebarWidth;
       top: $headerTop;
       right: 0;
       bottom: 0;

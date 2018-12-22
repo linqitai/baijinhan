@@ -17,13 +17,13 @@
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">学生</span></el-breadcrumb-item>
           <el-breadcrumb-item><span>学生等级列表</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
     <div class="operateTableBox">
-      <div class="functionBox">
+      <!-- <div class="functionBox">
         <div class="element">
           <label class="inline">姓名：</label>
           <div class="inline">
@@ -33,8 +33,8 @@
             <el-button type="primary" size="medium">查询</el-button>
           </div>
         </div>
-      </div>
-      <el-table :data="tableData" border style="width: 100%">
+      </div> -->
+      <el-table :data="tableData" border style="width: 100%;margin-top: 10px;">
         <el-table-column prop="name" label="等级名称" width="180">
         </el-table-column>
         <el-table-column prop="serial" label="级别">

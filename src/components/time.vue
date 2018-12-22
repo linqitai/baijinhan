@@ -1,6 +1,6 @@
 <template>
   <div class="inline">
-    <label class="inline margL20">排课周期：</label>
+    <label class="inline">排课周期：</label>
     <div class="inline">
        <el-select class="width140" v-model="time1" @change="time1Change" placeholder="请选择" size="medium">
         <el-option

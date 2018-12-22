@@ -16,7 +16,7 @@
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
           <el-breadcrumb-item><span>退课列表</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -26,10 +26,10 @@
         <div class="element">
           <label class="inline">学号：</label>
           <div class="inline">
-             <el-input v-model="no" placeholder="请输入所要查询的学号"></el-input>
+             <el-input v-model="serial" size="medium" placeholder="请输入所要查询的学号"></el-input>
           </div>
           <div class="inline">
-            <el-button type="primary" size="">查询</el-button>
+            <el-button type="primary" size="medium" @click="search">查询</el-button>
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default {
       total: 100,
       schoole_id: localStorage.getItem("_school_id"),
       showPageTag:true,
-      no: '',
+      serial: '',
       tableData: []
     }
   },
@@ -121,9 +121,13 @@ export default {
     operate(row) {
 
     },
+    search() {
+      this.getList();
+    },
     getList() {
       var that = this;
       var params = {
+        serial: that.serial
         // school_id: that.schoole_id
       }
       var url = dropsListUrl;

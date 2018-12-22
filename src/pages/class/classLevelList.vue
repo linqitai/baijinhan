@@ -23,21 +23,23 @@
       </div>
     </div>
     <div class="operateTableBox">
-      <!-- <div class="functionBox">
-        <div class="element">
-          <label class="inline">姓名：</label>
-          <div class="inline">
-             <el-input v-model="name" size="medium" placeholder="请输入所要查询的姓名"></el-input>
-          </div>
-          <div class="inline">
-            <el-button type="primary" size="medium">查询</el-button>
-          </div>
+      <div class="functionBox">
+        <div class="inline">
+          <el-button type="primary" size="medium" @click="addBtn">新增</el-button>
         </div>
-      </div> -->
-      <el-table :data="tableData" border style="width: 100%;margin-top: 10px;">
+      </div>
+      <el-table :data="tableData" border style="width: 100%;">
         <el-table-column prop="name" label="等级名称" width="180">
         </el-table-column>
         <el-table-column prop="level" label="级别">
+        </el-table-column>
+        <el-table-column prop="shool_id" label="校区">
+        </el-table-column>
+        <el-table-column prop="" label="地区">
+        </el-table-column>
+        <el-table-column prop="created_at" label="创建时间">
+        </el-table-column>
+        <el-table-column prop="updatad_at" label="修改时间">
         </el-table-column>
         <el-table-column prop="name" label="操作" width="200">
           <template slot-scope="scope">
@@ -105,6 +107,9 @@ export default {
     this.getList();
   },
   methods: {
+    addBtn() {
+      
+    },
     sureEdit(){
       let that = this;
       var params = {

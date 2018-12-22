@@ -98,7 +98,7 @@
   <div class="loginWrap container" id="particles-js">
     <div class="login_form">
       <div class="headButton">白金汉</div>
-      <img class="logo" src="../../images/logo.jpg" width="60" height="60">
+      <img class="logo" src="https://xywl-1256946438.cos.ap-chengdu.myqcloud.com/bjh%2Fbjh.png" width="80" height="50">
       <div class="title">欢迎登录</div>
       <div class="inputWrapper">
         <div class="inputBox">
@@ -133,8 +133,8 @@ import axios from 'axios'
 export default {
   data: function() {
     return {
-      username: '17326052006',
-      password: 'dtc233',
+      username: '17326052006', // 17326052006
+      password: 'dtc233', // dtc233
       ishover: false,
       autofocus: true,
       loginStatus: "",

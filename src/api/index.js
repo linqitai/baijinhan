@@ -66,6 +66,10 @@ export const teacherTypeListUrl = host + 'api/admin/teacher/type-list';
 export const importTableUrl = host + 'api/admin/excel/dayarrangings-export';
 // 删除与恢复
 export const courseDeleteUrl = host + 'api/admin/course/delete';
+// 代选课列表
+export const alterSelectListUrl = host + 'api/admin/arranging/time-list';
+// 代选课
+export const alterSelectUrl = host + 'api/admin/teacher/help-choose';
 
 
 

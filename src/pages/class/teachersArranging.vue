@@ -118,7 +118,7 @@ $tableLeft:100px;
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">教师</span></el-breadcrumb-item>
           <el-breadcrumb-item><span>教师排班明细表</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -149,8 +149,7 @@ $tableLeft:100px;
             <el-radio :label="1">中教</el-radio>
           </el-radio-group> 
           <div class="inline margL20">
-            <el-button type="primary" size="medium" @click="importTable">导出</el-button> 
-            <!-- <a :href="importTableUrl">导出</a> -->
+            <el-button type="primary" size="medium" @click="importTable">导出</el-button>
           </div>
         </div>
       </div>
@@ -248,37 +247,12 @@ export default {
     　　var downloadElement = document.createElement('a');
     　　var href = window.URL.createObjectURL(blob); //创建下载的链接
     　　downloadElement.href = href;
-    　　downloadElement.download = 'xxx.xlsx'; //下载后文件名
+    　　downloadElement.download = `${that.date}教师排班明细表.xlsx`; //下载后文件名
     　　document.body.appendChild(downloadElement);
     　　downloadElement.click(); //点击下载
     　　document.body.removeChild(downloadElement); //下载完成移除元素
     　　window.URL.revokeObjectURL(href); //释放掉blob对象 
       });
-      
-      // $.ajax({ 
-      //   url : url, 
-      //   type : 'GET', 
-      //   // data : qs.stringify(params), 
-      //   cache: false,
-      //   // 告诉jQuery不要去处理发送的数据
-      //   processData : false, 
-      //   // 告诉jQuery不要去设置Content-Type请求头
-      //   contentType : false,
-      //   beforeSend: function (XMLHttpRequest) {
-      //     // 'application/json'
-      //     XMLHttpRequest.setRequestHeader("authorization", localStorage.getItem('authorization'));
-      //     XMLHttpRequest.setRequestHeader("Content-Type", 'application/json');
-      //   },
-      //   complete: function( xhr,data ){
-          
-      //   },
-      //   success : function(res) { 
-      //     console.log("====成功===");
-      //   },
-      //   error : function(responseStr) { 
-          
-      //   } 
-      // });
     },
     changeType() {
       if(!this.date){

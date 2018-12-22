@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/orderClassList'
     },
     {
       path: '/login',
@@ -27,6 +27,15 @@ export default new Router({
         })
       },
       children: [
+        {
+          path: '/orderClassOne',
+          name: '上周未定课程统计',
+          component: (resolve) => {
+            import('../pages/class/orderClassOne').then((module) => {
+              resolve(module)
+            })
+          }
+        },
         {
           path: '/orderClassList',
           name: '订课总览',
@@ -68,6 +77,15 @@ export default new Router({
           name: '学生等级列表',
           component: (resolve) => {
             import('../pages/class/studentLevelList').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/alterSelectCourse',
+          name: '代选课',
+          component: (resolve) => {
+            import('../pages/class/alterSelectCourse').then((module) => {
               resolve(module)
             })
           }
@@ -137,7 +155,7 @@ export default new Router({
         },
         {
           path: '/classplan3',
-          name: '课程安排',
+          name: 'classplan3',
           component: (resolve) => {
             import('../pages/class/plan3').then((module) => {
               resolve(module)

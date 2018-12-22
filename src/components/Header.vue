@@ -9,8 +9,8 @@
   // background-color:#11132A;
   background-color: #434B7E;
   .logoIcon {
-    width: 84px;
-    height: 60px;
+    width: 80px;
+    height: 50px;
   }
   .manage-box{
     font-size: 14px;
@@ -24,7 +24,7 @@
 </style>
 <template>
   <div class="header">
-    <div class="left width100"><img class="logoIcon" src="../images/logo.jpg"></div>
+    <div class="left width100"><img class="logoIcon" src="https://xywl-1256946438.cos.ap-chengdu.myqcloud.com/bjh%2Fbjh.png"></div>
     <div class="left manage-box">
       白金汉后台管理系统
     </div>

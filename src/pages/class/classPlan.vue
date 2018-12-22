@@ -75,7 +75,7 @@ $height:50px;
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
           <el-breadcrumb-item><span>课程安排</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -111,7 +111,7 @@ $height:50px;
         <div style="margin-top: 10px;">
           <!-- <el-button type="primary" size="medium" @click="preparePublish">预发布课程</el-button> -->
           <el-button type="primary" size="medium" @click="publish">发布课程</el-button>
-          <el-button type="primary" size="medium">上周未定课程统计</el-button>
+          <el-button type="primary" size="medium" @click="statistics">上周未定课程统计</el-button>
         </div>
         <div style="margin-top: 18px;">
           <el-radio-group v-model="week" @change="changeweek">
@@ -227,11 +227,14 @@ export default {
     this.getRooms();
   },
   methods: {
+    statistics() {
+      this.$router.push('./orderClassOne');
+    },
     courseChange(e) {
       this.course_id = e.split(',')[0]
       this.lession_id = e.split(',')[1]
-      console.log(this.courseValue,"courseValue")
-      console.log(this.lession_id,"lession_id")
+      // console.log(this.courseValue,"courseValue")
+      // console.log(this.lession_id,"lession_id")
     },
     getRooms() {
       var that = this;
@@ -239,10 +242,10 @@ export default {
         school_id: that.schoole_id
       }
       var url = getRoomsUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data.category;
           that.rooms = result.data.rooms;
@@ -263,11 +266,11 @@ export default {
         teacher_id: that.teacherValue,
       }
       var url = getTeacherCourseUrl;
-      console.log(params,"=========params============")
+      // console.log(params,"=========params============")
       that.$axios.post(url,params).then((res)=>{
-        console.log(res,"resresresres")
+        // console.log(res,"resresresres")
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           that.coursesOption = result.data.course;
           for(var i=0;i<that.coursesOption.length;i++){
@@ -278,7 +281,7 @@ export default {
               // that.coursesOption[i].lession_id = that.coursesOption[i].lessons[j].id
             }
           }
-          console.log(that.coursesOption,"that.coursesOption")
+          // console.log(that.coursesOption,"that.coursesOption")
         }
       });
     },
@@ -288,16 +291,16 @@ export default {
         school_id: that.schoole_id
       }
       var url = teacherListUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data.category;
-          console.log(result.data.teachers,"result.data.teachers;")
+          // console.log(result.data.teachers,"result.data.teachers;")
           that.teachersOption = result.data.teachers;
           for(var i=0;i<that.teachersOption.length;i++){
-            console.log(that.teachersOption[i].id,"that.teachersOption[i].id")
+            // console.log(that.teachersOption[i].id,"that.teachersOption[i].id")
             that.teachersOption[i].value = that.teachersOption[i].id
             that.teachersOption[i].label = that.teachersOption[i].en_name
           }
@@ -308,7 +311,7 @@ export default {
       var that = this;
       that.room_id = room_id;
       that.hour = hour;
-      console.log(that.hour,"that.hour")
+      // console.log(that.hour,"that.hour")
       if(that.weekth==""){
         that.$alert('请先选择排课周期', '提示');
         return;
@@ -324,8 +327,8 @@ export default {
     },
     editClass(){
       var that = this;
-      console.log(that.weekth.split(',')[0],"begin")
-      console.log(that.week,"week")
+      // console.log(that.weekth.split(',')[0],"begin")
+      // console.log(that.week,"week")
       var params = {
         time:parseInt(that.weekth.split(',')[0]) + oneDaySecond*(that.week-1) + that.hour*60*60,// 当前选择方块的时间戳，比如：2018年 9月 24号 1点的课程
         room_id:that.room_id,
@@ -335,14 +338,14 @@ export default {
         teacher_id: that.teacherValue,
       }
       var url = editClassUrl;
-      console.log(params,"=========params============")
+      // console.log(params,"=========params============")
 
       that.$axios.post(url,params).then((res)=>{
-        console.log(res,"resresresres")
+        // console.log(res,"resresresres")
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
+        // console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          console.log("success")
+          // console.log("success")
           that.teacherValue = "";
           that.courseValue ="";
           that.getList();
@@ -387,19 +390,19 @@ export default {
         is_released: 0,
       }
       var url = classListUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result,'--result--')
+        // console.log(result,'--result--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data.category;
           var arranging = result.data.arranging;
-          console.log(arranging,"arranging");
-          console.log(Object.keys(arranging),"keys");
+          // console.log(arranging,"arranging");
+          // console.log(Object.keys(arranging),"keys");
           var keys = Object.keys(arranging);
           var arr = [];
           for(var i=0;i<keys.length;i++){
-            console.log(arranging[keys[i]],"arranging")
+            // console.log(arranging[keys[i]],"arranging")
             var obj = arranging[keys[i]];
             for(var j=0;j<obj.length;j++){
               var item = {
@@ -417,9 +420,9 @@ export default {
           }
           that.initList();
           for(var i=0;i<arr.length;i++){
-            console.log(arr,"arr")
-            console.log(arr[i],"arr[i]")
-            console.log(arr[i].hour,"arr[i].hour")
+            // console.log(arr,"arr")
+            // console.log(arr[i],"arr[i]")
+            // console.log(arr[i].hour,"arr[i].hour")
             for(var j=0;j<list.length;j++){
               if(list[j].hour==arr[i].hour){
                 for(var k=0;k<list[j].blocks.length;k++){
@@ -435,7 +438,7 @@ export default {
             }
           }
           that.list = list;
-          console.log(that.list,"list==================================")
+          // console.log(that.list,"list==================================")
         }
       });
     },
@@ -456,10 +459,10 @@ export default {
       }
       // Object.assign(params, params, p);
       var url = arrangingReleaseUrl;
-      console.log(params,"params")
+      // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.code,'--res.status_code--')
+        // console.log(result.code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           that.getList();
           that.$message({
@@ -490,31 +493,31 @@ export default {
       var isGetList = false;
       //获取目前的时间戳
       var timeNow = new Date().getTime()
-      console.log(value,"value") // value: 2018/11
+      // console.log(value,"value") // value: 2018/11
       var month = value.split('/')[1]
-      console.log("月份：" + month)
+      // console.log("月份：" + month)
       var firstDay = value.toString() + "/1"
       var arr = []
       var time = getTime(firstDay)//获取时间戳
       var days = getDaysInYearMonth(value.split('/')[0],month)
-      console.log(days,"天数")
+      // console.log(days,"天数")
       for(var i=0;i<days;i++){
         var d = getDay(time)
-        // console.log(d,'ddddd')
+        // // console.log(d,'ddddd')
         if(d==1){
           var lastRange = getFullDate(time)
-          console.log(lastRange,"lastRange")
+          // console.log(lastRange,"lastRange")
           var m = getMonth(lastRange)
-          // console.log("month:" + month + ",m:" + m)
+          // // console.log("month:" + month + ",m:" + m)
           if(month == m) {
             var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
-            console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
+            // console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
             if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
               that.time2 = range
-              console.log(that.time2,"that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2")
-              console.log(isGetList,"isGetList")
+              // console.log(that.time2,"that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2")
+              // console.log(isGetList,"isGetList")
               if(isGetList == false) {
                 that.time2Change(that.time2)
                 isGetList = true
@@ -528,7 +531,7 @@ export default {
     },
     time2Change(value) {
       var that = this;
-      console.log(value,"value")
+      // console.log(value,"value")
       var time1 = getTime(value.split('~')[0]).toString()
       var len1 = time1.length
       var time2 = getTime(value.split('~')[1]).toString()
@@ -539,9 +542,9 @@ export default {
       w.push(timebegin)
       w.push(timeend)
       that.weekth = w.join(',') //"1542946667,1543030763";
-      console.log(that.weekth,"weekth")
+      // console.log(that.weekth,"weekth")
       that.week = 1
-      console.log("intoGetList==============================================")
+      // console.log("intoGetList==============================================")
       that.getList()
     },
     getTime1Option() {
@@ -550,7 +553,7 @@ export default {
       var year = datatime.getFullYear();
       var month = datatime.getMonth()-1
       var monthNow = datatime.getMonth()+1
-      console.log(month,"month now")
+      // console.log(month,"month now")
       var arr = []
       for(var i=month;i<12;i++){
         if(monthNow == (i+1)){
@@ -565,12 +568,12 @@ export default {
         var item = {label:`${year2}/${i+1}`,value: `${year2}/${i+1}`}
         arr.push(item)
       }
-      // console.log(arr,"arr")
+      // // console.log(arr,"arr")
       that.time1Options = arr
     },
     changeweek(){
       var that = this;
-      console.log(that.week,"week")
+      // console.log(that.week,"week")
       if(that.weekth==""){
         that.$alert('请先选择排课周期', '提示');
       }else{

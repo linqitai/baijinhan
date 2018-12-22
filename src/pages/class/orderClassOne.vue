@@ -76,7 +76,7 @@ $height:50px;
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>订课总览</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span>上周未定课程统计</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
@@ -226,8 +226,8 @@ export default {
       room_id:'',
       lession_id:'',
       course_id:'',
-      book_value:1,
-      book:'1',
+      book_value:0,
+      book:0,
     }
   },
   created() {
@@ -528,7 +528,8 @@ export default {
             arr.push(item)
             console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
             if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
-              that.time2 = range
+              // that.time2 = range
+              that.time2 =  getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
               if(isGetList == false) {
                 that.time2Change(that.time2)
                 isGetList = true

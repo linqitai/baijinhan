@@ -60,7 +60,7 @@
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">教学部</span></el-breadcrumb-item>
+          <el-breadcrumb-item><span class="nocurrent">教师</span></el-breadcrumb-item>
           <el-breadcrumb-item><span>教师列表</span></el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -68,16 +68,27 @@
     <div class="operateTableBox">
       <div class="functionBox">
         <div class="element">
-          <label class="inline">姓名：</label>
+          <label class="inline">教师编码：</label>
           <div class="inline">
-             <el-input v-model="name" size="medium" placeholder="请输入所要查询的姓名"></el-input>
+             <el-input v-model="serial" size="medium" placeholder="请输入所要查询的内容" clearable></el-input>
+          </div>
+          <label class="inline margL20">中文姓名：</label>
+          <div class="inline">
+             <el-input v-model="cn_name" size="medium" placeholder="请输入所要查询的内容" clearable></el-input>
           </div>
           <div class="inline">
-            <el-button type="primary" size="medium">查询</el-button>
+            <el-button type="primary" size="medium" @click="search">查询</el-button>
           </div>
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%">
+        <el-table-column
+          prop="head_img_url"
+          label="头像">
+          <template slot-scope="scope">
+              <img :src="scope.row.head_img_url" class="avatarUrl" width="60">
+          </template>
+        </el-table-column>
         <el-table-column
           prop="en_name"
           label="英文名称">
@@ -85,6 +96,10 @@
         <el-table-column
           prop="cn_name"
           label="中文名称">
+        </el-table-column>
+        <el-table-column
+          prop="serial"
+          label="编码">
         </el-table-column>
         <el-table-column
           prop="type.name"
@@ -95,22 +110,13 @@
           label="职位">
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="部门">
-        </el-table-column>
-        <el-table-column
           prop="mobile"
           label="手机"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="address"
           label="住址">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="兼职/专职"
-          width="100">
         </el-table-column>
         <el-table-column
           prop="school_id"
@@ -123,10 +129,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <div class="tableBottom" v-show="showPageTag">
+      <div class="tableBottom" v-show="showPageTag">
         <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[4,6,8]" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
-      </div> -->
+      </div>
     </div>
     <el-dialog title="排课" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
@@ -193,7 +199,7 @@
               </el-option>
             </el-select>
           </div>
-          <m-time @getTimeData="getTimeData"></m-time>
+          <m-time class="margL20" @getTimeData="getTimeData"></m-time>
         </div>
       </div>
       <table class="thisTableCheck">
@@ -252,7 +258,7 @@
               </el-option>
             </el-select>
           </div>
-          <m-time @getTimeData="getTimeData"></m-time>
+          <m-time class="margL20" @getTimeData="getTimeData"></m-time>
         </div>
       </div>
       <table class="thisTableCheck">
@@ -332,6 +338,7 @@ export default {
       total: 100,
       showPageTag:true,
       name: '',
+      en_name:'',
       tableData: [],
       dialogVisible: false,
       isShowTableDialog: false,
@@ -359,6 +366,8 @@ export default {
       course_id:'',
       lessonList:'',
       title:'',
+      serial:"",
+      cn_name:"",
       isShowTableSetCourseDialog:false,
       isShowTableSetFreeDialog:false
     }
@@ -372,6 +381,9 @@ export default {
     mTime
   },
   methods: {
+    search() {
+      this.getList();
+    },
     clickCheckbox(week,hour) {
       console.log(`${week},${hour}`)
       coordinates.push(`${week},${hour}`)
@@ -668,7 +680,11 @@ export default {
     getList(){
       let that = this;
       var params = {
-        school_id: that.schoole_id
+        serial:that.serial,
+        cn_name:that.cn_name,
+        school_id: that.schoole_id,
+        offset: (that.pageIndex-1)*that.pageSize,
+        limit: that.pageSize
       }
       var url = teacherListUrl;
       // console.log(params,"params")
@@ -681,18 +697,24 @@ export default {
             that.tableData[i].label = that.tableData[i].cn_name;
             that.tableData[i].value = that.tableData[i].id;
           }
+          that.total = result.data.count || 100;
+          if(that.total<that.pageSize) {
+            that.showPageTag = false;
+          }else{
+            that.showPageTag = true;
+          }
         }
       });
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      // this.getList();
+      this.getList();
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
       // console.log(val);
-      // this.getList();
+      this.getList();
     }
   }
 }

@@ -41,6 +41,22 @@ export function getFullDate(t){
   var d = time.getDate()
   return y + '/' + (m < 10 ? '0' + m : m) + '/' + (d < 10 ? '0' + d : d)
 }
+export function getFullDateTime(t){
+  var value=''
+  if(t.toString().length==10){
+    value = parseInt(t)*1000
+  }else{
+    value = parseInt(t)
+  }
+  var time = new Date(value)
+  var y = time.getFullYear()
+  var m = time.getMonth() + 1
+  var d = time.getDate()
+  var h = time.getHours()
+  var minute = time.getMinutes()
+  var s = time.getSeconds()
+  return y + '/' + (m < 10 ? '0' + m : m) + '/' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (minute < 10 ? '0' + minute : minute) + ':' + (s < 10 ? '0' + s : s)
+}
 export function getFullTime(t){
   var value=''
   if(t.toString().length==10){
