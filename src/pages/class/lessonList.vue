@@ -35,18 +35,24 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="name" label="话题名称" width="180">
+      <el-table :data="tableData" border style="width: 100%"  v-loading="loading">
+        <el-table-column prop="name" label="话题名称" width="260">
+          <template slot-scope="scope">
+            <label class="ellipsis">{{scope.row.name}}</label>
+          </template>
         </el-table-column>
         <el-table-column prop="serial" label="话题编号">
         </el-table-column>
         <el-table-column prop="created_at" label="创建时间" width="160">
         </el-table-column>
-        <el-table-column prop="introduce" label="话题简介">
+        <el-table-column prop="introduce" label="话题简介" width="200">
+          <template slot-scope="scope">
+            <label class="ellipsis">{{scope.row.introduce}}</label>
+          </template>
         </el-table-column>
         <el-table-column prop="sort" label="话题顺序">
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
@@ -144,6 +150,7 @@ import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,getCourseListUrl,ERR_OK } f
 export default {
   data() {
     return {
+      loading: true,
       pageIndex: 1, // offset/10+1
       pageSize: 8,
       total: 100,
@@ -211,6 +218,7 @@ export default {
     delete() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         lesson_id: this.form.lesson_id,
         is_deleted: 1
       }
@@ -239,6 +247,7 @@ export default {
     sureEdit() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         lesson_id: this.form.lesson_id,
         course_id: this.form.course_id,
         name: this.form.name,
@@ -268,12 +277,17 @@ export default {
             sort:"",
             introduce:""
           }
+        }else{
+          that.$alert('系统出错，请向技术人员汇报', '提示');
         }
-      });
+      }).catch(error => {
+        that.$alert('系统出错，请向技术人员汇报', '提示');
+      })
     },
     getList() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         name:that.name,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize,
@@ -281,6 +295,7 @@ export default {
       var url = lessonListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
+        that.loading = false;
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){

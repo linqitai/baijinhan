@@ -28,39 +28,7 @@ $height:50px;
       }
       .tableWrapper{
         overflow: scroll;
-        table.thatTable{
-          width: 100%;
-          border: 1px solid $tableBorderColor;
-          border-right:none;
-          margin-left: 60px;
-          background-color: white;
-          .header{
-            background-color: $mainColor;
-            color: white;
-          }
-          tr{
-            white-space:nowrap;
-            border-bottom: 1px solid $tableBorderColor;
-            &:nth-child(2),&:nth-child(5),&:nth-child(10){
-              background-color: #B1F1FF;
-            }
-          }
-          tr>th{
-            width: 150px;
-            height: $height;
-            line-height: $height;
-            border-right:1px solid $tableBorderColor;
-            box-sizing: content-box;
-            padding: 0 6px; 
-          }
-          tr>td{
-            width: 150px;
-            height: $height;
-            border-right:1px solid $tableBorderColor;
-            box-sizing: content-box;
-            padding: 0 6px;
-          }
-        }
+        
       }
     }
   }
@@ -155,7 +123,7 @@ $height:50px;
               <td v-for="(item,index) in items.blocks" :class="[item.users_count>0?'orderBgColor':'']">
                 <div style="min-width: 160px;">
                   <div :class="[item.is_released==1?'blue':'gray']" v-if="item.lessonSerial">
-                    <div class="margint">{{item.lessonSerial}}({{item.users_count}}-{{item.capacity}})</div>
+                    <div class="">{{item.lessonSerial}}({{item.users_count}}-{{item.capacity}})</div>
                     <div class="">{{item.lessonName}}</div>
                     <div>{{item.teacherName}}</div>
                   </div>
@@ -398,6 +366,7 @@ export default {
     getList() {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         weekth: that.weekth,
         week:that.week,
         book:that.book//0只显示未订课程  1只显示已定课程  不传全部都显示
@@ -468,7 +437,7 @@ export default {
     publishEvent() {
       let that = this;
       var params = {
-        // arranging_id:"",
+        schoole_id: localStorage.getItem("_school_id"),
         weekth: this.weekth
       }
       // Object.assign(params, params, p);

@@ -27,18 +27,18 @@ $tableLeft:100px;
         // flex: 0 0 60px;
         width: $tableLeft;
         border-left:1px solid $tableBorderColor;
-        border-right:1px solid $tableBorderColor;
+        border-top:1px solid $tableBorderColor;
         border-bottom:1px solid $tableBorderColor;
         position: absolute;
         left: 0;
         top: 0;
         background-color: $mainColor;
         color: white;
+        box-sizing: border-box;
         label{
           height: 40px;
           line-height: 40px;
           display: block;
-          box-sizing: content-box;
         }
         li{
           height: $height2;
@@ -50,19 +50,23 @@ $tableLeft:100px;
       }
       .tableWrapper{
         overflow: scroll;
+        box-sizing:content-box;
         table.thatTable{
           width: 100%;
           // border: 1px solid $tableBorderColor;
           border-right:none;
           margin-left: $tableLeft;
           background-color: white;
+          box-sizing:content-box;
           .header{
             background-color: $mainColor;
             color: white;
+            box-sizing:content-box;
           }
           tr{
             white-space:nowrap;
-            border-bottom: 1px solid $tableBorderColor;
+            // border-bottom: 1px solid $tableBorderColor;
+            box-sizing:content-box;
           }
           tr>th{
             width: 120px;
@@ -70,28 +74,32 @@ $tableLeft:100px;
             line-height: 40px;
             border-right:1px solid $tableBorderColor;
             padding: 0 6px; 
+            box-sizing:content-box;
           }
           tr{
+            box-sizing:content-box;
             td{
               height: $height2;
               border-right:1px solid $tableBorderColor;
               overflow: hidden;
+              box-sizing:content-box;
               .item{
                 width: 120px;
                 padding: 0 6px; 
                 height: 100%;
+                color: $headerColor;
                 white-space:normal;
-               word-break:break-all;
-               word-wrap:break-word;
+                word-break:break-all;
+                word-wrap:break-word;
                 display: flex;
                 flex-direction: column;
                 align-content: space-between;
-                  flex-wrap:wrap;
+                flex-wrap:wrap;
                 .line1,.line2,.line3{
                   flex: auto;
                 }
                 .line1{
-                  margin-top: 3px;
+                  margin-top: 8px;
                 }
                 .line3{
                   margin-bottom: 3px;
@@ -176,11 +184,11 @@ $tableLeft:100px;
               <th>20:00</th>
             </tr>
             <tr v-for="(items,index) in teachers">
-              <td v-for="(item,index) in items.blocks">
+              <td v-for="(item,index) in items.blocks" class="width120">
                 <div v-show="item.course" class="item">
-                  <div class="line1">课程{{item.lesson}}({{item.course}})</div>
-                  <div class="line2">地点：{{item.school_id}}{{item.room}}</div>
-                  <div class="line3">订课人数：{{item.users_count}}</div>
+                  <div class="line1 ellipsis">{{item.lesson}}({{item.course}})</div>
+                  <div class="line2 ellipsis">地点：{{item.school_id}}{{item.room}}</div>
+                  <div class="line3 ellipsis">订课人数：{{item.users_count}}</div>
                 </div>
               </td>
             </tr>
@@ -205,7 +213,7 @@ export default {
       time1Options:[],
       date:"",
       time:"",
-      type:"",
+      type:0,
       serial:"",
       schoole_id: localStorage.getItem("_school_id"),
       importTableUrl:""
@@ -275,6 +283,7 @@ export default {
     getList(){
       let that = this;
       var params = {
+        schoole_id: this.schoole_id,
         time:this.time,
         serial:this.serial,
         type:this.type

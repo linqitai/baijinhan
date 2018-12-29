@@ -25,7 +25,7 @@
       <div class="functionBox">
         <div class="element">
           <div class="inline">
-            <el-button type="primary" size="medium" @click="addBtn">新增</el-button>
+            <el-button type="primary" size="medium" @click="handleEditClick(null,'add')">新增</el-button>
           </div>
           <label class="inline margL20">课程名：</label>
           <div class="inline">
@@ -36,10 +36,13 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" v-loading="loading">
         <el-table-column
           prop="school_id"
           label="校区">
+          <template slot-scope="scope">
+              {{scope.row.school_id | filterSchool}}
+           </template>
         </el-table-column>
         <el-table-column prop="name" label="课程名称" width="200">
            <template slot-scope="scope">
@@ -68,7 +71,7 @@
         <el-table-column prop="name" label="操作" width="200">
           <template slot-scope="scope">
             <el-button @click="handleDetailClick(scope.row)" type="text" size="small" icon="el-icon-view">查看</el-button>
-            <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
+            <el-button @click="handleEditClick(scope.row,'edit')" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">{{scope.row.is_deleted==0?'删除':'恢复'}}</el-button>
           </template>
         </el-table-column>
@@ -78,7 +81,7 @@
         </el-pagination>
       </div>
     </div>
-    <el-dialog title="新增课程" :visible.sync="isShowAddCourseDialog" :append-to-body="true" :fullscreen="false" width="500px">
+    <el-dialog :title="title" :visible.sync="isShowAddCourseDialog" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
         <div class="element margT10">
           <label class="inline">级别名称：</label>
@@ -94,11 +97,10 @@
             </el-select>
           </div>
         </div>
-        <div class="element margT10">
+        <!-- <div class="element margT10">
           <label class="inline">课程类型：</label>
           <div class="inline">
-             <!-- <el-input v-model="room_id" size="medium" placeholder="请输入内容"></el-input> -->
-             <el-select class="width140" size="medium" v-model="form.type_id" placeholder="请选择">
+            <el-select class="width140" size="medium" v-model="form.type_id" placeholder="请选择">
               <el-option
                 v-for="item in courseTypeOptions"
                 :key="item.value"
@@ -107,7 +109,7 @@
               </el-option>
             </el-select>
           </div>
-        </div>
+        </div> -->
         <div class="element margT10">
           <label class="inline">课程名称：</label>
           <div class="inline">
@@ -173,14 +175,15 @@ import {courseListUrl,courseEditUrl,courseLevelListUrl,courseTypeListUrl,teacher
 export default {
   data() {
     return {
+      loading: true,
       pageIndex: 1,
       pageSize: 10,
       total: 100,
-      showPageTag:true,
+      showPageTag:false,
       name: '',
       tableData: [],
       isShowAddCourseDialog:false,
-      schoolOptions:[],
+      schoolOptions:JSON.parse(localStorage.getItem('_schoolsOptions')),
       levelOptions:[],
       courseTypeOptions:[],
       teacherTypeOptions:[],
@@ -190,7 +193,7 @@ export default {
         serial:'',
         total:'',
         level_id:"",//ok
-        type_id:"",//ok
+        // type_id:"",//ok
         name:"",//ok
         teacher_type_id:'',//ok
         capacity:'',//ok
@@ -200,9 +203,20 @@ export default {
       }
     }
   },
+  filters:{
+    filterSchool(t){
+     var schoolsOptions = JSON.parse(localStorage.getItem('_schoolsOptions'));
+      for(var i=0;i<schoolsOptions.length;i++) {
+        if(t==schoolsOptions[i].value) {
+          console.log(schoolsOptions[i].name,"schoolsOptions[i].name")
+          return schoolsOptions[i].name;
+        }
+      }
+    }
+  },
   created() {
     this.getList()
-
+    console.log(this.schoolOptions,"schoolOptions")
     this.getCourseLevelList();
     this.getCourseTypeList();
     this.getTeacherTypeList();
@@ -211,22 +225,33 @@ export default {
     search() {
       this.getList();
     },
-    handleEditClick(row) {
+    handleEditClick(row,operate) {
       this.isShowAddCourseDialog = true;
-
-      this.form.course_id = row.id;
-      this.form.level_id = row.level.id;
-      this.form.type_id = row.type.id;
-      this.form.name = row.name;
-      this.form.serial = row.serial;
-      this.form.total = row.total;
-      this.form.teacher_type_id = row.type_id;
-      this.form.capacity = row.capacity;
-      this.form.introduction = row.introduction;
-      this.form.reservation = row.reservation?true:false;
-    },
-    addBtn(){
-      this.isShowAddCourseDialog = true;
+      if(operate == 'edit') {
+        this.title = '编辑课程'
+        this.form.course_id = row.id;
+        this.form.level_id = row.level_id;
+        // this.form.type_id = row.type_id; // =========================
+        this.form.name = row.name;
+        this.form.serial = row.serial;
+        this.form.total = row.total;
+        this.form.teacher_type_id = row.type_id;
+        this.form.capacity = row.capacity;
+        this.form.introduction = row.introduction;
+        this.form.reservation = row.reservation?true:false;
+      }else{
+        this.title = '新增课程'
+        this.form.course_id = '';
+        this.form.level_id = '';
+        // this.form.type_id = '';
+        this.form.name = '';
+        this.form.serial = '';
+        this.form.total = '';
+        this.form.teacher_type_id = '';
+        this.form.capacity = '';
+        this.form.introduction = '';
+        this.form.reservation = false;
+      }
     },
     getTeacherTypeList() {
       let that = this;
@@ -280,11 +305,12 @@ export default {
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           // that.tableData = result.data.course;
-          that.levelOptions = result.data;
+          that.levelOptions = result.data.list;
           for(var i=0;i<that.levelOptions.length;i++){
             that.levelOptions[i].label = that.levelOptions[i].name
             that.levelOptions[i].value = that.levelOptions[i].id
           }
+          console.log(that.levelOptions,"levelOptions")
         }
       });
     },
@@ -342,6 +368,7 @@ export default {
     delete(row) {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id: row.id,
         is_deleted: row.is_deleted==0?1:0
       }
@@ -371,6 +398,7 @@ export default {
       var url = courseListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
+        that.loading = false;
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){

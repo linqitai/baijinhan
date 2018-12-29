@@ -35,21 +35,15 @@
         </div>
       </div> -->
       <el-table :data="tableData" border style="width: 100%;margin-top: 10px;">
-        <el-table-column prop="name" label="等级名称" width="180">
+        <el-table-column prop="name" label="等级名称" width="220">
         </el-table-column>
-        <el-table-column prop="serial" label="级别">
+        <el-table-column prop="level" label="级别">
         </el-table-column>
-        <el-table-column prop="created_at" label="校区" width="160">
+        <el-table-column prop="created_at" label="创建时间">
         </el-table-column>
-        <el-table-column prop="introduce" label="地区" width="120">
-        </el-table-column>
-        <el-table-column prop="sort" label="创建时间">
-        </el-table-column>
-        <el-table-column prop="sort" label="修改时间">
-        </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="160" fixed="right">
           <template slot-scope="scope">
-            <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
+            <!-- <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button> -->
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
           </template>
         </el-table-column>
@@ -69,7 +63,7 @@
              <el-input v-model="form.serial" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
-        <div class="element margT20">
+        <!-- <div class="element margT20">
           <label class="inline">校区：</label>
           <div class="inline">
              <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
@@ -80,7 +74,7 @@
           <div class="inline">
              <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
           </div>
-        </div>
+        </div> -->
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -90,7 +84,7 @@
   </div>
 </template>
 <script>
-import { lessonListUrl,lessonEditUrl,ERR_OK } from '@/api/index'
+import { courseLevelListUrl,lessonEditUrl,ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
 export default {
   data() {
@@ -101,6 +95,7 @@ export default {
       formLabelWidth: '120px',
       tableData:[],
       form: {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id:"",
         name:"",
         serial:"",
@@ -116,6 +111,7 @@ export default {
     sureEdit(){
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id: this.form.course_id,
         name: this.form.name,
         serial: this.form.serial,
@@ -147,16 +143,18 @@ export default {
     getList() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
+        area_id: localStorage.getItem("area_id"),
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize,
       }
-      var url = lessonListUrl;
+      var url = courseLevelListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.tableData = result.data.lesson;
+          that.tableData = result.data.list;
           
         }
       });

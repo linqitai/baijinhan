@@ -37,7 +37,7 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" v-loading="loading">
         <el-table-column
           prop="user.en_name"
           label="订课学生">
@@ -93,10 +93,11 @@ import { getSex,getFullDate } from '@/common/js/utils'
 export default {
   data() {
     return {
+      loading: true,
       pageIndex: 1,
       pageSize: 6,
       total: 100,
-      showPageTag:true,
+      showPageTag:false,
       no: '',
       courseName: '',
       tableData: []
@@ -132,6 +133,7 @@ export default {
     dropArrangingEvent(row) {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         user_id: row.user_id,
         arranging_id: row.arranging_id
       }
@@ -155,12 +157,14 @@ export default {
     getList() {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         serial: that.no,
         course_name: that.courseName
       }
       var url = studentBookListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
+        that.loading = false;
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
@@ -172,12 +176,12 @@ export default {
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      // this.getList();
+      this.getList();
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
       console.log(val);
-      // this.getList();
+      this.getList();
     }
   }
 }

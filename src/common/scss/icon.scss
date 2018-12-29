@@ -13,14 +13,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-@font-face {
-  font-family: 'iconfontS';  /* project id 900438 */
-  src: url('//at.alicdn.com/t/font_900438_dxqp2sxfeqe.eot');
-  src: url('//at.alicdn.com/t/font_900438_dxqp2sxfeqe.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_900438_dxqp2sxfeqe.woff') format('woff'),
-  url('//at.alicdn.com/t/font_900438_dxqp2sxfeqe.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_900438_dxqp2sxfeqe.svg#iconfont') format('svg');
-}
 .icon-manage:before { content: "\e6a6"; }
 .icon-setting:before { content: "\e60e"; }
 .icon-logout:before { content: "\e636"; }

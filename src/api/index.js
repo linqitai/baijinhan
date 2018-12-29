@@ -1,4 +1,4 @@
-import http from './public'
+// import http from './public'
 export const host = 'http://bjh.chinaxywl.com/'
 // const host = '/xywl'
 
@@ -6,28 +6,47 @@ export const ERR_OK = 201
 
 // 登录接口
 export const loginUrl = host + 'api/admin/auth/login';
+// 用户权限
+// export const permissionsUrl = host + 'api/admin/role/permissions';
+// 角色列表
+export const roleListUrl = host + 'api/admin/role/list';
+// 创建修改角色
+export const roleEditUrl = host + 'api/admin/role/edit';
+// 用户绑定角色(更改绑定)
+export const roleBindUrl = host + 'api/admin/role/bind';
+// 校区列表
+export const schoolListUrl = host + 'api/admin/school/list';
+// 单个角色详情
+export const roleOneUrl = host + 'api/admin/role/one';
+// 查看单节课程详情
+export const arrangingOneUrl = host + 'api/admin/arranging/one-user';
+// 班主任列表
+export const teacherTrackUrl = host + 'api/admin/teacher/track';
+// 合同状态
+export const contractTypeUrl = host + 'api/admin/contract/contract-type';
+// 删除课表
+export const arrangingDeleteUrl = host + 'api/admin/arranging/delete';
 
 // 课表列表
 export const classListUrl = host + 'api/admin/arranging/list';
-
 // 编辑课程表
 export const editClassUrl = host + 'api/admin/arranging/edit';
-
 // 教师列表
 export const teacherListUrl = host + 'api/admin/teacher/list';
-
 // 教师添加空闲时间
 export const teacherFreeEditUrl = host + 'api/admin/teacher/free-edit';
-
 // 单个教师的空闲时间
 export const teacherFreeUrl = host + 'api/admin/teacher/myfrees';
-
 // 校区教室
-export const getRoomsUrl = host + '/api/admin/school/rooms';
+export const getRoomsUrl = host + 'api/admin/school/rooms';
 // 教师的课程（包换话题）
-export const getTeacherCourseUrl = host + '/api/admin/teacher/course';
+export const getTeacherCourseUrl = host + 'api/admin/teacher/course';
 // 课程列表
 export const getCourseListUrl = host + 'api/admin/course/list';
+// 话题列表列表
+export const getLessonListUrl = host + 'api/admin/lesson/list';
+// 话题列表列表
+export const lessonSearchUrl = host + 'api/admin/lesson/search';
 // 学生列表
 export const getStudentListUrl = host + 'api/admin/user/list';
 // 退课列表
@@ -70,6 +89,10 @@ export const courseDeleteUrl = host + 'api/admin/course/delete';
 export const alterSelectListUrl = host + 'api/admin/arranging/time-list';
 // 代选课
 export const alterSelectUrl = host + 'api/admin/teacher/help-choose';
+// 用户权限
+export const rolePermissionsUrl = host + 'api/admin/role/permissions';
+// 同步角色权限
+export const roleChooseUrl = host + 'api/admin/role/choose';
 
 
 

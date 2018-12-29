@@ -77,7 +77,7 @@ export default {
       var arr = []
       var time  = getTime(firstDay)
       var days = getDaysInYearMonth(value.split('/')[0],month)
-      // // console.log(days,"天数")
+      console.log(`${value.split('/')[0]}年${month}月份有${days}天`)
       for(var i=0;i<days;i++){
         var d = getDay(time)
         if(d==1){

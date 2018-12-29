@@ -60,7 +60,7 @@
         </el-table-column>
         <el-table-column
           prop="arranging.course.name"
-          label="课程名称">
+          label="课程名称" width="140">
         </el-table-column>
         <el-table-column
           prop="arranging.course.type_id"
@@ -98,7 +98,7 @@ export default {
       pageSize: 6,
       total: 100,
       schoole_id: localStorage.getItem("_school_id"),
-      showPageTag:true,
+      showPageTag:false,
       serial: '',
       tableData: []
     }
@@ -127,6 +127,7 @@ export default {
     getList() {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         serial: that.serial
         // school_id: that.schoole_id
       }

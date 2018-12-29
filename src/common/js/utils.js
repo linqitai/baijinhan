@@ -29,17 +29,22 @@ export function getMonth(date) {
   return month+1;
 }
 export function getFullDate(t){
-  var value=''
-  if(t.toString().length==10){
-    value = parseInt(t)*1000
+  if(t) {
+    var value=''
+    if(t.toString().length==10){
+      value = parseInt(t)*1000
+    }else{
+      value = parseInt(t)
+    }
+    var time = new Date(value)
+    var y = time.getFullYear()
+    var m = time.getMonth() + 1
+    var d = time.getDate()
+    return y + '/' + (m < 10 ? '0' + m : m) + '/' + (d < 10 ? '0' + d : d)
   }else{
-    value = parseInt(t)
+    return '--'
   }
-  var time = new Date(value)
-  var y = time.getFullYear()
-  var m = time.getMonth() + 1
-  var d = time.getDate()
-  return y + '/' + (m < 10 ? '0' + m : m) + '/' + (d < 10 ? '0' + d : d)
+  
 }
 export function getFullDateTime(t){
   var value=''

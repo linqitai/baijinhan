@@ -11,16 +11,21 @@ $tableBorderColor:#c7c7c7;
 $headerColor:#434B7E;
 // 长度单位
 $headerTop:50px;
+$height:50px;
 .width70{width: 70px;}.width80{width: 80px;}.width100{width: 100px;}.width120{width: 120px;}.width140{width: 140px;}.width160{width: 160px;}.width220{width: 220px;}.width240{width: 240px;}
 .width260{width: 260px;}.width280{width: 280px;}
-.margint{margin-top: 6px;}.marginb{margin-bottom: 6px;}
+.margint{margin-top: 10px;}.marginb{margin-bottom: 6px;}
 .margR20{margin-right: 20px;}
-.margT3{margin-top: 3px;}.margT6{margin-top: 6px;}.margT8{margin-top: 8px;}.margT10{margin-top: 10px;}.margT20{margin-top: 20px;}
+.margT3{margin-top: 3px;}.margT4{margin-top: 4px;}.margT6{margin-top: 6px;}.margT8{margin-top: 8px;}.margT10{margin-top: 10px;}.margT20{margin-top: 20px;}
 .margL10{margin-left: 10px;}.margL20{margin-left: 20px;}.margL40{margin-left: 40px;}
 .margL100{margin-left: 100px;}.margL200{margin-left: 200px;}
 .gray{color: #787878}
-.blue{color: #409EFF;}
+.blue{color: #006BD4;}
+.white{color: white;}
 .green{color: green;}
+.freeColor,.orderBgColor{
+  background-color: #90C8FF;
+}
 .inline{
   display: inline-block;
 }
@@ -110,6 +115,11 @@ $headerTop:50px;
   text-align: left;
 }
 
+.el-dialog__body{
+  padding:10px 20px;
+  padding-bottom:20px;
+}
+
 .dialogModel{
   position: fixed;
   left: 50%;
@@ -133,77 +143,135 @@ $headerTop:50px;
     margin-top: 24px;
   }
 }
-.freeColor,.orderBgColor{
-  background-color: #2564A5;
-}
 $tableTDheight: 50px;
 .tablelineheight{
   line-height: $tableTDheight;
 }
 table.thisTableCheck{
-    width: 900px;
-    border: 1px solid $tableBorderColor;
-    border-right:none;
-    background-color: white;
-    margin-top: 10px;
-    .header{
-      background-color: $mainColor;
-      color: white;
-    }
-    tr{
-      white-space:nowrap;
-      text-align: center;
-      border-bottom: 1px solid $tableBorderColor;
-      &:nth-child(2),&:nth-child(5),&:nth-child(11){
-        background-color: #B1F1FF;
-      }
-    }
-    tr>th,tr>td{
-      display: inline-block;
-      width: 170px;
-      height: $tableTDheight;
-      border-right:1px solid $tableBorderColor;
-      // vertical-align: inherit;
-    }
-    th:first-child{
-      width: 200px;
-    }
-    tr>td:first-child{
-      width: 200px;
+  width: 900px;
+  border: 1px solid $tableBorderColor;
+  border-right:none;
+  background-color: white;
+  margin-top: 10px;
+  .header{
+    background-color: $mainColor;
+    color: white;
+  }
+  tr{
+    white-space:nowrap;
+    text-align: center;
+    border-bottom: 1px solid $tableBorderColor;
+    // &:nth-child(2),&:nth-child(5),&:nth-child(11){
+    //   background-color: #ECFCFF;
+    // }
+    &:nth-child(even) {
+      background-color: #ECFCFF;
     }
   }
-// 表格样式
-// .tableList {
-//   width: 100%;
-//   min-width: 1380px;
-//   border: 1px solid #e1e6ef;
-//   margin-top: 10px;
-//   thead {
-//     background-color: #e1e6ef;
-//     tr th{
-//       padding: 12px 8px;
-//       text-align: center;
-//       &:nth-of-type(2){
-//         width: 100px;
-//       }
-//     }
-//   }
-//   tbody {
-//     background-color: #ffffff;
-//     tr{
-//       border-top: 1px solid #DDDDDD
-//     }
-//     tr:hover {
-//       background-color: #f1f2f7;
-//     }
-//     tr td {
-//       padding: 8px 8px;
-//       text-align: center;
-//       line-height: 16px;
-//     }
-//   }
-//   .noData {
-//     font-size: 16px;
-//     padding: 30px;
-//   }
-// }
+  tr>th,tr>td{
+    display: inline-block;
+    width: 170px;
+    height: $tableTDheight;
+    border-right:1px solid $tableBorderColor;
+    // vertical-align: inherit;
+  }
+  th:first-child{
+    width: 200px;
+  }
+  tr>td:first-child{
+    width: 200px;
+  }
+}
+table.thatTable{
+  width: 100%;
+  border: 1px solid $tableBorderColor;
+  border-right:none;
+  margin-left: 60px;
+  background-color: white;
+  .header{
+    background-color: $mainColor;
+    color: white;
+  }
+  tr{
+    white-space:nowrap;
+    border-bottom: 1px solid $tableBorderColor;
+    // &:nth-child(2),&:nth-child(5),&:nth-child(10){
+    //   background-color: #B1F1FF;
+    // }
+    &:nth-child(even) {
+      background-color: #ECFCFF;
+    }
+  }
+  tr>th{
+    width: 150px;
+    height: $height;
+    line-height: $height;
+    border-right:1px solid $tableBorderColor;
+    box-sizing: content-box;
+    padding: 0 6px; 
+  }
+  tr>td{
+    width: 150px;
+    height: $height;
+    border-right:1px solid $tableBorderColor;
+    box-sizing: content-box;
+    padding: 0 6px;
+    cursor: pointer;
+    &:hover{
+      background-color:rgba(0,44,253,0.3);
+    }
+  }
+}
+
+.header{
+  background-color: $mainColor;
+  color: white;
+}
+table.setRolePermissionsTable{
+  margin-top: 10px;
+  box-sizing:content-box;
+  tr{
+    border-bottom: 1px solid $tableBorderColor;
+    border-left: 1px solid $tableBorderColor;
+    box-sizing:content-box;
+    th{
+      height: 40px;
+      line-height: 40px;
+      min-width: 100px;
+      padding-left: 10px;
+      border-right:1px solid $tableBorderColor;
+      box-sizing:content-box;
+      text-align: left;
+    }
+    td{
+      min-width: 100px;
+      padding-left: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-right: 1px solid $tableBorderColor;
+      box-sizing: content-box;
+    }
+  }
+}
+
+
+
+
+.users{
+  overflow: hidden;
+  margin-top: 20px;
+  border-top: 1px solid #646464;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  .avater{
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+  }
+  .name{
+    flex: 1;
+    margin-left: 20px;
+  }
+}

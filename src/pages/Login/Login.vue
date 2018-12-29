@@ -184,10 +184,13 @@ export default {
           console.log(res.status_code,'==res.status_code==')
           if(res.status_code===200){
             localStorage.setItem('login_id',res.data.id);
+            localStorage.setItem('area_id',res.data.area_id);
+            localStorage.setItem('role_id',res.data.role_id);
+            localStorage.setItem('school_name',res.data.school.name);
             localStorage.setItem("_school_id",res.data.school_id);
             console.log("school_id:",res.data.school_id)
             that.$cookie.set('currentTitleId',0);
-            that.$router.push('./classplan')
+            that.$router.push('./orderClassList')
             console.log("成功");
           }else{
             console.log("失败");

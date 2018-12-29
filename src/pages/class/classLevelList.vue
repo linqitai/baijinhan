@@ -33,21 +33,28 @@
         </el-table-column>
         <el-table-column prop="level" label="级别">
         </el-table-column>
-        <el-table-column prop="shool_id" label="校区">
+        <el-table-column prop="school_id" label="校区">
+          <template slot-scope="scope">
+              {{scope.row.school_id | filterSchool}}
+           </template>
         </el-table-column>
-        <el-table-column prop="" label="地区">
+        <el-table-column prop="area_id" label="地区">
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间">
+        <el-table-column prop="created_at" label="创建时间" width="160">
         </el-table-column>
-        <el-table-column prop="updatad_at" label="修改时间">
+        <el-table-column prop="updatad_at" label="修改时间" width="160">
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div class="tableBottom" v-show="showPageTag">
+        <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[6,8,10]" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
+      </div>
     </div>
     <el-dialog title="修改话题" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
@@ -66,13 +73,13 @@
         <div class="element margT20">
           <label class="inline">校区：</label>
           <div class="inline">
-             <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
+             <el-input v-model="form.school_id" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
           <label class="inline">地区：</label>
           <div class="inline">
-             <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
+             <el-input v-model="form.area_id" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
       </div>
@@ -89,8 +96,10 @@ import { courseLevelListUrl,lessonEditUrl,ERR_OK } from '@/api/index'
 export default {
   data() {
     return {
+      showPageTag:false,
       pageIndex: 1, // offset/10+1
       pageSize: 8,
+      total:0,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       tableData:[],
@@ -103,6 +112,17 @@ export default {
       name:''
     }
   },
+  filters:{
+    filterSchool(t){
+     var schoolsOptions = JSON.parse(localStorage.getItem('_schoolsOptions'));
+      for(var i=0;i<schoolsOptions.length;i++) {
+        if(t==schoolsOptions[i].value) {
+          console.log(schoolsOptions[i].name,"schoolsOptions[i].name")
+          return schoolsOptions[i].name;
+        }
+      }
+    }
+  },
   created() {
     this.getList();
   },
@@ -113,6 +133,7 @@ export default {
     sureEdit(){
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id: this.form.course_id,
         name: this.form.name,
         serial: this.form.serial,
@@ -144,8 +165,9 @@ export default {
     getList() {
       let that = this;
       var params = {
-        // offset: (that.pageIndex-1)*that.pageSize,
-        // limit: that.pageSize,
+        schoole_id: localStorage.getItem("_school_id"),
+        offset: (that.pageIndex-1)*that.pageSize,
+        limit: that.pageSize,
       }
       var url = courseLevelListUrl;
       console.log(params,"params")
@@ -153,13 +175,19 @@ export default {
         var result = res.data;
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
-          that.tableData = result.data;
-          
+          that.tableData = result.data.list;
+          that.total = result.data.count;
+          if(that.total<that.pageSize) {
+            that.showPageTag = false;
+          }else{
+            that.showPageTag = true;
+          }
         }
       });
     },
     handleEditClick(row) {
       this.form = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id:row.course_id,
         name:row.name,
         serial:row.serial,
@@ -170,6 +198,16 @@ export default {
     handleDeleteClick(row) {
 
     },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      console.log(val);
+      this.getList();
+    }
   }
 }
 </script>

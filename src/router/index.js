@@ -154,10 +154,10 @@ export default new Router({
           }
         },
         {
-          path: '/classplan3',
-          name: 'classplan3',
+          path: '/roleList',
+          name: '角色列表',
           component: (resolve) => {
-            import('../pages/class/plan3').then((module) => {
+            import('../pages/class/roleList').then((module) => {
               resolve(module)
             })
           }

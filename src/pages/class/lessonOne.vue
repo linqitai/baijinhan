@@ -60,6 +60,10 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="tableBottom" v-show="showPageTag">
+        <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[6,8,10]" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
+      </div>
     </div>
     <el-dialog title="修改话题" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
@@ -95,8 +99,11 @@ import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,ERR_OK } from '@/api/index'
 export default {
   data() {
     return {
+      loading: true,
       pageIndex: 1, // offset/10+1
       pageSize: 8,
+      total: 0,
+      showPageTag: false,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       tableData:[],
@@ -123,6 +130,7 @@ export default {
     delete() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         lesson_id: this.form.lesson_id,
         is_deleted: 1
       }
@@ -151,6 +159,7 @@ export default {
     sureEdit() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id: this.form.course_id,
         name: this.form.name,
         serial: this.form.serial,
@@ -181,6 +190,7 @@ export default {
     getList() {
       let that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
       	course_id:this.$cookie.get('course_id'),
         name:that.name,
         offset: (that.pageIndex-1)*that.pageSize,
@@ -193,12 +203,18 @@ export default {
         console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           that.tableData = result.data.lesson;
-          
+          that.total = result.data.count || 100;
+          if(that.total<that.pageSize) {
+            that.showPageTag = false;
+          }else{
+            that.showPageTag = true;
+          }
         }
       });
     },
     handleEditClick(row) {
       this.form = {
+        schoole_id: localStorage.getItem("_school_id"),
         course_id:row.course_id,
         name:row.name,
         serial:row.serial,
@@ -222,6 +238,16 @@ export default {
           });          
         });
     },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      // console.log(val);
+      this.getList();
+    }
   }
 }
 </script>

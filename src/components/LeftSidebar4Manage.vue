@@ -58,8 +58,8 @@
   <ul class="mSidebar">
     <li v-for="(item,index) in mSidebar">
       <div class="itemTitle" @click="flexToggle(index,'click')">
-        <i class="fa iconStyle left" :class="item.icon"></i>
-        <div class="title left">{{item.title}}</div>
+        <i class="el-icon-menu iconStyle left"></i>
+        <div class="title left">{{item.text}}</div>
         <!-- <i class="iconfont icon-arrowdowm arrow right"></i> -->
       </div>
       <transition name='fade'>
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+import { rolePermissionsUrl,roleOneUrl,ERR_OK } from '@/api/index'
 var menu = [
             {icon:'fa-navicon',title:'课程',
             subs:[
@@ -94,7 +95,7 @@ var menu = [
             {icon:'fa-navicon',title:'学生',
             subs:[
                   {id:0,text:'学生列表',path:'/studentList'},
-                  {id:1,text:'学生等级列表',path:'/studentLevelList'}
+                  // {id:1,text:'学生等级列表',path:'/studentLevelList'}
             ]}
            ]
 
@@ -106,7 +107,7 @@ export default {
       flex: [],
       isCollapse: false,
       activeIndex: '',
-      mSidebar:menu
+      mSidebar:""
     }
   },
   // 接受父组件的值
@@ -120,42 +121,85 @@ export default {
     }
   },
   created(){
-    var href = window.location.href;
-    console.log(window.location.href,"window.location.href")
-    console.log(href.split('#')[1],"href.split('#')[1]")
-    var currentTitleId = this.$cookie.get('currentTitleId')||0;
-    this.flexToggle(currentTitleId,"created")
-    this.$router.push({
-      path: href.split('#')[1]
-    })
-    // if(href.split('#')[1]){
-    //   // this.flex=this.initFlex();
-      
-    // }else{
-    //   // console.log(this.$router.options.routes[0].redirect,"this.$router")
-    //   this.flex=this.initFlex();
-    //   this.$router.push({
-    //     path: href.split('#')[1]
-    //   })
-    //   var currentTitleId = this.$cookie.get('currentTitleId')||0;
-    //   var currentId = this.$cookie.get('currentId')||0;
-    //   console.log(currentTitleId + "," + currentId)
-    //   if(currentTitleId == 'undefined'){
-    //     currentTitleId = 0;
-    //   }
-    //   var redirect = this.$router.options.routes[0].redirect;
-    //   if(redirect == '/classplan') {
-    //     currentTitleId = 0;
-    //     this.$cookie.set('currentId',0)
-    //   }
-    //   this.flexToggle(currentTitleId,"created")
-    // }
+    this.getPermissions();
   },
   mounted() {
   },
   methods: {
+    getPermissions() {
+      let that = this;
+      var params = {
+        schoole_id: localStorage.getItem("_school_id"),
+        user_id: localStorage.getItem('login_id')
+      }
+      var url = rolePermissionsUrl;
+      console.log(params,"params================================================")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.mSidebar = result.data;
+          for(var i=0;i<that.mSidebar.length;i++){
+            for(var j=0;j<that.mSidebar[i].subs.length;j++) {
+              that.mSidebar[i].subs[j].id = j;
+            }
+          }
+          var href = window.location.href;
+          var currentTitleId = that.$cookie.get('currentTitleId')||0;
+          that.flexToggle(currentTitleId,"created")
+          that.$router.push({
+            path: href.split('#')[1]
+          })
+          that.getRoleOneInfo();
+        }
+      });
+    },
+    getRoleOneInfo() {
+      let that = this;
+      var params = {
+        schoole_id: localStorage.getItem("_school_id"),
+        role_id: localStorage.getItem('role_id')
+      }
+      var url = roleOneUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        that.loading = false;
+        var result = res.data;
+        console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.roleOne = result.data;
+          
+          // var permission_id_arr = []
+          // for(var i=0;i<that.roleOne.permissions.length;i++) {
+          //   var permission_id = that.roleOne.permissions[i].permission_id;
+          //   permission_id_arr.push(permission_id)
+          //   for(var j=0;j<that.roleOne.permissions[i].subs.length;j++) {
+          //     var permission_id =  that.roleOne.permissions[i].subs[j].permission_id
+          //     permission_id_arr.push(permission_id)
+          //   }
+          // }
+          // console.log(permission_id_arr,"permission_id_arr")
+
+          // for(var k=0;k<rolePermissions.length;k++){
+          //   var permission_id = rolePermissions[k].permission_id;
+          //   console.log(permission_id_arr.indexOf(permission_id),permission_id)
+          //   if(permission_id_arr.indexOf(permission_id)>-1){
+          //     rolePermissions[k].check = true;
+          //   }
+          //   for(var q=0;q<rolePermissions[k].subs.length;q++) {
+          //     var permission_id = rolePermissions[k].subs[q].permission_id;
+          //     if(permission_id_arr.indexOf(permission_id)>-1){
+          //       rolePermissions[k].subs[q].check = true;
+          //     }
+          //   }
+          // }
+          // that.rolePermissions = rolePermissions;
+        }
+      })
+    },
     setRouter(currentTitleId,currentId) {
-      this.$router.push(menu[currentTitleId].subs[currentId].path); 
+      var that = this;
+      this.$router.push(that.mSidebar[currentTitleId].subs[currentId].path); 
     },
     textClick(item) {
       var currentTitleId = this.$cookie.get('currentTitleId')||0;
@@ -187,12 +231,12 @@ export default {
         }
       }
       // var currentTitleId = this.$cookie.get('currentTitleId');
-      var currentId = this.$cookie.get('currentId');
+      var currentId = this.$cookie.get('currentId')||0;
       console.log(index + "," + currentId)
       this.setRouter(index,currentId);
     },
     initFlex() {
-      this.itemTitleLen = menu.length;//标题的长度
+      this.itemTitleLen = this.mSidebar.length;//标题的长度
       var arr=[]
       for(var i = 0; i < this.itemTitleLen; i++) {
         if(i==0) {

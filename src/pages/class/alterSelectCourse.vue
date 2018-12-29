@@ -28,39 +28,6 @@ $height:50px;
       }
       .tableWrapper{
         overflow: scroll;
-        table.thatTable{
-          width: 100%;
-          border: 1px solid $tableBorderColor;
-          border-right:none;
-          margin-left: 60px;
-          background-color: white;
-          .header{
-            background-color: $mainColor;
-            color: white;
-          }
-          tr{
-            white-space:nowrap;
-            border-bottom: 1px solid $tableBorderColor;
-            &:nth-child(2),&:nth-child(5),&:nth-child(10){
-              background-color: #B1F1FF;
-            }
-          }
-          tr>th{
-            width: 150px;
-            height: $height;
-            line-height: $height;
-            border-right:1px solid $tableBorderColor;
-            box-sizing: content-box;
-            padding: 0 6px; 
-          }
-          tr>td{
-            width: 150px;
-            height: $height;
-            border-right:1px solid $tableBorderColor;
-            box-sizing: content-box;
-            padding: 0 6px;
-          }
-        }
       }
     }
   }
@@ -105,7 +72,7 @@ $height:50px;
 	        <el-radio :label="7">周日</el-radio>
 	      </el-radio-group>
 	    </div>
-      <el-table :data="tableData" border style="width: 100%; margin-top: 12px;">
+      <el-table :data="tableData" border style="width: 100%; margin-top: 12px;" v-loading="loading">
         <!-- <el-table-column
           prop="en_name"
           label="上课日期">
@@ -153,10 +120,11 @@ var list = []
 export default {
   data() {
     return {
+      loading:true,
       pageIndex: 1,
       pageSize: 6,
       total: 100,
-      showPageTag:true,
+      showPageTag:false,
       schoole_id: localStorage.getItem("_school_id"),
       weekth:'',
       courseValue: '',
@@ -249,6 +217,7 @@ export default {
     alterSelectEvent(row) {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         time:row.begin_time,
         user_id: that.user_id,
         arranging_id: that.arranging_id
@@ -270,6 +239,7 @@ export default {
     getList() {
       var that = this;
       var params = {
+        schoole_id: localStorage.getItem("_school_id"),
         weekth: that.weekth,
         week:that.week,
         offset: (that.pageIndex-1)*that.pageSize,
@@ -278,6 +248,7 @@ export default {
       var url = alterSelectListUrl;
       console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
+        that.loading = false;
         var result = res.data;
         console.log(result,'--result--')
         if(result.status_code == ERR_OK){
