@@ -146,6 +146,7 @@ export default {
     var inputs = document.getElementsByTagName('input')
   },
   methods: {
+    
     hover() {
       this.ishover = !this.ishover
     },
@@ -188,6 +189,10 @@ export default {
             localStorage.setItem('role_id',res.data.role_id);
             localStorage.setItem('school_name',res.data.school.name);
             localStorage.setItem("_school_id",res.data.school_id);
+            localStorage.setItem("areaName",res.data.area.name);
+            localStorage.setItem("en_name",res.data.en_name);
+            localStorage.setItem("roleName",res.data.role.name);
+            
             console.log("school_id:",res.data.school_id)
             that.$cookie.set('currentTitleId',0);
             that.$router.push('./orderClassList')

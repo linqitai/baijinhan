@@ -35,16 +35,18 @@
           </div>
         </div>
       </div>
+
       <el-table :data="tableData" border style="width: 100%"  v-loading="loading">
         <el-table-column prop="name" label="话题名称" width="260">
           <template slot-scope="scope">
             <label class="ellipsis">{{scope.row.name}}</label>
           </template>
         </el-table-column>
-        <el-table-column prop="serial" label="话题编号">
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
-        </el-table-column>
+        <el-table-column prop="course.name" label="课程" width="160"></el-table-column>
+        <el-table-column prop="level.name" label="等级"></el-table-column>
+        <el-table-column prop="capacity" label="选课上限"></el-table-column>
+        <el-table-column prop="teacher_type" label="教师类型"></el-table-column>
+        <el-table-column prop="created_at" label="创建时间" width="160"></el-table-column>
         <el-table-column prop="introduce" label="话题简介" width="200">
           <template slot-scope="scope">
             <label class="ellipsis">{{scope.row.introduce}}</label>

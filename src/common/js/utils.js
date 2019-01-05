@@ -83,3 +83,15 @@ export function getTodayDate(value) {
 export function getSex(t){
   return t==1?"男":"女"
 }
+
+export function hasNull(params){
+  var keys = Object.keys(params);
+  for (var i = 0; i < keys.length; i++) {
+    console.log(params[keys[i]], "params[keys[i]]")
+    var obj = params[keys[i]];
+    if (!obj && obj!=0) {
+      return true;
+    }
+  }
+  return false;
+}

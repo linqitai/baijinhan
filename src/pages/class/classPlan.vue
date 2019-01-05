@@ -119,8 +119,9 @@ $height:50px;
             <tr v-for="(items,index) in list">
               <td v-for="(item,index) in items.blocks" @click="openDialogModel(item)">
                 <div style="width: 180px;">
-                  <div v-if="item.teacherName" :class="[item.is_released==1?'blue':'gray']">
-                    <div class="ellipsis">{{item.courseName}}</div>
+                  <div v-if="item.capacity" :class="[item.is_released==1?'blue':'gray']">
+                    <!-- ({{item.lesson.name}}) -->
+                    <div class="ellipsis">{{item.courseSerial}} {{item.courseName}}({{item.lessonLevelName}})</div>
                     <div class="ellipsis">{{item.lessonName}}</div>
                     <div class="ellipsis">{{item.teacherName}}(capacity:{{item.capacity}})</div>
                   </div>
@@ -131,11 +132,12 @@ $height:50px;
         </div>
       </div>
     </div>
-    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="40%">
+    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="400">
+      
       <div class="lineBox">
         <b class="icon">*</b>
         <b class="text">课程级别</b>
-        <el-select class="inputTitle" v-model="courseLevelValue" placeholder="请选择课程等级" @change="courseLevelChange">
+        <el-select class="inputTitle" v-model="courseLevelValue" placeholder="请选择课程等级" @change="courseLevelChange" clearable>
           <el-option
             v-for="item in courseLevelOption"
             :key="item.value"
@@ -146,20 +148,8 @@ $height:50px;
       </div>
       <div class="lineBox">
         <b class="icon">*</b>
-        <b class="text">教师</b>
-        <el-select class="inputTitle" v-model="teacherValue" placeholder="请选择教师" @change="getTeacherCourseEvent">
-          <el-option
-            v-for="item in teachersOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </div>
-      <div class="lineBox">
-        <b class="icon">*</b>
         <b class="text">课程</b>
-        <el-select class="inputTitle" v-model="courseValue" placeholder="请选择课程" @change="courseChange">
+        <el-select class="inputTitle" v-model="courseValue" placeholder="请选择课程" @change="courseChange" clearable>
           <el-option
             v-for="item in coursesOption"
             :key="item.value"
@@ -171,16 +161,21 @@ $height:50px;
       <div class="lineBox">
         <b class="icon">*</b>
         <b class="text">话题</b>
-        <el-select
-          class="inputTitle"
-          v-model="lessonValue"
-          filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          :loading="loading" clearable @change="lessonChange">
+        <el-select class="inputTitle" v-model="lessonValue" filterable remote reserve-keyword placeholder="请输入关键词" :loading="loading" clearable @change="lessonChange">
           <el-option
             v-for="item in options4"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="lineBox">
+        <b class="icon"></b>
+        <b class="text">教师</b>
+        <el-select class="inputTitle" v-model="teacherValue" placeholder="请选择教师" @change="getTeacherCourseEvent" clearable>
+          <el-option
+            v-for="item in teachersOption"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -196,7 +191,7 @@ $height:50px;
   </div>
 </template>
 <script>
-import { arrangingDeleteUrl,classListUrl,teacherFreeUrl,getRoomsUrl,teacherListUrl,getTeacherCourseUrl,lessonSearchUrl,editClassUrl,arrangingReleaseUrl,courseLevelListUrl,ERR_OK } from '@/api/index'
+import { arrangingDeleteUrl,classListUrl,teacherFreeUrl,getRoomsUrl,teacherFreesUrl,getTeacherCourseUrl,lessonSearchUrl,editClassUrl,arrangingReleaseUrl,courseLevelListUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth,getTodayDate } from '@/common/js/utils'
 // 一天有多少毫秒
 var oneDayTime = 24*60*60*1000
@@ -283,16 +278,21 @@ export default {
         offset: 0,
         limit: 1000
       }
-      var url = teacherListUrl;
+      var url = teacherFreesUrl;
       // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
         if(result.status_code == ERR_OK){
           that.teachersOption = result.data.teachers;
-          for(var i=0;i<that.teachersOption.length;i++){
-            that.teachersOption[i].value = that.teachersOption[i].id
-            that.teachersOption[i].label = that.teachersOption[i].en_name
+          if(that.teachersOption){
+            for(var i=0;i<that.teachersOption.length;i++){
+              that.teachersOption[i].value = that.teachersOption[i].id
+              that.teachersOption[i].label = that.teachersOption[i].en_name
+            }  
+          }else{
+
           }
+          console.log(that.teachersOption,'that.teachersOption')
         }
       });
     },
@@ -355,11 +355,13 @@ export default {
     courseChange(value) {
       console.log(value,"value");
       this.course_id = value;
+      this.lessonValue = ''
       // 获取话题列表
       this.getlessonList();
     },
     courseLevelChange(value) {
       this.course_level_id = value
+      this.lessonValue = ''
       // 获取话题列表
       this.getlessonList();
     },
@@ -395,38 +397,19 @@ export default {
       that.room_id = item.room_id;
       that.hour = item.hour;
       that.arranging_ids = item.id;
-      // console.log(that.hour,"that.hour")
-      // if(that.weekth==""){
-      //   that.$alert('请先选择排课周期', '提示');
-      //   return;
-      // }
       that.isShowPaikeDialog = true;
       that.courseLevelValue = item.level_id;
-      that.teacherValue = item.teacher_id;
+      console.log(that.teachersOption,'that.teachersOption')
+      if(this.teachersOption) {
+        that.teacherValue = item.teacher_id;
+      }else{
+        that.teacherValue = '';
+      }
       that.courseValue = item.course_id;
       that.course_id = item.course_id;
       that.course_level_id = item.level_id;
       that.lesson_id = item.lesson_id;
       that.getlessonList();
-      
-      // if(item.teacherName) {
-      //   that.$confirm('是否取消选课?', '提示', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     console.log("cancel")
-      //     that.cancel(item)
-      //   }).catch(() => {
-      //     console.log('已取消删除')
-      //     // that.$message({
-      //     //   type: 'info',
-      //     //   message: '已取消删除'
-      //     // });          
-      //   });        
-      // }else{
-      //   that.isShowPaikeDialog = true
-      // }
     },
     cancel() {
       var that = this;
@@ -456,7 +439,7 @@ export default {
       // console.log(that.week,"week")
       var params = {
         time:parseInt(that.weekth.split(',')[0]) + oneDaySecond*(that.week-1) + that.hour*60*60,// 当前选择方块的时间戳，比如：2018年 9月 24号 1点的课程
-        room_id:that.room_id,
+        room_id: that.room_id,
         lesson_id: that.lesson_id,
         course_id: that.course_id,
         school_id: that.schoole_id,
@@ -468,7 +451,7 @@ export default {
       that.$axios.post(url,params).then((res)=>{
         // console.log(res,"resresresres")
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
+        console.log(result.status_code,'--res.status_code--')
         if(result.status_code == ERR_OK){
           // console.log("success")
           that.clearPaikeDialog()
@@ -477,7 +460,9 @@ export default {
         }else if(result.status_code == 433) {
           // that.$alert(result.message, '提示');
           that.$alert('该教室已有课程', '提示');
-        }
+        }else if(result.status_code == 422){
+          that.$alert('请检查必填项', '提示');
+        } 
       });
     },
     clearPaikeDialog(){
@@ -549,6 +534,8 @@ export default {
                 hour:obj[j].hour,
                 id:obj[j].id,
                 lessonName:obj[j].lesson.name,
+                lessonLevelName:obj[j].lesson.level?obj[j].lesson.level.name:'',
+                courseSerial:obj[j].lesson.course?obj[j].lesson.course.serial:'',
                 courseName:obj[j].lesson.course?obj[j].lesson.course.name:'',
                 level_id:obj[j].lesson.level_id,
                 teacher_id:obj[j].teacher.id,
@@ -576,8 +563,10 @@ export default {
                     list[j].blocks[k].teacher_id = arr[i].teacher_id;
                     list[j].blocks[k].course_id = arr[i].course_id;
                     list[j].blocks[k].lesson_id = arr[i].lesson_id;
+                    list[j].blocks[k].courseSerial = arr[i].courseSerial;
                     list[j].blocks[k].courseName = arr[i].courseName;
                     list[j].blocks[k].lessonName = arr[i].lessonName;
+                    list[j].blocks[k].lessonLevelName = arr[i].lessonLevelName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
                     list[j].blocks[k].is_released = arr[i].is_released;
                     list[j].blocks[k].capacity = arr[i].capacity?arr[i].capacity:'--';
@@ -673,38 +662,50 @@ export default {
           });          
         });
     },
-    time1Change(value) {
+    time1Change(value) {// value: 2018/11
       var that = this;
       var isGetList = false;
       //获取目前的时间戳
       var timeNow = new Date().getTime()
-      // console.log(value,"value") // value: 2018/11
       var month = value.split('/')[1]
-      // console.log("月份：" + month)
       var firstDay = value.toString() + "/1"
       var arr = []
       var time = getTime(firstDay)//获取时间戳
-      var days = getDaysInYearMonth(value.split('/')[0],month)
-      console.log(`${value.split('/')[0]}年${month}月份有${days}天`)
+      var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
       // console.log(days,"天数")
       for(var i=0;i<days;i++){
         var d = getDay(time)
-        // // console.log(d,'ddddd')
+        //判断d是否是星期一
         if(d==1){
-          var lastRange = getFullDate(time)
-          // console.log(lastRange,"lastRange")
+          var lastRange = getFullDate(time) // 周一的年月日
           var m = getMonth(lastRange)
-          // // console.log("month:" + month + ",m:" + m)
           if(month == m) {
-            var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
+            var range = null
+            if(getFullDate(timeNow)<getFullDate(time)){//这是加上上个月的最后一周
+              range = getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
+            }else{
+              range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
+            }
+            // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
-            // console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
-            if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
-              that.time2 = range
-              // console.log(that.time2,"that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2that.time2")
-              // console.log(isGetList,"isGetList")
+            // getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0
+            var endDate = range.split('~')[1]
+            var endDateTime = getTime(endDate)
+            console.log(endDate,getTodayDate(endDateTime))
+            console.log("================================================")
+            if(getTodayDate(endDateTime)>20) {
+              if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
+              range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
+              }
+              var item = {label:range,value:range}
+              arr.push(item)//这是加上这个月的最后一周
+            }
+            if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
+              console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
+              console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")
               if(isGetList == false) {
+                that.time2 = range
                 that.time2Change(that.time2)
                 isGetList = true
               }
@@ -737,7 +738,7 @@ export default {
       var that = this;
       var datatime = new Date()
       var year = datatime.getFullYear();
-      var month = datatime.getMonth()-1
+      var month = datatime.getMonth()
       var monthNow = datatime.getMonth()+1
       // console.log(month,"month now")
       var arr = []

@@ -36,6 +36,8 @@ axios.defaults.timeout = 5000
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   config.headers.authorization = localStorage.getItem('authorization');
+  config.data.school_id = localStorage.getItem('_school_id');
+  config.data.area_id = localStorage.getItem('area_id');
   // 参数格式转换
   if(config.method=="post"){
     config.data = qs.stringify(config.data);
@@ -61,6 +63,9 @@ axios.interceptors.response.use(function (res) {
   //   path: '/login'
   // })
   if(err.response.data){
+    if (err.response.data.status_code==433) {
+      alert('错误信息：' + err.response.data.message)
+    }
     if (err.response.data.status_code==401) {
       router.replace({
         path: '/login'

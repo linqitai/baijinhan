@@ -1,4 +1,4 @@
- provinces: [{
+ const provinces = [{
       "name": "北京",
       "list": [{
         "Id": 1,
@@ -1926,4 +1926,8 @@
         "city": "博尔塔拉蒙古自治州",
         "number": "0909"
       }]
-    }],
+    }]
+
+export function getProvinces(){
+  return provinces;  
+}

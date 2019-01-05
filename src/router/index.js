@@ -28,6 +28,24 @@ export default new Router({
       },
       children: [
         {
+          path: '/attendance',
+          name: '到课率',
+          component: (resolve) => {
+            import('../pages/class/attendance').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/courseSetting',
+          name: '课程设置',
+          component: (resolve) => {
+            import('../pages/class/courseSetting').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
           path: '/orderClassOne',
           name: '上周未定课程统计',
           component: (resolve) => {

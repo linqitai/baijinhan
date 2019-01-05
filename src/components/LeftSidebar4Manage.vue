@@ -95,7 +95,7 @@ var menu = [
             {icon:'fa-navicon',title:'学生',
             subs:[
                   {id:0,text:'学生列表',path:'/studentList'},
-                  // {id:1,text:'学生等级列表',path:'/studentLevelList'}
+                  {id:1,text:'学生等级列表',path:'/studentLevelList'}
             ]}
            ]
 

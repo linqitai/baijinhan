@@ -27,9 +27,9 @@
           <div class="inline">
             <el-button type="primary" size="medium" @click="handleEditClick(null,'add')">新增</el-button>
           </div>
-          <label class="inline margL20">课程名：</label>
+          <label class="inline margL20">课程编号：</label>
           <div class="inline">
-             <el-input v-model="name" size="medium" placeholder="请输入所要查询的课程名"></el-input>
+             <el-input v-model="course_id" size="medium" placeholder="查询内容" clearable></el-input>
           </div>
           <div class="inline">
             <el-button type="primary" size="medium" @click="search">查询</el-button>
@@ -38,28 +38,38 @@
       </div>
       <el-table :data="tableData" border style="width: 100%" v-loading="loading">
         <el-table-column
-          prop="school_id"
-          label="校区">
-          <template slot-scope="scope">
-              {{scope.row.school_id | filterSchool}}
-           </template>
+          prop="area.name"
+          label="地区">
+          <!-- <template slot-scope="scope">
+              {{scope.row.area.name}}
+           </template> -->
         </el-table-column>
-        <el-table-column prop="name" label="课程名称" width="200">
+        <el-table-column prop="name" label="课程名称" width="160">
            <template slot-scope="scope">
               {{scope.row.serial}}({{scope.row.name}})
            </template>
         </el-table-column>
         <el-table-column
-          prop="level.name"
-          label="课程级别">
+          prop="absent_count"
+          label="允许缺课次数" width="110">
         </el-table-column>
         <el-table-column
-          prop="type.name"
-          label="课程类型">
+          prop="selection_count"
+          label="最大选课次数" width="110">
         </el-table-column>
         <el-table-column
-          prop="total"
-          label="课程人数">
+          prop="is_use_level"
+          label="是否区分等级" width="110">
+          <template slot-scope="scope">
+            {{scope.row.is_use_level==1?'是':'否'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="type"
+          label="课程教师类型" width="110">
+          <template slot-scope="scope">
+            {{scope.row.type | filterTeacherType}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="reservation"
@@ -68,7 +78,7 @@
               {{scope.row.reservation==1?'是':'否'}}
            </template>
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="160" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleDetailClick(scope.row)" type="text" size="small" icon="el-icon-view">查看</el-button>
             <el-button @click="handleEditClick(scope.row,'edit')" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
@@ -180,7 +190,8 @@ export default {
       pageSize: 10,
       total: 100,
       showPageTag:false,
-      name: '',
+      course_id: '',
+      title:'',
       tableData: [],
       isShowAddCourseDialog:false,
       schoolOptions:JSON.parse(localStorage.getItem('_schoolsOptions')),
@@ -212,13 +223,16 @@ export default {
           return schoolsOptions[i].name;
         }
       }
+    },
+    filterTeacherType(t){
+      return t==1?'中教':t==2?'外教':t==3?'中外教':t==4?'班主任':''
     }
   },
   created() {
     this.getList()
     console.log(this.schoolOptions,"schoolOptions")
     this.getCourseLevelList();
-    this.getCourseTypeList();
+    // this.getCourseTypeList();
     this.getTeacherTypeList();
   },
   methods: {
@@ -390,8 +404,7 @@ export default {
     getList() {
       let that = this;
       var params = {
-        name:this.name,
-        school_id: this.form.school_id,
+        course_id:this.course_id,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize
       }

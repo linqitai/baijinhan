@@ -470,36 +470,50 @@ export default {
           });          
         });
     },
-    time1Change(value) {
+    time1Change(value) {// value: 2018/11
       var that = this;
       var isGetList = false;
       //获取目前的时间戳
       var timeNow = new Date().getTime()
-      console.log(value,"value") // value: 2018/11
       var month = value.split('/')[1]
-      console.log("月份：" + month)
       var firstDay = value.toString() + "/1"
       var arr = []
       var time = getTime(firstDay)//获取时间戳
-      var days = getDaysInYearMonth(value.split('/')[0],month)
-      console.log(days,"天数")
+      var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
+      // console.log(days,"天数")
       for(var i=0;i<days;i++){
         var d = getDay(time)
-        // console.log(d,'ddddd')
+        //判断d是否是星期一
         if(d==1){
-          var lastRange = getFullDate(time)
-          console.log(lastRange,"lastRange")
+          var lastRange = getFullDate(time) // 周一的年月日
           var m = getMonth(lastRange)
-          // console.log("month:" + month + ",m:" + m)
           if(month == m) {
-            var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
+            var range = null
+            if(getFullDate(timeNow)<getFullDate(time)){//这是加上上个月的最后一周
+              range = getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
+            }else{
+              range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
+            }
+            // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
-            console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
-            if(getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0) {
-              // that.time2 = range
-              that.time2 =  getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
+            // getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0
+            var endDate = range.split('~')[1]
+            var endDateTime = getTime(endDate)
+            console.log(endDate,getTodayDate(endDateTime))
+            console.log("================================================")
+            if(getTodayDate(endDateTime)>20) {
+              if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
+              range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
+              }
+              var item = {label:range,value:range}
+              arr.push(item)//这是加上这个月的最后一周
+            }
+            if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
+              console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
+              console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")
               if(isGetList == false) {
+                that.time2 = range
                 that.time2Change(that.time2)
                 isGetList = true
               }

@@ -6,8 +6,10 @@ export const ERR_OK = 201
 
 // 登录接口
 export const loginUrl = host + 'api/admin/auth/login';
-// 用户权限
-// export const permissionsUrl = host + 'api/admin/role/permissions';
+// 退出登录
+export const logoutUrl = host + 'api/admin/auth/logout';
+// 教师课程到课率月统计
+export const lastMonthSignUrl = host + 'api/admin/statistical/last-month-sign';
 // 角色列表
 export const roleListUrl = host + 'api/admin/role/list';
 // 创建修改角色
@@ -33,6 +35,7 @@ export const classListUrl = host + 'api/admin/arranging/list';
 export const editClassUrl = host + 'api/admin/arranging/edit';
 // 教师列表
 export const teacherListUrl = host + 'api/admin/teacher/list';
+export const teacherFreesUrl = host + 'api/admin/teacher/frees';
 // 教师添加空闲时间
 export const teacherFreeEditUrl = host + 'api/admin/teacher/free-edit';
 // 单个教师的空闲时间

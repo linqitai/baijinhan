@@ -29,10 +29,38 @@
       白金汉后台管理系统
     </div>
     <div class="left manage-box">
+      <div class="element margL20" v-if="role_id!=0">
+        <label class="inline">地区：{{areaName}}</label>
+    </div>
+      <div class="element margL20" v-if="role_id==0">
+        <label class="inline">地区：</label>
+        <div class="inline">
+          <el-select class="width140" size="small" v-model="sheng" @change="shengChange" placeholder="请选择">
+            <el-option
+              v-for="item in provincesList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="inline" v-if="sheng">
+          <el-select class="width140" size="small" v-model="number" @change="areaChange" placeholder="请选择">
+            <el-option
+              v-for="item in areaList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+    </div>
+    <div class="left manage-box">
       <div class="element margL20">
         <label class="inline">选择校区：</label>
         <div class="inline">
-           <el-select class="width140" size="small" v-model="school_id" @change="schoolChange" placeholder="请选择">
+          <el-select class="width140" size="small" v-model="school_id" @change="schoolChange" placeholder="请选择">
             <el-option
               v-for="item in schoolsOptions"
               :key="item.value"
@@ -46,24 +74,74 @@
     <div class="right manage-box margR20" @click="logout">
       <i class="iconfont iconstyle icon-logout"></i>退出登录
     </div>
+    <div class="right manage-box margR20" @click="logout">
+      {{username}} {{roleName}}
+    </div>
   </div>
 </template>
 <script>
 import { logoutUrl,schoolListUrl, ERR_OK } from '@/api/index'
+import { getProvinces } from '@/common/js/city'
 export default {
   data() {
     return {
-      role: '',
-      username: 'admin',
+      role_id: localStorage.getItem('role_id'),
+      areaName: localStorage.getItem('areaName'),
+      username: localStorage.getItem('en_name'),
+      roleName: localStorage.getItem('roleName'),
       icon: 'icon-manage',
       schoolsOptions:[],
+      provincesList:[],
+      areaList:[],
+      sheng:'',
+      number:'',
       school_id:''
     }
   },
   created() {
-    this.getSchoolList()
+    this.provincesList = getProvinces();
+    // console.log(this.provincesList);
+    for(var i=0;i<this.provincesList.length;i++) {
+      this.provincesList[i].label =  this.provincesList[i].name;
+      this.provincesList[i].value = this.provincesList[i].name;
+    }
+    this.getSchoolList();
   },
   methods: {
+    logout() {
+      var that = this;
+      var params = {
+        
+      }
+      var url = logoutUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.status_code,'--res.status_code--')
+        if(result.status_code == ERR_OK){
+          that.$router.replace({
+            path: '/login'
+          })
+        }
+      });
+    },
+    shengChange(value) {
+      // var areaList = []
+      for(var i=0;i<this.provincesList.length;i++) {
+        if(value == this.provincesList[i].name) {
+          this.areaList = this.provincesList[i].list;
+          break;
+        }
+      }
+      for(var i=0;i<this.areaList.length;i++) {
+        this.areaList[i].label = this.areaList[i].city;
+        this.areaList[i].value = this.areaList[i].number;
+      }
+    },
+    areaChange(value) {
+      console.log(value,"areaNumber")
+      localStorage.setItem('areaNumber', value)
+    },
     getSchoolList() {
       let that = this;
       // console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
@@ -106,18 +184,6 @@ export default {
       // localStorage.setItem('_lSidebar','setting');
       // this.$emit('childToParentEvent', 'setting')
       this.$router.push('/setting');
-    },
-    logout() {
-      /*window.localStorage.removeItem("authorization");
-      console.log(localStorage.getItem('authorization'),'--authorization---')
-      var url = logoutUrl;
-      this.$axios.post(url,null).then((res)=>{
-        var result = res.data;
-        console.log(result.status_code,'--result.status_code--');
-        if(result.status_code == ERR_OK){
-          this.$router.push('/login');
-        }
-      });*/
     },
     toFirstPage() {
       // this.$router.push('./firstPage')
