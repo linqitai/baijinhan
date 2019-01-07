@@ -174,6 +174,8 @@ export default {
       this.school_id = value
       console.log(value,"_school_id")
       localStorage.setItem("_school_id",value);
+      // alert("reload")
+      location.reload()
     },
     manage(){
       // localStorage.setItem('_lSidebar','manage');

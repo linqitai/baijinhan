@@ -170,7 +170,6 @@ export default {
       var that = this;
       var params = {
         serial: that.serial,
-        school_id: that.schoole_id
       }
       var url = getStudentListUrl;
       console.log(params,"params")
@@ -217,7 +216,6 @@ export default {
     alterSelectEvent(row) {
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         time:row.begin_time,
         user_id: that.user_id,
         arranging_id: that.arranging_id
@@ -239,7 +237,6 @@ export default {
     getList() {
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         weekth: that.weekth,
         week:that.week,
         offset: (that.pageIndex-1)*that.pageSize,

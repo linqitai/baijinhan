@@ -26,7 +26,7 @@
         <div class="element">
           <label class="inline">学号：</label>
           <div class="inline">
-             <el-input v-model="no" size="medium" placeholder="请输入所要查询的学号" clearable></el-input>
+             <el-input class="width160" v-model="no" size="medium" placeholder="请输入学号" clearable></el-input>
           </div>
           <label class="inline margL20">课程名称：</label>
           <div class="inline">
@@ -49,22 +49,21 @@
               {{scope.row.user.sex|filterSex}}
             </template>
         </el-table-column>
-        <el-table-column
-          prop="arranging.begin_time"
-          label="订课时间">
+        <el-table-column prop="arranging.begin_time" label="订课时间" width="100">
           <template slot-scope="scope">
               {{scope.row.arranging.begin_time|filterDate}}
           </template>
         </el-table-column>
         <el-table-column
           prop="arranging.course.name"
-          label="课程类型名称">
+          label="课程类型名称" width="160">
         </el-table-column>
         <el-table-column prop="arranging.lesson.name" label="话题" width="200">
+          <template slot-scope="scope">
+              <label class="ellipsis">{{scope.row.arranging.lesson.name}}</label>
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="arranging.begin_time"
-          label="上课时间">
+        <el-table-column prop="arranging.begin_time" label="上课时间" width="100">
           <template slot-scope="scope">
               {{scope.row.arranging.begin_time|filterDate}}
           </template>
@@ -73,8 +72,7 @@
           prop="arranging.room.name"
           label="教室名称">
         </el-table-column>
-        <el-table-column
-          label="操作">
+        <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleDropClick(scope.row)" type="text" size="small" icon="el-icon-close">退课</el-button>
           </template>
