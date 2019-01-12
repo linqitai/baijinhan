@@ -58,6 +58,10 @@
           label="最大选课次数" width="110">
         </el-table-column>
         <el-table-column
+          prop="capacity"
+          label="课程容量">
+        </el-table-column>
+        <el-table-column
           prop="is_use_level"
           label="是否区分等级" width="110">
           <template slot-scope="scope">
@@ -69,6 +73,13 @@
           label="课程教师类型" width="110">
           <template slot-scope="scope">
             {{scope.row.type | filterTeacherType}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="is_use_level"
+          label="是否区分等级" width="110">
+          <template slot-scope="scope">
+            {{scope.row.is_auth_drop==1?'允许':scope.row.is_auth_drop==2?'不允许':''}}
           </template>
         </el-table-column>
         <el-table-column
@@ -127,12 +138,6 @@
           </div>
         </div>
         <div class="element margT10">
-          <label class="inline">课程编号：</label>
-          <div class="inline">
-             <el-input v-model="form.serial" size="medium" placeholder="请输入内容"></el-input>
-          </div>
-        </div>
-        <div class="element margT10">
           <label class="inline">课程节数：</label>
           <div class="inline">
              <el-input v-model="form.total" size="medium" placeholder="请输入内容"></el-input>
@@ -141,7 +146,7 @@
         <div class="element margT10">
           <label class="inline">教师类型：</label>
           <div class="inline">
-            <el-select class="width140" size="medium" v-model="form.teacher_type_id" placeholder="请选择">
+            <el-select class="width140" size="medium" v-model="form.type" placeholder="请选择">
               <el-option
                 v-for="item in teacherTypeOptions"
                 :key="item.value"
@@ -152,9 +157,49 @@
           </div>
         </div>
         <div class="element margT10">
-          <label class="inline">课程人数：</label>
+          <label class="inline">课程容量：</label>
           <div class="inline">
              <el-input v-model="form.capacity" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline">允许选课次数：</label>
+          <div class="inline">
+             <el-input v-model="form.selection_count" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline">允许缺课次数：</label>
+          <div class="inline">
+             <el-input v-model="form.absent_count" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline">是否区分课程等级：</label>
+          <div class="inline">
+             <!-- <el-input v-model="form.is_use_level" size="medium" placeholder="请输入内容"></el-input> -->
+             <el-select class="width140" size="medium" v-model="form.is_use_level" placeholder="请选择">
+              <el-option
+                v-for="item in is_use_levelOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline">是否允许自助退课：</label>
+          <div class="inline">
+             <!-- <el-input v-model="form.is_auth_drop" size="medium" placeholder="请输入内容"></el-input> -->
+             <el-select class="width140" size="medium" v-model="form.is_auth_drop" placeholder="请选择">
+              <el-option
+                v-for="item in is_auth_dropOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </div>
         </div>
         <div class="element margT10">
@@ -196,18 +241,24 @@ export default {
       isShowAddCourseDialog:false,
       schoolOptions:JSON.parse(localStorage.getItem('_schoolsOptions')),
       levelOptions:[],
-      courseTypeOptions:[],
-      teacherTypeOptions:[],
+      is_use_levelOptions:[{label:'是',value:1},{label:'不是',value:2}],
+      is_auth_dropOptions:[{label:'允许',value:1},{label:'不允许',value:0}],
+      courseTypeOptions:[],// t==1?'中教':t==2?'外教':t==3?'中外教':t==4?'班主任':''
+      teacherTypeOptions:[{label:'中教',value:1},{label:'外教',value:2},{label:'中外教',value:3},{label:'班主任',value:4}],
       form: {
         school_id:localStorage.getItem("_school_id"),
         course_id:"",//OK
         serial:'',
         total:'',
         level_id:"",//ok
-        // type_id:"",//ok
+        type:"",//ok
         name:"",//ok
         teacher_type_id:'',//ok
         capacity:'',//ok
+        absent_count:'',
+        selection_count:'',
+        is_use_level:'',
+        is_auth_drop:'',
         introduction:'',//ok
         teacher_type_id:'',
         reservation:false//ok 0不需要1需要
@@ -233,7 +284,7 @@ export default {
     console.log(this.schoolOptions,"schoolOptions")
     this.getCourseLevelList();
     // this.getCourseTypeList();
-    this.getTeacherTypeList();
+    // this.getTeacherTypeList();
   },
   methods: {
     search() {
@@ -245,47 +296,36 @@ export default {
         this.title = '编辑课程'
         this.form.course_id = row.id;
         this.form.level_id = row.level_id;
-        // this.form.type_id = row.type_id; // =========================
+        this.form.type = row.type; // =========================
         this.form.name = row.name;
         this.form.serial = row.serial;
         this.form.total = row.total;
         this.form.teacher_type_id = row.type_id;
         this.form.capacity = row.capacity;
+        this.form.absent_count = row.absent_count ;
+        this.form.selection_count = row.selection_count;
+        this.form.is_use_level = row.is_use_level;
+        this.form.is_auth_drop = row.is_auth_drop;
         this.form.introduction = row.introduction;
         this.form.reservation = row.reservation?true:false;
+        console.log(this.form,"formformformformformform")
       }else{
         this.title = '新增课程'
         this.form.course_id = '';
         this.form.level_id = '';
-        // this.form.type_id = '';
+        this.form.type = '';
         this.form.name = '';
         this.form.serial = '';
         this.form.total = '';
         this.form.teacher_type_id = '';
         this.form.capacity = '';
+        this.form.absent_count = '';
+        this.form.selection_count = '';
+        this.form.is_use_level = '';
+        this.form.is_auth_drop = '';
         this.form.introduction = '';
         this.form.reservation = false;
       }
-    },
-    getTeacherTypeList() {
-      let that = this;
-      var params = {
-        school_id: this.form.school_id
-      }
-      var url = teacherTypeListUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
-        var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          // that.tableData = result.data.course;
-          that.teacherTypeOptions = result.data;
-          for(var i=0;i<that.teacherTypeOptions.length;i++){
-            that.teacherTypeOptions[i].label = that.teacherTypeOptions[i].name
-            that.teacherTypeOptions[i].value = that.teacherTypeOptions[i].id
-          }
-        }
-      });
     },
     getCourseTypeList() {
       let that = this;
@@ -296,8 +336,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.course;
           that.courseTypeOptions = result.data;
           for(var i=0;i<that.courseTypeOptions.length;i++){
@@ -316,8 +356,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.course;
           that.levelOptions = result.data.list;
           for(var i=0;i<that.levelOptions.length;i++){
@@ -336,8 +376,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.course;
           that.isShowAddCourseDialog = false;
           that.getList();
@@ -390,8 +430,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.course;
           that.getList();
           that.$message({
@@ -413,8 +453,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.course;
           that.total = result.data.count;
           if(that.total<that.pageSize) {

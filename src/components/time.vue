@@ -74,7 +74,15 @@ export default {
       var month = value.split('/')[1]
       var firstDay = value.toString() + "/1"
       var arr = []
+      var range = null
       var time = getTime(firstDay)//获取时间戳
+      var firstD = getDay(time)
+      if(firstD!=1){
+          range = getFullDate(time-oneDayTime*(firstD-1)) + "~" + getFullDate(time+(7-firstD)*oneDayTime)
+          console.log(range,"rangerangerangerangerangerange===============================range")
+          var item = {label:range,value:range}
+          arr.push(item)//这是加上这个月的最后一周
+        }
       var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
       // console.log(days,"天数")
       for(var i=0;i<days;i++){
@@ -84,12 +92,7 @@ export default {
           var lastRange = getFullDate(time) // 周一的年月日
           var m = getMonth(lastRange)
           if(month == m) {
-            var range = null
-            if(getFullDate(timeNow)<getFullDate(time)){//这是加上上个月的最后一周
-              range = getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
-            }else{
-              range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
-            }
+            range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
@@ -98,13 +101,7 @@ export default {
             var endDateTime = getTime(endDate)
             console.log(endDate,getTodayDate(endDateTime))
             console.log("================================================")
-            if(getTodayDate(endDateTime)>20) {
-              if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
-              range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
-              }
-              var item = {label:range,value:range}
-              arr.push(item)//这是加上这个月的最后一周
-            }
+            
             if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
               console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
               console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")

@@ -1,17 +1,7 @@
 <style lang="scss" scoped>
 .apply{
-  padding:12px 20px;
-  background-color: white;
   .operateTableBox{
-    margin-top: 10px;
-    padding-bottom: 10px;
-    border: 1px solid #F3F2F2;
-    background-color: #F2F2F2;
     .functionBox{
-      padding: 18px;
-      .status{
-        width: 120px;
-      }
     }
   }
 }
@@ -42,18 +32,26 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="name" label="话题名称" width="180">
+
+      <el-table :data="tableData" border style="width: 100%"  v-loading="loading">
+        <el-table-column prop="name" label="话题名称" width="260">
+          <template slot-scope="scope">
+            <label class="ellipsis">{{scope.row.name}}</label>
+          </template>
         </el-table-column>
-        <el-table-column prop="serial" label="话题编号">
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
-        </el-table-column>
-        <el-table-column prop="introduce" label="话题简介">
+        <el-table-column prop="course.name" label="课程" width="160"></el-table-column>
+        <el-table-column prop="level.name" label="等级"></el-table-column>
+        <el-table-column prop="capacity" label="选课上限"></el-table-column>
+        <el-table-column prop="teacher_type" label="教师类型"></el-table-column>
+        <el-table-column prop="created_at" label="创建时间" width="160"></el-table-column>
+        <el-table-column prop="introduce" label="话题简介" width="200">
+          <template slot-scope="scope">
+            <label class="ellipsis">{{scope.row.introduce}}</label>
+          </template>
         </el-table-column>
         <el-table-column prop="sort" label="话题顺序">
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="200">
+        <el-table-column prop="name" label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
@@ -65,6 +63,46 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="新增话题" :visible.sync="dialogAddFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
+      <div class="dialogBody">
+        <div class="element">
+          <label class="inline">课程名称：</label>
+          <div class="inline">
+            <!-- <el-input v-model="form.course_id" size="medium" placeholder="请输入内容"></el-input> -->
+            <el-select class="width120" size="medium" v-model="form.course_id" placeholder="请选择">
+              <el-option
+                v-for="item in courseOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline">话题名称：</label>
+          <div class="inline">
+             <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline width70">排序：</label>
+          <div class="inline">
+             <el-input v-model="form.sort" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline">话题介绍：</label>
+          <div class="inline">
+             <el-input v-model="form.introduce" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogAddFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureEdit">确 定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="修改话题" :visible.sync="dialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
       <div class="dialogBody">
         <div class="element">
@@ -77,6 +115,12 @@
           <label class="inline">话题编号：</label>
           <div class="inline">
              <el-input v-model="form.serial" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline width70">排序：</label>
+          <div class="inline">
+             <el-input v-model="form.sort" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
         <div class="element margT20">
@@ -94,7 +138,7 @@
   </div>
 </template>
 <script>
-import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,ERR_OK } from '@/api/index'
+import { lessonListUrl,lessonEditUrl,lessonDeleteUrl,getCourseListUrl,ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
 export default {
   data() {
@@ -102,16 +146,20 @@ export default {
       loading: true,
       pageIndex: 1, // offset/10+1
       pageSize: 8,
-      total: 0,
-      showPageTag: false,
+      total: 100,
+      title:'',
       dialogFormVisible: false,
+      dialogAddFormVisible: false,
       formLabelWidth: '120px',
+      showPageTag: false,
       tableData:[],
+      courseOptions:[],
       form: {
         lesson_id:"",
         course_id:"",
         name:"",
         serial:"",
+        sort:"",
         introduce:""
       },
       name:'',
@@ -120,12 +168,47 @@ export default {
     }
   },
   created() {
-  	this.breadCrumb = `课程${this.coursename}的话题列表`
+    this.breadCrumb = `课程${this.coursename}的话题列表`
     this.getList();
   },
   methods: {
     search() {
       this.getList();
+    },
+    addBtn() {
+      this.title="新增话题"
+      this.form = {
+        lesson_id:"",
+        course_id:"",
+        name:"",
+        serial:"",
+        sort:"",
+        introduce:""
+      }
+      this.dialogAddFormVisible = true;
+      this.getCourseList();
+    },
+    addEvent() {
+
+    },
+    getCourseList() {
+      let that = this;
+      var params = {
+        school_id: that.school_id
+      }
+      var url = getCourseListUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.courseOptions = result.data.course;
+          for(var i=0;i<that.courseOptions.length;i++){
+            that.courseOptions[i].label = that.courseOptions[i].name
+            that.courseOptions[i].value = that.courseOptions[i].id
+          }
+        }
+      });
     },
     delete() {
       let that = this;
@@ -138,8 +221,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.getList();
           that.$message({
             showClose: true,
@@ -160,38 +243,46 @@ export default {
       let that = this;
       var params = {
         schoole_id: localStorage.getItem("_school_id"),
+        lesson_id: this.form.lesson_id,
         course_id: this.form.course_id,
         name: this.form.name,
         serial: this.form.serial,
+        sort:this.form.sort,
         introduce: this.form.introduce
       }
       var url = lessonEditUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.getList();
           that.$message({
             showClose: true,
-            message: '修改成功',
+            message: '操作成功',
             type: 'success'
           });
-          that.dialogFormVisible = false;        
+          that.dialogFormVisible = false;
+          that.dialogAddFormVisible = false;        
           that.form =  {
+            lesson_id:"",
             course_id:"",
             name:"",
             serial:"",
+            sort:"",
             introduce:""
           }
+        }else{
+          that.$alert('系统出错，请向技术人员汇报', '提示');
         }
-      });
+      }).catch(error => {
+        that.$alert('系统出错，请向技术人员汇报', '提示');
+      })
     },
     getList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-      	course_id:this.$cookie.get('course_id'),
+        course_id: this.$cookie.set('course_id'),
         name:that.name,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize,
@@ -199,9 +290,10 @@ export default {
       var url = lessonListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
+        that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.lesson;
           that.total = result.data.count || 100;
           if(that.total<that.pageSize) {
@@ -213,11 +305,13 @@ export default {
       });
     },
     handleEditClick(row) {
+      this.title="修改话题"
       this.form = {
-        schoole_id: localStorage.getItem("_school_id"),
+        lesson_id:row.id,
         course_id:row.course_id,
         name:row.name,
         serial:row.serial,
+        sort:row.sort,
         introduce:row.introduce
       }
       this.dialogFormVisible = true;

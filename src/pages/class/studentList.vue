@@ -61,16 +61,9 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%" v-loading="loading">
-        <el-table-column prop="end_time" label="最后跟踪时间" width="120">
-          <template slot-scope="scope">
-              {{scope.row.end_time|filterDate}}
-           </template>
-        </el-table-column>
         <el-table-column prop="track_people.en_name" label="班主任" width="120">
         </el-table-column>
-        <el-table-column prop="contract_no" label="合同编号" width="180">
-        </el-table-column>
-        <el-table-column prop="serial" label="学号">
+        <el-table-column prop="contract_no" label="学号" width="140">
         </el-table-column>
         <el-table-column prop="cn_name" label="中文名">
         </el-table-column>
@@ -85,17 +78,15 @@
         </el-table-column>
         <el-table-column prop="home_phone" label="家庭电话" width="120">
         </el-table-column>
-        <el-table-column
-          prop="begin_level.name"
-          label="开始级别">
+        <el-table-column prop="begin_level.name" label="开始级别" width="120">
         </el-table-column>
         <el-table-column
           prop="end_level.name"
-          label="结束级别">
+          label="结束级别" width="120">
         </el-table-column>
         <el-table-column
           prop="level.name"
-          label="当前级别">
+          label="当前级别" width="120">
         </el-table-column>
         <el-table-column
           prop="status"
@@ -104,6 +95,10 @@
           <template slot-scope="scope">
               {{scope.row.status | filterStatus}}
           </template>
+        </el-table-column>
+        <el-table-column
+          prop="contract.name"
+          label="合同类型" width="120">
         </el-table-column>
         <el-table-column label="操作" width="140" fixed="right">
           <template slot-scope="scope">
@@ -244,16 +239,14 @@
           </div>
         </div>
         <div class="element margT10">
+          <label class="inline labelWidth">合同号：</label>
+          <div class="inline">
+             <el-input v-model="form.contract_no" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
           <label class="inline labelWidth">培训开始时间：</label>
           <div class="inline">
-             <!-- <el-input v-model="form.begin_time" size="medium" placeholder="请输入内容"></el-input> -->
-            <!-- <el-date-picker
-              v-model="form.begin_time"
-              type="date"
-              placeholder="选择日期"
-              format="yyyy 年 MM 月 dd 日"
-              value-format="timestamp">
-            </el-date-picker> -->
             <el-date-picker
                 v-model="form.begin_time"
                 type="date"
@@ -266,14 +259,6 @@
         <div class="element margT10">
           <label class="inline labelWidth">培训结束时间：</label>
           <div class="inline">
-             <!-- <el-input v-model="form.begin_time" size="medium" placeholder="请输入内容"></el-input> -->
-            <!-- <el-date-picker
-              v-model="form.end_time"
-              type="date"
-              placeholder="选择日期"
-              format="yyyy 年 MM 月 dd 日"
-              value-format="timestamp">
-            </el-date-picker> -->
             <el-date-picker
                 v-model="form.end_time"
                 type="date"
@@ -293,16 +278,15 @@
 </template>
 <script>
 import { getStudentListUrl,editStudentInfoUrl,courseLevelListUrl,teacherTrackUrl,contractTypeUrl,ERR_OK } from '@/api/index'
-import { getFullDate,getFullTime,getTime } from '@/common/js/utils'
+import { getFullDate,getFullTime,getTime,formClear } from '@/common/js/utils'
 export default {
   data() {
     return {
       begin_time:'',
       loading:true,
       pageIndex: 1,
-      pageSize: 6,
+      pageSize: 100,
       total: 0,
-      schoole_id: localStorage.getItem("_school_id"),
       showPageTag:false,
       no: '',
       tableData: [],
@@ -356,6 +340,7 @@ export default {
         mobile:"",
         home_phone:"",
         contract_type:"",
+        contract_no:'',
         begin_level:"",
         end_level:"",
         status:"",
@@ -390,15 +375,13 @@ export default {
     getContract_typeList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        area_id: localStorage.getItem('area_id')
       }
       var url = contractTypeUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.contract_typeOption = result.data;
           for(var i=0;i<that.contract_typeOption.length;i++){
              that.contract_typeOption[i].value = that.contract_typeOption[i].id
@@ -412,15 +395,13 @@ export default {
       // teacherTrackUrl
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        area_id: localStorage.getItem('area_id')
       }
       var url = teacherTrackUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.teacherTrackOption = result.data;
           for(var i=0;i<that.teacherTrackOption.length;i++){
              that.teacherTrackOption[i].value = that.teacherTrackOption[i].id
@@ -433,15 +414,14 @@ export default {
     getCourseLevelList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        area_id: localStorage.getItem('area_id')
+        
       }
       var url = courseLevelListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.courseLevelOption = result.data.list;
           for(var i=0;i<that.courseLevelOption.length;i++){
              that.courseLevelOption[i].value = that.courseLevelOption[i].id
@@ -460,7 +440,6 @@ export default {
       if(operate=='edit'){
         this.title = '编辑学生信息'
         this.form = {
-          schoole_id: localStorage.getItem("_school_id"),
           user_id: row.id,
           cn_name: row.cn_name,
           en_name: row.en_name,
@@ -468,6 +447,7 @@ export default {
           mobile: row.mobile,
           home_phone: row.home_phone,
           contract_type: parseInt(row.contract_type),
+          contract_no:row.contract_no,
           begin_level: row.begin_level.id,
           end_level: row.end_level.id,
           status: parseInt(row.status),
@@ -477,24 +457,8 @@ export default {
         }
       }else{
         this.title = '新增学生信息'
-        this.form = {
-          schoole_id: localStorage.getItem("_school_id"),
-          user_id:'',
-          cn_name:'',
-          en_name:'',
-          sex:'',
-          mobile:'',
-          home_phone:'',
-          contract_type:'',
-          begin_level:"",
-          end_level:"",
-          status:"",
-          track_people:"",
-          begin_time:'',
-          end_time:''
-        }
+        formClear(this.form)
       }
-      console.log(this.form,"this.form")
     },
     sureEditBtn() {
       var that = this;
@@ -505,9 +469,13 @@ export default {
       console.log(params,"params")                                                                                                          
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.$alert('修改成功');
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.$message({
+            showClose: true,
+            message: '操作成功',
+            type: 'success'
+          });
           that.getList();
           that.dialogFormVisible = false;
         }else{
@@ -526,7 +494,6 @@ export default {
       this.maskIsShow = false;
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         user_id: this.form.user_id,
         status: that.status
       }
@@ -534,9 +501,13 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.$alert('修改成功');
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.$message({
+            showClose: true,
+            message: '操作成功',
+            type: 'success'
+          });
           that.getList();
         }
       })
@@ -559,7 +530,6 @@ export default {
       var params = {
         serial: that.serial,
         en_name: that.en_name,
-        school_id: that.schoole_id,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize
       }
@@ -568,8 +538,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.user;
           that.total = result.data.count;
           if(that.total<that.pageSize) {

@@ -121,8 +121,8 @@ export default {
       console.log(params,"params")
       /*this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.lesson;
           // that.$message("修改成功")
           that.$message({
@@ -152,8 +152,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.list;
           
         }

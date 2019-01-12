@@ -63,9 +63,9 @@
               <label class="ellipsis">{{scope.row.arranging.lesson.name}}</label>
           </template>
         </el-table-column>
-        <el-table-column prop="arranging.begin_time" label="上课时间" width="100">
+        <el-table-column prop="arranging.begin_time" label="上课时间" width="140">
           <template slot-scope="scope">
-              {{scope.row.arranging.begin_time|filterDate}}
+              {{scope.row.arranging.begin_time|filterDate}} {{scope.row.arranging.hour}}点
           </template>
         </el-table-column>
         <el-table-column
@@ -78,10 +78,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <div class="tableBottom" v-show="showPageTag">
+      <div class="tableBottom" v-show="showPageTag">
         <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[4,6,8]" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -93,7 +93,7 @@ export default {
     return {
       loading: true,
       pageIndex: 1,
-      pageSize: 6,
+      pageSize: 8,
       total: 100,
       showPageTag:false,
       no: '',
@@ -139,8 +139,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.getList();
           that.$message({
             type: 'success',
@@ -155,19 +155,25 @@ export default {
     getList() {
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         serial: that.no,
-        course_name: that.courseName
+        course_name: that.courseName,
+        offset: (that.pageIndex-1)*that.pageSize,
+        limit: that.pageSize
       }
       var url = studentBookListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.tableData = result.data;
-          
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.tableData = result.data.list;
+          that.total = result.data.count;
+          if(that.total<that.pageSize) {
+            that.showPageTag = false;
+          }else{
+            that.showPageTag = true;
+          }
         }
       })
     },

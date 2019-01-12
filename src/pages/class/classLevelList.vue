@@ -38,8 +38,8 @@
               {{scope.row.school_id | filterSchool}}
            </template>
         </el-table-column>
-        <el-table-column prop="area_id" label="地区">
-        </el-table-column>
+<!--         <el-table-column prop="area_id" label="地区">
+        </el-table-column> -->
         <el-table-column prop="created_at" label="创建时间" width="160">
         </el-table-column>
         <el-table-column prop="updatad_at" label="修改时间" width="160">
@@ -76,12 +76,12 @@
              <el-input v-model="form.school_id" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
-        <div class="element margT20">
+<!--         <div class="element margT20">
           <label class="inline">地区：</label>
           <div class="inline">
              <el-input v-model="form.area_id" size="medium" placeholder="请输入内容"></el-input>
           </div>
-        </div>
+        </div> -->
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -143,8 +143,8 @@ export default {
       console.log(params,"params")
       /*this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.lesson;
           // that.$message("修改成功")
           that.$message({
@@ -173,8 +173,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.list;
           that.total = result.data.count;
           if(that.total<that.pageSize) {

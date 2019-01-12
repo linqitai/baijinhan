@@ -73,13 +73,16 @@
     <div class="operateTableBox">
       <div class="functionBox">
         <div class="element">
-          <label class="inline">教师编码：</label>
           <div class="inline">
-             <el-input v-model="serial" size="medium" placeholder="请输入所要查询的内容" clearable></el-input>
+            <el-button type="primary" size="medium" @click="operateBtn(null,'add')">新增</el-button>
+          </div>
+          <label class="inline margL20">教师编码：</label>
+          <div class="inline width140">
+             <el-input v-model="serial" size="medium" placeholder="请输入内容" clearable></el-input>
           </div>
           <label class="inline margL20">中文姓名：</label>
-          <div class="inline">
-             <el-input v-model="cn_name" size="medium" placeholder="请输入所要查询的内容" clearable></el-input>
+          <div class="inline width140">
+             <el-input v-model="cn_name" size="medium" placeholder="请输入内容" clearable></el-input>
           </div>
           <div class="inline">
             <el-button type="primary" size="medium" @click="search">查询</el-button>
@@ -138,11 +141,13 @@
               {{scope.row.school_id|filterSchool}}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template slot-scope="scope">
             <el-button @click="selectFreeTimeClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">选择空闲时间</el-button>
             <el-button @click="setClassClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">排课</el-button>
             <el-button @click="setPermissionClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">设置角色</el-button>
+            <el-button @click="operateBtn(scope.row,'edit')" type="text" size="small" icon="el-icon-edit-outline">编辑</el-button>
+            <el-button @click="deleteBtn(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -209,7 +214,7 @@
           <div class="inline">
              <el-select class="width140" v-model="teacherValue" size="medium" placeholder="请选择">
               <el-option
-                v-for="item in tableData"
+                v-for="item in teacherOption"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -268,7 +273,7 @@
           <div class="inline">
              <el-select class="width140" v-model="teacherValue" size="medium" placeholder="请选择">
               <el-option
-                v-for="item in tableData"
+                v-for="item in teacherOption"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -328,11 +333,80 @@
         <el-button type="primary" @click='setPermissionEvent'>确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="编辑教师" :visible.sync="eidtDialogFormVisible" :append-to-body="true" :fullscreen="false" width="500px">
+      <div class="dialogBody">
+        <div class="element margT10">
+          <label class="inline width120">中文名：</label>
+          <div class="inline">
+             <el-input v-model="form.cn_name" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline width120">英文名：</label>
+          <div class="inline">
+             <el-input v-model="form.en_name" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline width120">电话：</label>
+          <div class="inline">
+             <el-input v-model="form.mobile" size="medium" placeholder="请输入内容" maxlength="11"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline width120">性别：</label>
+          <div class="inline">
+             <el-select size="medium" v-model="form.sex" placeholder="请选择">
+              <el-option
+                v-for="item in sexOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline width120">教师：</label>
+          <div class="inline">
+            <!-- <el-input v-model="form.course_id" size="medium" placeholder="请输入内容"></el-input> -->
+            <el-select class="inputTitle" v-model="form.type_id" placeholder="请选择" clearable>
+              <el-option
+                v-for="item in teacherTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="element margT20">
+          <label class="inline width120">是否是班主任：</label>
+          <div class="inline">
+            <!-- <el-input v-model="form.course_id" size="medium" placeholder="请输入内容"></el-input> -->
+            <el-select class="inputTitle" v-model="form.is_track" placeholder="请选择" clearable>
+              <el-option
+                v-for="item in isMasterOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="eidtDialogFormVisible = false" size="medium">取 消</el-button>
+        <el-button type="primary" @click="operateEvent" size="medium">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,setClassMoreUrl,getRoomsUrl,courseListUrl,lessonListUrl,roleListUrl,roleBindUrl,rolePermissionsUrl,schoolListUrl,ERR_OK } from '@/api/index'
-import { getFullDate,getTime } from '@/common/js/utils'
+import { teacherListUrl,teacherFreeEditUrl,teacherFreeUrl,setClassMoreUrl,getRoomsUrl,courseListUrl,lessonListUrl,roleListUrl,roleBindUrl,rolePermissionsUrl,schoolListUrl,teacherEditUrl,teacherDeleteUrl,ERR_OK } from '@/api/index'
+import { getFullDate,getTime,hasNull,formClear } from '@/common/js/utils'
+import { getTeacherTypeOptions } from '@/common/js/teacherType'
 import mTime from '../../components/time.vue'
 var coordinatesAttr = new Array(); //先声明一维 
 for ( var i = 0; i < 8; i++) { //一维长度为8
@@ -384,6 +458,22 @@ export default {
       tableData: [],
       dialogVisible: false,
       isShowTableDialog: false,
+      eidtDialogFormVisible: false,
+      teacherTypeOptions:getTeacherTypeOptions(),
+      sexOption:[{
+        value:1,
+        label:"男"
+      },{
+        value:2,
+        label:"女"
+      }],
+      isMasterOptions:[{
+        value:1,
+        label:"是"
+      },{
+        value:0,
+        label:"不是"
+      }],
       teachers:[],
       teacherValue:'',
       coordinatesAttr:coordinatesAttr,
@@ -413,18 +503,27 @@ export default {
       isShowTableSetCourseDialog:false,
       isShowTableSetFreeDialog:false,
       roleList:[],
+      teacherOption:[],
       setPermissionDialog: false,
       roleName:"",
       user_id:"",
-      role_id:""
-      // schoolsOptions:localStorage.getItem("_schoolsOptions"))
+      role_id:"",
+      form:{
+        teacher_id:'',
+        en_name:'',
+        cn_name:'',
+        mobile:'',
+        sex:'',
+        type_id:'',
+        is_track:'',
+      },
+      operate:''
     }
   },
   created() {
     schoolsOptions = JSON.parse(localStorage.getItem("_schoolsOptions"))
-    console.log("_schoolsOptions",localStorage.getItem("_schoolsOptions"))
-    // this.getTime1Option()
-    this.getRoleList()
+    this.getRoleList();
+    this.getTearcherOption();
   },
   filters:{
     filterRole(t){
@@ -438,11 +537,8 @@ export default {
       }
     },
     filterSchool(t){
-      console.log(t,"t")
-      console.log(schoolsOptions,"schoolsOptions")
       for(var i=0;i<schoolsOptions.length;i++) {
         if(t==schoolsOptions[i].value) {
-          console.log(schoolsOptions[i].name,"schoolsOptions[i].name")
           return schoolsOptions[i].name;
         }
       }
@@ -455,16 +551,14 @@ export default {
     getRoleList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        area_id:localStorage.getItem('area_id')
       }
       var url = roleListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           roleList = result.data;
           that.roleList = roleList;
           for(var i=0;i<that.roleList.length;i++){
@@ -475,6 +569,92 @@ export default {
         }
       });
     },
+    deleteBtn(row) {
+      var that = this
+      this.$confirm(`此操作将永久删除${row.en_name}, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.deleteEvent(row);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
+    deleteEvent(row) {
+      let that = this;
+      var params = {
+         teacher_id:row.id
+      }
+      var url = teacherDeleteUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.getList();
+          that.$message({
+            showClose: true,
+            message: '操作成功',
+            type: 'success'
+          });
+        }
+      });
+    },
+    operateBtn(row,operate) {
+      var that = this;
+      this.operate = operate;
+      if(operate=='add') {
+        that.title="新增教师"
+        formClear(that.form);
+      }else{
+        that.title="编辑教师"
+        that.form = {
+          teacher_id:row.id,
+          en_name:row.en_name,
+          cn_name:row.cn_name,
+          mobile:row.mobile,
+          sex:row.sex,
+          type_id:row.type.id,
+          is_track:row.is_track,
+        }
+      }
+      this.eidtDialogFormVisible = true;
+    },
+    operateEvent() {
+      let that = this;
+      var params = that.form;
+      console.log(hasNull(params,"hasNull(params"));
+      if(that.operate=="edit"){
+        if(hasNull(params)){
+          that.$alert('所有输入框不能为空',"提示");
+          return;
+        }
+      }else{
+        delete params.teacher_id;
+        if(hasNull(params)){
+          that.$alert('所有输入框不能为空',"提示");
+          return;
+        }
+      }
+      var url = teacherEditUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.getList();
+          that.eidtDialogFormVisible = false;
+          that.$message({
+            message: '操作成功',
+            type: 'success'
+          });
+        }
+      })
+    },
     setPermissionClick(row) {
       this.setPermissionDialog = true;
       // this.roleName = row.role.name
@@ -484,7 +664,6 @@ export default {
     setPermissionEvent() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         user_id:this.user_id,
         role_id:this.role_id
       }
@@ -493,8 +672,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           this.setPermissionDialog = false;
           that.getList()
           that.$message({
@@ -524,7 +703,6 @@ export default {
     getLessonList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         course_id:that.course_id
         // offset: (that.pageIndex-1)*that.pageSize,
         // limit: that.pageSize,
@@ -533,8 +711,8 @@ export default {
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.lessonList = result.data.lesson;
           for(var i=0;i<that.lessonList.length;i++){
             that.lessonList[i].label = that.lessonList[i].name
@@ -546,14 +724,13 @@ export default {
     getRooms() {
       var that = this;
       var params = {
-        school_id: that.schoole_id
       }
       var url = getRoomsUrl;
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           that.rooms = result.data.rooms;
           // console.log(that.rooms,"that.rooms")
@@ -569,16 +746,13 @@ export default {
     getCourseList() {
       let that = this;
       var params = {
-        school_id: this.school_id,
-        // offset: (that.pageIndex-1)*that.pageSize,
-        // limit: that.pageSize,
       }
       var url = courseListUrl;
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.courseList = result.data.course;
           for(var i=0;i<that.courseList.length;i++){
             that.courseList[i].label = that.courseList[i].name
@@ -627,8 +801,8 @@ export default {
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data;
           that.getTeacherFree();
           that.$message({
@@ -729,8 +903,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data;
           this.$message({
             message: '保存成功',
@@ -766,15 +940,14 @@ export default {
       let that = this;
       var params = {
         weekth: this.weekth,
-        teacher_id: this.teacherValue,
-        school_id: this.schoole_id
+        teacher_id: this.teacherValue
       }
       var url = teacherFreeUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           var list = result.data;
           if(list.length==0){
             that.clearTable()
@@ -806,7 +979,6 @@ export default {
       var params = {
         serial:that.serial,
         cn_name:that.cn_name,
-        school_id: that.schoole_id,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize
       }
@@ -815,11 +987,11 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data.teachers;
           for(var i=0;i<that.tableData.length;i++) {
-            that.tableData[i].label = that.tableData[i].cn_name;
+            that.tableData[i].label = that.tableData[i].en_name;
             that.tableData[i].value = that.tableData[i].id;
           }
 
@@ -828,6 +1000,28 @@ export default {
             that.showPageTag = false;
           }else{
             that.showPageTag = true;
+          }
+        }
+      });
+    },
+    getTearcherOption(){
+      let that = this;
+      var params = {
+        offset: 0,
+        limit: 100
+      }
+      var url = teacherListUrl;
+      // console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.teacherOption = result.data.teachers;
+          console.log(that.teacherOption.length,"that.teacherOption.length")
+          for(var i=0;i<that.teacherOption.length;i++) {
+            that.teacherOption[i].label = that.teacherOption[i].en_name;
+            console.log(that.teacherOption[i].label,"that.teacherOption[i].label");
+            that.teacherOption[i].value = that.teacherOption[i].id;
           }
         }
       });

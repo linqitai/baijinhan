@@ -28,6 +28,15 @@ export default new Router({
       },
       children: [
         {
+          path: '/schoolRoom',
+          name: '校区教室',
+          component: (resolve) => {
+            import('../pages/class/schoolRoom').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
           path: '/attendance',
           name: '到课率',
           component: (resolve) => {

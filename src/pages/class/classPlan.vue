@@ -132,61 +132,81 @@ $height:50px;
         </div>
       </div>
     </div>
-    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="400">
-      
-      <div class="lineBox">
-        <b class="icon">*</b>
-        <b class="text">课程级别</b>
-        <el-select class="inputTitle" v-model="courseLevelValue" placeholder="请选择课程等级" @change="courseLevelChange" clearable>
-          <el-option
-            v-for="item in courseLevelOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="500px">  
+      <div v-if="!isShowDeleteBtn">
+        <div class="lineBox">
+          <b class="icon">*</b>
+          <b class="text">课程级别</b>
+          <el-select class="inputTitle" v-model="courseLevelValue" placeholder="请选择课程等级" @change="courseLevelChange" clearable>
+            <el-option
+              v-for="item in courseLevelOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="lineBox">
+          <b class="icon">*</b>
+          <b class="text">课程</b>
+          <el-select class="inputTitle" v-model="courseValue" placeholder="请选择课程" @change="courseChange" clearable>
+            <el-option
+              v-for="item in coursesOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="lineBox">
+          <b class="icon">*</b>
+          <b class="text">话题</b>
+          <el-select class="inputTitle" v-model="lessonValue" filterable remote reserve-keyword placeholder="请输入关键词" :loading="loading" clearable @change="lessonChange">
+            <el-option
+              v-for="item in options4"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="lineBox">
+          <b class="icon"></b>
+          <b class="text">教师</b>
+          <el-select class="inputTitle" v-model="teacherValue" placeholder="请选择教师" @change="getTeacherCourseEvent" clearable>
+            <el-option
+              v-for="item in teachersOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+        <span class="dialog-footer">
+          <el-button @click="isShowPaikeDialog = false" class='right margT20'>取 消</el-button>
+          <el-button class="right margT20 margR20" type="primary" @click="editClass">确 定</el-button>
+          <div style="clear: both;"></div>
+        </span>
       </div>
-      <div class="lineBox">
-        <b class="icon">*</b>
-        <b class="text">课程</b>
-        <el-select class="inputTitle" v-model="courseValue" placeholder="请选择课程" @change="courseChange" clearable>
-          <el-option
-            v-for="item in coursesOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+      <div v-else>
+        <div class="lineBox">
+          <label class="width80">课程级别：</label>{{show.lessonLevelName}}
+        </div>
+        <div class="lineBox">
+          <label class="width80">课程：</label>{{show.courseName}}
+        </div>
+        <div class="lineBox">
+          <label class="width80">话题：</label>{{show.lessonName}}
+        </div>
+        <div class="lineBox" v-if="show.tearcherName">
+          <label class="width80">教师：</label>{{show.tearcherName}}
+        </div>
+        <span class="dialog-footer">
+          <el-button @click="isShowPaikeDialog = false" class='right margT20'>取 消</el-button>
+          <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
+          <div style="clear: both;"></div>
+        </span>
       </div>
-      <div class="lineBox">
-        <b class="icon">*</b>
-        <b class="text">话题</b>
-        <el-select class="inputTitle" v-model="lessonValue" filterable remote reserve-keyword placeholder="请输入关键词" :loading="loading" clearable @change="lessonChange">
-          <el-option
-            v-for="item in options4"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </div>
-      <div class="lineBox">
-        <b class="icon"></b>
-        <b class="text">教师</b>
-        <el-select class="inputTitle" v-model="teacherValue" placeholder="请选择教师" @change="getTeacherCourseEvent" clearable>
-          <el-option
-            v-for="item in teachersOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" class="left" @click="cancel" v-if="isShowDeleteBtn">删 除</el-button>
-        <el-button @click="isShowPaikeDialog = false">取 消</el-button>
-        <el-button type="primary" @click="editClass">确 定</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -207,6 +227,7 @@ export default {
       teacherValue: '',
       isShowPaikeDialog:false,
       week:1,
+      weekTime:'',
       time1Options:[],
       time2Options:[],
       time1:"",
@@ -229,52 +250,26 @@ export default {
       options5:[],
       loading: false,
       arranging_ids:'',
-      isShowDeleteBtn: false
+      isShowDeleteBtn: false,
+      show: {
+        lessonLevelName:'',
+        courseName:'',
+        lessonName:'',
+        tearcherName:''
+      }
     }
   },
   created() {
     this.getRooms();
-    this.getTeacherList()
-    this.getCourseList()
+    // this.getCourseList()
     this.getCourseLevelList();
     // this.getlessonList();
   },
   methods: {
-    getCourseList() {
-      var that = this;
-
-      // const loading = that.$loading({
-      //   lock: true,
-      //   text: 'Loading',
-      //   spinner: 'el-icon-loading',
-      //   background: 'rgba(0, 0, 0, 0.7)'
-      // });
-
-      var params = {
-        school_id: that.schoole_id,
-        // teacher_id: that.teacherValue,
-      }
-      var url = getTeacherCourseUrl;
-      // console.log(params,"=========params============")
-      that.$axios.post(url,params).then((res)=>{
-        // loading.close();
-        // console.log(res,"resresresres")
-        var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.coursesOption = result.data.course;
-          for(var i=0;i<that.coursesOption.length;i++){
-             that.coursesOption[i].value = that.coursesOption[i].id
-             that.coursesOption[i].label = that.coursesOption[i].name
-          }
-          // console.log(that.coursesOption,"that.coursesOption")
-        }
-      });
-    },
     getTeacherList() {
       var that = this;
       var params = {
-        school_id: that.schoole_id,
+        time: that.weekTime,
         offset: 0,
         limit: 1000
       }
@@ -282,7 +277,7 @@ export default {
       // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        if(result.status_code == ERR_OK){
+        if(result.code == ERR_OK){
           that.teachersOption = result.data.teachers;
           if(that.teachersOption){
             for(var i=0;i<that.teachersOption.length;i++){
@@ -299,8 +294,7 @@ export default {
     getlessonList() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        coure_id: this.course_id,
+        course_id: this.course_id,
         course_level_id: this.course_level_id,
         // offset: 0,
         // limit: 1000
@@ -309,8 +303,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.lessonOption = result.data.lesson;
           var aaa = [];
           for(var i=0;i<that.lessonOption.length;i++){
@@ -326,6 +320,61 @@ export default {
         }
       });
     },
+    lessonChange(value) {
+      this.lesson_id = value;
+    },
+    statistics() {
+      this.$router.push('./orderClassOne');
+    },
+    courseChange(value) {
+      console.log(value,"value");
+      this.course_id = value;
+      this.lessonValue = ''
+      this.teacherValue = ''
+      // 获取话题列表
+      this.getlessonList();
+    },
+    getCourseList() {
+      var that = this;
+      var params = {
+      }
+      var url = getTeacherCourseUrl;
+      // console.log(params,"=========params============")
+      that.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.coursesOption = result.data.course;
+          for(var i=0;i<that.coursesOption.length;i++){
+             that.coursesOption[i].value = that.coursesOption[i].id
+             that.coursesOption[i].label = that.coursesOption[i].name
+          }
+          // console.log(that.coursesOption,"that.coursesOption")
+        }
+      });
+    },
+    courseLevelChange(value) {
+      var that = this;
+      this.course_level_id = value
+      this.lessonValue = ''
+      this.getCourseList();
+      this.teacherValue = ''
+      console.log(value,"course_level_id")
+      console.log(that.courseLevelOption,"that.courseLevelOptionthat.courseLevelOption")
+      for (var i = 0; i < that.courseLevelOption.length; i++) {
+        console.log(i,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+        if(that.courseLevelOption[i].id==value) {
+          that.coursesOption = that.courseLevelOption[i].courses
+          for(var i=0;i<that.coursesOption.length;i++){
+             that.coursesOption[i].value = that.coursesOption[i].id
+             that.coursesOption[i].label = that.coursesOption[i].name
+          }
+          break;
+        }
+      }
+      // 获取话题列表
+      // this.getlessonList();
+    },
     getCourseLevelList() {
       let that = this;
       var params = {
@@ -336,8 +385,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.courseLevelOption = result.data.list;
           for(var i=0;i<that.courseLevelOption.length;i++){
              that.courseLevelOption[i].value = that.courseLevelOption[i].id
@@ -345,25 +394,6 @@ export default {
           }
         }
       });
-    },
-    lessonChange(value) {
-      this.lesson_id = value
-    },
-    statistics() {
-      this.$router.push('./orderClassOne');
-    },
-    courseChange(value) {
-      console.log(value,"value");
-      this.course_id = value;
-      this.lessonValue = ''
-      // 获取话题列表
-      this.getlessonList();
-    },
-    courseLevelChange(value) {
-      this.course_level_id = value
-      this.lessonValue = ''
-      // 获取话题列表
-      this.getlessonList();
     },
     getRooms() {
       var that = this;
@@ -374,8 +404,8 @@ export default {
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           that.rooms = result.data.rooms;
           that.initList();
@@ -388,11 +418,16 @@ export default {
     },
     openDialogModel(item) {
       var that = this;
+      that.lessonValue = '';
       if(item.id) {
         that.isShowDeleteBtn = true;
       }else{
         that.isShowDeleteBtn = false;
       }
+      that.show.lessonLevelName = item.lessonLevelName;
+      that.show.courseName = item.courseName;
+      that.show.lessonName = item.lessonName;
+      that.show.tearcherName = item.teacherName;
       console.log(item,"itemtitemitem")
       that.room_id = item.room_id;
       that.hour = item.hour;
@@ -409,7 +444,13 @@ export default {
       that.course_id = item.course_id;
       that.course_level_id = item.level_id;
       that.lesson_id = item.lesson_id;
-      that.getlessonList();
+
+      //获取时间 weekTime
+      var weekTime = getTime(that.time2.split('~')[0])+getTime(oneDayTime*(that.week-1))+getTime(oneDayTime*(that.hour/24))
+      console.log(weekTime,"weekTime")
+      that.weekTime = weekTime/1000
+      // that.getlessonList();
+      that.getTeacherList();
     },
     cancel() {
       var that = this;
@@ -422,8 +463,8 @@ export default {
       // console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.isShowPaikeDialog = false;
           that.getList();
           that.$message({
@@ -449,20 +490,22 @@ export default {
       // console.log(params,"=========params============")
 
       that.$axios.post(url,params).then((res)=>{
-        // console.log(res,"resresresres")
+        console.log(res,"resresresres")
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // console.log("success")
           that.clearPaikeDialog()
           that.getList();
           that.isShowPaikeDialog = false
-        }else if(result.status_code == 433) {
+        }else if(result.code == 433) {
           // that.$alert(result.message, '提示');
           that.$alert('该教室已有课程', '提示');
-        }else if(result.status_code == 422){
-          that.$alert('请检查必填项', '提示');
+        }else if(result.code == 422){
+          that.$alert(result.message, '提示');
         } 
+      }).catch(res=>{
+        that.$alert('参数错误', '提示');
       });
     },
     clearPaikeDialog(){
@@ -517,7 +560,7 @@ export default {
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
         // console.log(result,'--result--')
-        if(result.status_code == ERR_OK){
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           var arranging = result.data.arranging;
           // console.log(arranging,"arranging");
@@ -559,6 +602,7 @@ export default {
                 for(var k=0;k<list[j].blocks.length;k++){
                   if(list[j].blocks[k].roomName==arr[i].roomName){
                     list[j].blocks[k].id = arr[i].id;
+                    list[j].blocks[k].hour = arr[i].hour;
                     list[j].blocks[k].level_id = arr[i].level_id;
                     list[j].blocks[k].teacher_id = arr[i].teacher_id;
                     list[j].blocks[k].course_id = arr[i].course_id;
@@ -600,8 +644,8 @@ export default {
       // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.getList();
           that.$message({
             type: 'success',
@@ -637,8 +681,8 @@ export default {
       // console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.getList();
           that.$message({
             type: 'success',
@@ -670,7 +714,15 @@ export default {
       var month = value.split('/')[1]
       var firstDay = value.toString() + "/1"
       var arr = []
+      var range = null
       var time = getTime(firstDay)//获取时间戳
+      var firstD = getDay(time)
+      if(firstD!=1){
+          range = getFullDate(time-oneDayTime*(firstD-1)) + "~" + getFullDate(time+(7-firstD)*oneDayTime)
+          console.log(range,"rangerangerangerangerangerange===============================range")
+          var item = {label:range,value:range}
+          arr.push(item)//这是加上这个月的最后一周
+        }
       var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
       // console.log(days,"天数")
       for(var i=0;i<days;i++){
@@ -680,12 +732,7 @@ export default {
           var lastRange = getFullDate(time) // 周一的年月日
           var m = getMonth(lastRange)
           if(month == m) {
-            var range = null
-            if(getFullDate(timeNow)<getFullDate(time)){//这是加上上个月的最后一周
-              range = getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
-            }else{
-              range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
-            }
+            range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
@@ -694,13 +741,14 @@ export default {
             var endDateTime = getTime(endDate)
             console.log(endDate,getTodayDate(endDateTime))
             console.log("================================================")
-            if(getTodayDate(endDateTime)>20) {
-              if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
-              range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
-              }
-              var item = {label:range,value:range}
-              arr.push(item)//这是加上这个月的最后一周
-            }
+            // if(getTodayDate(endDateTime)>20) {
+            //   if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
+            //   range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
+            //   }
+            //   var item = {label:range,value:range}
+            //   arr.push(item)//这是加上这个月的最后一周
+            // }
+            
             if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
               console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
               console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")
@@ -760,7 +808,7 @@ export default {
     },
     changeweek(){
       var that = this;
-      // console.log(that.week,"week")
+      console.log(that.week,"week")
       if(that.weekth==""){
         that.$alert('请先选择排课周期', '提示');
       }else{

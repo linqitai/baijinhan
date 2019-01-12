@@ -60,12 +60,6 @@
             <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
-        <!-- <div class="element margT20">
-          <label class="inline width70">等级：</label>
-          <div class="inline">
-            <el-input v-model="form.level" size="medium" placeholder="请输入内容"></el-input>
-          </div>
-        </div> -->
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogAddFormVisible = false">取 消</el-button>
@@ -161,8 +155,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.rolePermissions = result.data;
           console.log(that.rolePermissions,"that.rolePermissions");
          
@@ -200,8 +194,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.$message({
             showClose: true,
             message: '操作成功',
@@ -248,8 +242,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.roleOne = result.data;
           console.log(that.rolePermissions,"rolePermissions")
           console.log(that.roleOne,"roleOne")
@@ -300,8 +294,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data;
           that.total = result.data.count || 0;
           if(that.total<that.pageSize) {
@@ -333,7 +327,6 @@ export default {
     operateEvent() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         role_id: this.form.role_id,
         name: this.form.name
       }
@@ -341,47 +334,43 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          // that.getList();
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.getList();
           that.$message({
             showClose: true,
             message: '操作成功',
             type: 'success'
           });
           that.dialogAddFormVisible = false;
-
         }
       });
     },
     delete() {
+      that.$message({
+        showClose: true,
+        message: '接口缺失',
+        type: 'success'
+      });
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        lesson_id: this.form.lesson_id,
         is_deleted: 1
       }
-      var url = lessonDeleteUrl;
+      // var url = lessonDeleteUrl;
       console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
-        var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-          that.getList();
-          that.$message({
-            showClose: true,
-            message: '修改成功',
-            type: 'success'
-          });
-          that.dialogFormVisible = false;        
-          that.form =  {
-            course_id:"",
-            name:"",
-            serial:"",
-            introduce:""
-          }
-        }
-      });
+      // this.$axios.post(url,params).then((res)=>{
+      //   var result = res.data;
+      //   console.log(result.code,'--res.code--')
+      //   if(result.code == ERR_OK){
+      //     that.getList();
+      //     that.$message({
+      //       showClose: true,
+      //       message: '修改成功',
+      //       type: 'success'
+      //     });
+      //     that.dialogFormVisible = false;   
+      //   }
+      // });
     },
     getList() {
       let that = this;
@@ -394,8 +383,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data;
           that.total = result.data.count || 0;
           if(that.total<that.pageSize) {

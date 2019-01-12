@@ -84,15 +84,17 @@ $height:50px;
         </el-table-column>
         <el-table-column
           prop="course.name"
-          label="课程名称">
+          label="课程名称" width="120">
         </el-table-column>
         <el-table-column
-          prop="type.name"
-          label="课程类型">
+          prop="lesson.name"
+          label="话题名称" width="240">
         </el-table-column>
         <el-table-column
-          prop="role.name"
-          label="已选人数">
+          prop="lesson.level.name"
+          label="课程级别" width="120">
+        </el-table-column>
+        <el-table-column prop="users_count" label="已选人数">
         </el-table-column>
         <el-table-column prop="capacity" label="可选人数">
         </el-table-column>
@@ -125,7 +127,6 @@ export default {
       pageSize: 6,
       total: 100,
       showPageTag:false,
-      schoole_id: localStorage.getItem("_school_id"),
       weekth:'',
       courseValue: '',
       teacherValue: '',
@@ -146,7 +147,8 @@ export default {
       serial:"",
       en_name:"",
       user_id:"",
-      arranging_id:""
+      arranging_id:"",
+      level_id:''
     }
   },
   components: {
@@ -168,6 +170,9 @@ export default {
     },
     searchBySerial() {
       var that = this;
+      if(that.serial=='') {
+        that.$alert('请先输入学号', '提示');
+      }
       var params = {
         serial: that.serial,
       }
@@ -175,17 +180,21 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           var user = result.data.user;
+          console.log(user,"useruser")
           if(user.length>0) {
             that.en_name = user[0].en_name;
             that.user_id = user[0].id;
+            that.level_id = user[0].level.id;
+            console.log(that.level_id,"level_id")
             // that.cn_name = user[0].cn_name;
             that.studentInfo = `英文名：${user[0].en_name},中文名：${user[0].cn_name}`
           }else{
             that.studentInfo = '并无此学生'
           }
+          that.getList()
         }
       })
     },
@@ -224,8 +233,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // var user = result.data.user;
           this.$message({
             type: 'success',
@@ -238,7 +247,8 @@ export default {
       var that = this;
       var params = {
         weekth: that.weekth,
-        week:that.week,
+        level_id: that.level_id,
+        week: that.week,
         offset: (that.pageIndex-1)*that.pageSize,
         limit: that.pageSize
       }
@@ -248,7 +258,7 @@ export default {
         that.loading = false;
         var result = res.data;
         console.log(result,'--result--')
-        if(result.status_code == ERR_OK){
+        if(result.code == ERR_OK){
           that.tableData = result.data.list;
           that.total = result.data.count;
           if(that.total<that.pageSize) {

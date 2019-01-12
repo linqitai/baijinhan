@@ -178,8 +178,6 @@ export default {
         complete: function( xhr,data ){
           this.authorization = xhr.getResponseHeader('authorization')
           localStorage.setItem('authorization', xhr.getResponseHeader('authorization'));
-          console.log(xhr.getResponseHeader('authorization'),'authorization')
-          console.log(data,'data')
         },
         success : function(res) { 
           console.log(res.status_code,'==res.status_code==')
@@ -192,11 +190,8 @@ export default {
             localStorage.setItem("areaName",res.data.area.name);
             localStorage.setItem("en_name",res.data.en_name);
             localStorage.setItem("roleName",res.data.role.name);
-            
-            console.log("school_id:",res.data.school_id)
             that.$cookie.set('currentTitleId',0);
-            that.$router.push('./orderClassList')
-            console.log("成功");
+            that.$router.push('./orderClassList');
           }else{
             console.log("失败");
           }

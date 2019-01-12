@@ -29,7 +29,7 @@
 <script>
 // import { ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
-import {ERR_OK} from "@/api/index"
+import {courseSettingUrl,ERR_OK} from "@/api/index"
 export default {
   data() {
     return {
@@ -37,10 +37,27 @@ export default {
     }
   },
   created() {
-    
+    this.getData();
   },
   methods: {
-    
+    getData() {
+      var that = this;
+      var params = {
+      }
+      var url = courseSettingUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          // that.$message({
+          //   showClose: true,
+          //   message: '操作成功',
+          //   type: 'success'
+          // });
+        }
+      })
+    },
   }
 }
 </script>

@@ -76,7 +76,7 @@
 <script>
 import { rolePermissionsUrl,roleOneUrl,ERR_OK } from '@/api/index'
 var menu = [
-            {icon:'fa-navicon',title:'课程',
+            {title:'课程',
             subs:[
                   {id:0,text:'订课总览',path:'/orderClassList'},
                   {id:1,text:'课程安排',path:'/classplan'},
@@ -87,12 +87,12 @@ var menu = [
                   {id:6,text:'代退课',path:'/studentBookList'},
                   {id:7,text:'代订课',path:'/alterSelectCourse'},
              ]},
-            {icon:'fa-navicon',title:'教师',
+            {title:'教师',
             subs:[
                   {id:0,text:'教师列表',path:'/teacherList'},
                   {id:1,text:'教师排班明细表',path:'/teachersArranging'}
             ]},
-            {icon:'fa-navicon',title:'学生',
+            {title:'学生',
             subs:[
                   {id:0,text:'学生列表',path:'/studentList'},
                   {id:1,text:'学生等级列表',path:'/studentLevelList'}
@@ -136,8 +136,8 @@ export default {
       console.log(params,"params================================================")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.mSidebar = result.data;
           for(var i=0;i<that.mSidebar.length;i++){
             for(var j=0;j<that.mSidebar[i].subs.length;j++) {
@@ -165,8 +165,8 @@ export default {
       this.$axios.post(url,params).then((res)=>{
         that.loading = false;
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.roleOne = result.data;
           
           // var permission_id_arr = []

@@ -10,6 +10,23 @@ export const loginUrl = host + 'api/admin/auth/login';
 export const logoutUrl = host + 'api/admin/auth/logout';
 // 教师课程到课率月统计
 export const lastMonthSignUrl = host + 'api/admin/statistical/last-month-sign';
+// 同意退课
+export const agreeDropUrl = host + 'api/admin/arranging/agree';
+// 教师编辑
+export const teacherEditUrl = host + 'api/admin/teacher/edit';
+// 教师删除
+export const teacherDeleteUrl = host + 'api/admin/teacher/delete';
+// 教室删除
+export const roomDeleteUrl = host + 'api/admin/room/delete';
+
+// 课程设置
+export const courseSettingUrl = host + 'api/admin/course/setting';
+
+// 校区教室
+export const roomListUrl = host + 'api/admin/room/list';
+// 教室编辑与新增
+export const roomEditUrl = host + 'api/admin/room/edit';
+
 // 角色列表
 export const roleListUrl = host + 'api/admin/role/list';
 // 创建修改角色

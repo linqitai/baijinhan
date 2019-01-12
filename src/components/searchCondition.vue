@@ -42,7 +42,7 @@
     .element {
       float: left;
       margin-right: 15px;
-      margin-top: 10px;
+      margin-top: 15px;
       &:last-child {
         margin-right: 0px;
       }
@@ -57,7 +57,7 @@
     </div>
     <div class="btnBox">
       <div class="btn">
-        <el-button type="primary" @click="searchData">筛选</el-button>
+        <el-button type="primary" @click="searchData" size="medium">筛选</el-button>
       </div>
       <div class="icon" @click="moreBtn" v-if="isShowMoreBtn">
         <i class="el-icon-caret-bottom moreIcon" :class="{iconTransform:isTwoLiine==true}"></i>

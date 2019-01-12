@@ -217,8 +217,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           that.rooms = result.data.rooms;
           that.initList();
@@ -242,8 +242,8 @@ export default {
       that.$axios.post(url,params).then((res)=>{
         console.log(res,"resresresres")
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.coursesOption = result.data.course;
           for(var i=0;i<that.coursesOption.length;i++){
             var serial = that.coursesOption[i].serial
@@ -266,8 +266,8 @@ export default {
       console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           console.log(result.data.teachers,"result.data.teachers;")
           that.teachersOption = result.data.teachers;
@@ -315,12 +315,12 @@ export default {
       that.$axios.post(url,params).then((res)=>{
         console.log(res,"resresresres")
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           console.log("success")
           that.getList();
           that.isShowPaikeDialog = false
-        }else if(result.status_code == 433) {
+        }else if(result.code == 433) {
           that.$alert(result.message, '提示');
         }
       });
@@ -376,7 +376,7 @@ export default {
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result,'--result--')
-        if(result.status_code == ERR_OK){
+        if(result.code == ERR_OK){
           // that.tableData = result.data.category;
           var arranging = result.data;
           console.log(arranging,"arranging");
@@ -445,8 +445,8 @@ export default {
       console.log(params,"params")
       that.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.$message({
             type: 'success',
             message: '操作成功!'
@@ -478,7 +478,15 @@ export default {
       var month = value.split('/')[1]
       var firstDay = value.toString() + "/1"
       var arr = []
+      var range = null
       var time = getTime(firstDay)//获取时间戳
+      var firstD = getDay(time)
+      if(firstD!=1){
+          range = getFullDate(time-oneDayTime*(firstD-1)) + "~" + getFullDate(time+(7-firstD)*oneDayTime)
+          console.log(range,"rangerangerangerangerangerange===============================range")
+          var item = {label:range,value:range}
+          arr.push(item)//这是加上这个月的最后一周
+        }
       var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
       // console.log(days,"天数")
       for(var i=0;i<days;i++){
@@ -488,12 +496,7 @@ export default {
           var lastRange = getFullDate(time) // 周一的年月日
           var m = getMonth(lastRange)
           if(month == m) {
-            var range = null
-            if(getFullDate(timeNow)<getFullDate(time)){//这是加上上个月的最后一周
-              range = getFullDate(time-oneDayTime*7)+"~"+getFullDate(time-oneDayTime)
-            }else{
-              range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
-            }
+            range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
             var item = {label:range,value:range}
             arr.push(item)
@@ -502,13 +505,7 @@ export default {
             var endDateTime = getTime(endDate)
             console.log(endDate,getTodayDate(endDateTime))
             console.log("================================================")
-            if(getTodayDate(endDateTime)>20) {
-              if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
-              range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
-              }
-              var item = {label:range,value:range}
-              arr.push(item)//这是加上这个月的最后一周
-            }
+            
             if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
               console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
               console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")

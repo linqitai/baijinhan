@@ -117,8 +117,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.$router.replace({
             path: '/login'
           })
@@ -152,8 +152,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        // console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        // console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.schoolsOptions = result.data.school;
           for(var i=0;i<that.schoolsOptions.length;i++){
             that.schoolsOptions[i].label = that.schoolsOptions[i].name

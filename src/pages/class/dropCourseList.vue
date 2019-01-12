@@ -34,9 +34,7 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column
-          prop="user.serial"
-          label="学号">
+        <el-table-column prop="user.serial" label="学号" width="100">
         </el-table-column>
         <el-table-column
           prop="user.en_name"
@@ -77,7 +75,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-button @click="operate(scope.row)" type="text" size="small" icon="el-icon-edit-outline">同意</el-button>
+            <el-button @click="operateBtn(scope.row,'agreeDrop')" type="text" size="small" icon="el-icon-edit-outline">同意</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -89,7 +87,7 @@
   </div>
 </template>
 <script>
-import { dropsListUrl,ERR_OK } from '@/api/index'
+import { dropsListUrl,agreeDropUrl,ERR_OK } from '@/api/index'
 import { getFullDate,getFullTime } from '@/common/js/utils'
 export default {
   data() {
@@ -118,8 +116,51 @@ export default {
     this.getList()
   },
   methods: {
-    operate(row) {
-
+    operateBtn(row,operate) {
+      var that = this
+      var message = ''
+      if(operate=='agreeDrop') {
+        message=`此操作将同意${row.user.en_name}退课，是否继续？`
+      }
+      this.$confirm( message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.agreeDropEvent(row);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
+    agreeDropEvent(row) {
+      let that = this;
+      var params = {
+        user_id: row.user.id,
+        arranging_id: row.arranging_id
+      }
+      var url = agreeDropUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          that.getList();
+          that.$message({
+            showClose: true,
+            message: '操作成功',
+            type: 'success'
+          });
+        }
+      }).catch(res=>{
+        that.$message({
+          showClose: true,
+          message: '系统故障',
+          type: 'warning'
+        });
+      });
     },
     search() {
       this.getList();
@@ -127,7 +168,6 @@ export default {
     getList() {
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         serial: that.serial
         // school_id: that.schoole_id
       }
@@ -135,8 +175,8 @@ export default {
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
           that.tableData = result.data;
           
         }
