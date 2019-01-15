@@ -188,6 +188,15 @@ export default new Router({
               resolve(module)
             })
           }
+        },
+        {
+          path: '/trackStudent',
+          name: '角色列表',
+          component: (resolve) => {
+            import('../pages/class/trackStudent').then((module) => {
+              resolve(module)
+            })
+          }
         }
       ]
     }

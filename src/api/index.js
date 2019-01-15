@@ -10,6 +10,7 @@ export const loginUrl = host + 'api/admin/auth/login';
 export const logoutUrl = host + 'api/admin/auth/logout';
 // 教师课程到课率月统计
 export const lastMonthSignUrl = host + 'api/admin/statistical/last-month-sign';
+export const trackArranging = host + 'api/admin/statistical/track-arranging';
 // 同意退课
 export const agreeDropUrl = host + 'api/admin/arranging/agree';
 // 教师编辑

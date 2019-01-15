@@ -29,21 +29,34 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 // Vue.use(utils)
-
-
 axios.defaults.timeout = 5000
  
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   config.headers.authorization = localStorage.getItem('authorization');
-  config.data.school_id = localStorage.getItem('_school_id');
-  config.data.area_id = localStorage.getItem('area_id');
+  // config.data.school_id = localStorage.getItem('_school_id');
+  // config.data.area_id = localStorage.getItem('area_id');
   // 参数格式转换
-  if(config.method=="post"){
-    config.data = qs.stringify(config.data);
-  }else if(config.method=="get"){
-    config.data = JSON.stringify(config.data);
-  }
+  if(config.method === 'post') {
+    let data = qs.parse(config.data)
+
+    config.data = qs.stringify({
+      school_id: localStorage.getItem('_school_id'),
+        area_id: localStorage.getItem('area_id'),
+        ...data
+    })
+} else if(config.method === 'get') {
+    config.params = {
+      school_id: localStorage.getItem('_school_id') ,
+      area_id: localStorage.getItem('area_id'),
+        ...config.params
+    }
+}
+  // if(config.method=="post"){
+  //   config.data = qs.stringify(config.data);
+  // }else if(config.method=="get"){
+  //   config.data = JSON.stringify(config.data);
+  // }
   return config;
 }, function (error) {
   // 对请求错误做些什么
