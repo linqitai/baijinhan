@@ -123,8 +123,8 @@
                 <div style="min-width: 160px;">
                   <div :class="[item.is_released==1?'blue':'gray']" v-if="item.lessonName">
                     <div class="">{{item.lessonSerial}}({{item.users_count}}-{{item.capacity}})</div>
-                    <div>{{item.lessonName}}</div>
-                    <div>{{item.teacherName}}</div>
+                    <div>{{item.courseName}}</div>
+                    <div>{{item.lessonName}} {{item.teacherName}}</div>
                   </div>
                 </div>
               </td>
@@ -412,7 +412,8 @@ export default {
                 week:obj[j].week,
                 hour:obj[j].hour,
                 lessonSerial:obj[j].course.serial,
-                lessonName:obj[j].course.name,
+                lessonName:obj[j].lesson.name,
+                courseName:obj[j].course.name,
                 teacherName:obj[j].teacher?obj[j].teacher.en_name:'',
                 roomName:obj[j].room.name,
                 is_released:obj[j].is_released,
@@ -435,6 +436,7 @@ export default {
                   if(list[j].blocks[k].roomName==arr[i].roomName){
                     list[j].blocks[k].lessonSerial = arr[i].lessonSerial;
                     list[j].blocks[k].lessonName = arr[i].lessonName;
+                    list[j].blocks[k].courseName = arr[i].courseName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
                     list[j].blocks[k].is_released = arr[i].is_released;
                     list[j].blocks[k].users_count = arr[i].users_count;
