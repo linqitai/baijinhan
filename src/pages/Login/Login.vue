@@ -189,7 +189,7 @@ export default {
             localStorage.setItem("_school_id",res.data.school_id);
             localStorage.setItem("areaName",res.data.area.name);
             localStorage.setItem("en_name",res.data.en_name);
-            localStorage.setItem("roleName",res.data.role.name);
+            localStorage.setItem("roleName",res.data.role!=null?res.data.role.name:'');
             that.$cookie.set('currentTitleId',0);
             that.$router.push('./orderClassList');
           }else{
