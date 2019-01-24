@@ -114,7 +114,10 @@ export const alterSelectUrl = host + 'api/admin/teacher/help-choose';
 export const rolePermissionsUrl = host + 'api/admin/role/permissions';
 // 同步角色权限
 export const roleChooseUrl = host + 'api/admin/role/choose';
-
-
+//结课动作
+export const closeLessonUrl = host+'api/admin/user/close-lesson'
+//个人可以结课列表
+export const waitCloseLessonUrl = host+'api/admin/user/wait-close-lesson'
+//个人已结课
 
 

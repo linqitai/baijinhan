@@ -38,12 +38,13 @@
                 :key="item.id"
                 :label="item.en_name" 
                 :value="item.id"
+                @click="choose"
               ></el-option>
             </el-select>
           </div>
-          <div class="inline">
+          <!-- <div class="inline">
             <el-button type="primary" size="medium" @click="search">查询</el-button>
-          </div>
+          </div> -->
         </div>
         <div class="element" style="float:left;margin-left:20px">
           <label class="inline">时间选择</label>
@@ -147,11 +148,11 @@ export default {
           if (result.code == ERR_OK) {
             that.tracksList = result.data;
             that.tracksChoosed = result.data[0].id
-            that.$message({
-              showClose: true,
-              message: "操作成功",
-              type: "success"
-            });
+            // that.$message({
+            //   showClose: true,
+            //   message: "操作成功",
+            //   type: "success"
+            // });
             that.arranging();
           }
         })
@@ -163,8 +164,7 @@ export default {
           });
         });
     },
-    arranging:function(e){
-      console.log(e,'!!!!!')
+    arranging:function(){
       let that = this;
       let url  = trackArranging+
        "?school_id=" +
@@ -187,11 +187,15 @@ export default {
           if (result.code == ERR_OK) {
             that.students = result.data.student;
             that.total = result.data.count;
-            that.$message({
-              showClose: true,
-              message: "操作成功",
-              type: "success"
-            });
+            if(that.total<=that.pageSize)
+              that.showPageTag = false; 
+            else
+               that.showPageTag = true; 
+            // that.$message({
+            //   showClose: true,
+            //   message: "操作成功",
+            //   type: "success"
+            // });
           }
         })
         .catch(res => {
