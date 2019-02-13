@@ -21,6 +21,13 @@
     }
   }
 }
+.el-dropdown-link {
+  cursor: pointer;
+  color: white;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
 </style>
 <template>
   <div class="header">
@@ -71,12 +78,41 @@
         </div>
       </div>
     </div>
-    <div class="right manage-box margR20" @click="logout">
+    <el-dropdown class="right manage-box margR20" @command="handleCommand">
+      <span class="el-dropdown-link">
+        {{username}} {{roleName}}<i class="el-icon-arrow-down el-icon--right"></i>
+      </span>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item command="edit">修改密码</el-dropdown-item>
+        <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+    <!-- <div class="right manage-box margR20" @click="logout">
       <i class="iconfont iconstyle icon-logout"></i>退出登录
     </div>
-    <div class="right manage-box margR20" @click="logout">
+    <div class="right manage-box margR20">
       {{username}} {{roleName}}
-    </div>
+    </div> -->
+    <el-dialog title="修改密码" :visible.sync="editPDialog" :append-to-body="true" :fullscreen="false" width="500px">
+      <div class="dialogBody">
+        <div class="element margT10">
+          <label class="inline">旧密码：</label>
+          <div class="inline">
+             <el-input v-model="oldP" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+        <div class="element margT10">
+          <label class="inline">新密码：</label>
+          <div class="inline">
+             <el-input v-model="newP" size="medium" placeholder="请输入内容"></el-input>
+          </div>
+        </div>
+      </div>  
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editPDialog = false">取 消</el-button>
+        <el-button type="primary" @click="savePEvent">提 交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -95,7 +131,8 @@ export default {
       areaList:[],
       sheng:'',
       number:'',
-      school_id:''
+      school_id:'',
+      editPDialog: false
     }
   },
   created() {
@@ -108,6 +145,24 @@ export default {
     this.getSchoolList();
   },
   methods: {
+    savePEvent() {
+
+    },
+    handleCommand(command) {
+      let that = this;
+      // this.$message('click on item ' + command);
+      switch (command) {
+        case 'edit':
+          that.editPDialog = true;
+          break;
+        case 'logout':
+          that.logout()
+          break;
+        default:
+          // statements_def
+          break;
+      }
+    },
     logout() {
       var that = this;
       var params = {

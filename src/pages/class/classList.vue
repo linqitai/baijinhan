@@ -1,4 +1,5 @@
 <style lang="scss" scoped>
+
 .apply{
   .operateTableBox{
     .functionBox{

@@ -175,6 +175,7 @@ export default {
         data : params, 
       }).then(res=>{
         var result = res.data;
+        console.log(result,"result")
         if(result.status_code == 200){
             localStorage.setItem('login_id',result.data.id);
             localStorage.setItem('area_id',result.data.area_id);
@@ -186,6 +187,12 @@ export default {
             localStorage.setItem("roleName",result.data.role.name);
             that.$cookie.set('currentTitleId',0);
             that.$router.push('./orderClassList');
+        }
+        if(result.code == 433) {
+          that.$message({
+            type: 'info',
+            message: result.message
+          });
         }
         this.authorization = res.headers.authorization;
         localStorage.setItem('authorization', this.authorization);
