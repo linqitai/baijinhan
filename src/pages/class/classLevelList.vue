@@ -47,6 +47,7 @@
         <el-table-column prop="name" label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
+            <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">等级可见课程</el-button>
             <el-button @click="handleDeleteClick(scope.row)" type="text" size="small" icon="el-icon-close">删除</el-button>
           </template>
         </el-table-column>
@@ -88,6 +89,11 @@
         <el-button type="primary" @click="sureEdit">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 设置等级弹窗 -->
+    <el-dialog>
+      
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -98,7 +104,7 @@ export default {
     return {
       showPageTag:false,
       pageIndex: 1, // offset/10+1
-      pageSize: 8,
+      pageSize: 10,
       total:0,
       dialogFormVisible: false,
       formLabelWidth: '120px',

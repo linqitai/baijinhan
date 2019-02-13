@@ -92,7 +92,9 @@ export default {
       canvasId: 'myCanvas',
       type: 'bar',
       options: {
-        title: '到课率统计'
+        title: '到课率统计',
+        autoWidth:true,
+        yEqual:1
       }
     }
   },

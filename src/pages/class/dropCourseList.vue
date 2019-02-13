@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       pageIndex: 1,
-      pageSize: 6,
+      pageSize: 10,
       total: 100,
       schoole_id: localStorage.getItem("_school_id"),
       showPageTag:false,

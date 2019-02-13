@@ -49,7 +49,7 @@ $height:50px;
     </div>
     <div class="operateTableBox">
       <div class="functionBox">
-        <m-time @getTimeData="getTimeData"></m-time>
+        <m-time v-model="weekth"></m-time>
         <div class="element margT10">
           <label class="inline">学号：</label>
           <div class="inline width120">
@@ -124,7 +124,7 @@ export default {
     return {
       loading:true,
       pageIndex: 1,
-      pageSize: 6,
+      pageSize: 10,
       total: 100,
       showPageTag:false,
       weekth:'',
@@ -155,7 +155,7 @@ export default {
     mTime
   },
   created() {
-    // this.getList();
+    this.getList();
   },
   filters:{
     filterDateTime(t){
@@ -235,6 +235,7 @@ export default {
         var result = res.data;
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
+          that.getList()
           // var user = result.data.user;
           this.$message({
             type: 'success',

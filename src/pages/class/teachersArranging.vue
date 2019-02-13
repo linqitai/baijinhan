@@ -230,9 +230,7 @@ export default {
     // this.getTime1Option()
     this.getList()
   },
-  components: {
-    // mTime
-  },
+
   methods: {
     importTable() {
       let that = this;

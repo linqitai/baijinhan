@@ -1,35 +1,34 @@
 <style lang="scss" scoped>
-@import '../../common/scss/common.scss';
-$height:50px;
-.apply{
-  .operateTableBox{
+@import "../../common/scss/common.scss";
+$height: 50px;
+.apply {
+  .operateTableBox {
     min-height: 820px;
-    .tableBox{
+    .tableBox {
       clear: both;
       // display: flex;
       text-align: center;
       position: relative;
-      .tableLeft{
+      .tableLeft {
         // flex: 0 0 60px;
         width: 60px;
-        border-left:1px solid $tableBorderColor;
-        border-right:1px solid $tableBorderColor;
-        border-bottom:1px solid $tableBorderColor;
+        border-left: 1px solid $tableBorderColor;
+        border-right: 1px solid $tableBorderColor;
+        border-bottom: 1px solid $tableBorderColor;
         position: absolute;
         left: 0;
         top: 0;
         background-color: $mainColor;
         color: white;
-        li{
+        li {
           height: $height;
           line-height: $height;
-          border-top:1px solid $tableBorderColor;
+          border-top: 1px solid $tableBorderColor;
           display: block;
         }
       }
-      .tableWrapper{
+      .tableWrapper {
         overflow: scroll;
-        
       }
     }
   }
@@ -44,8 +43,12 @@ $height:50px;
           <el-breadcrumb-item :to="{ path: '/' }">
             <span class="nocurrent">首页</span>
           </el-breadcrumb-item>
-          <el-breadcrumb-item><span class="nocurrent">课程</span></el-breadcrumb-item>
-          <el-breadcrumb-item><span>课程安排</span></el-breadcrumb-item>
+          <el-breadcrumb-item>
+            <span class="nocurrent">课程</span>
+          </el-breadcrumb-item>
+          <el-breadcrumb-item>
+            <span>课程安排</span>
+          </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </div>
@@ -53,29 +56,10 @@ $height:50px;
       <div class="functionBox">
         <div class="element">
           <label class="inline">排课周期：</label>
-          <div class="inline">
-             <el-select class="width140" size="medium" v-model="time1" @change="time1Change" placeholder="请选择">
-              <el-option
-                v-for="item in time1Options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="inline">
-             <el-select class="width200" size="medium" v-model="time2" @change="time2Change" placeholder="请选择">
-              <el-option
-                v-for="item in time2Options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
+           <my-time v-model="weekth" @change="getList"> </my-time>
           <!-- <div class="inline">
             <el-button type="primary" size="">查询</el-button>
-          </div> -->
+          </div>-->
         </div>
         <div style="margin-top: 10px;">
           <!-- <el-button type="primary" size="medium" @click="preparePublish">预发布课程</el-button> -->
@@ -121,7 +105,9 @@ $height:50px;
                 <div style="width: 180px;">
                   <div v-if="item.capacity" :class="[item.is_released==1?'blue':'gray']">
                     <!-- ({{item.lesson.name}}) -->
-                    <div class="ellipsis">{{item.courseSerial}} {{item.courseName}}({{item.lessonLevelName}})</div>
+                    <div
+                      class="ellipsis"
+                    >{{item.courseSerial}} {{item.courseName}}({{item.lessonLevelName}})</div>
                     <div class="ellipsis">{{item.lessonName}}</div>
                     <div class="ellipsis">{{item.teacherName}}(capacity:{{item.capacity}})</div>
                   </div>
@@ -132,77 +118,116 @@ $height:50px;
         </div>
       </div>
     </div>
-    <el-dialog title="排课" :visible.sync="isShowPaikeDialog" :append-to-body="true" :fullscreen="false" width="500px">  
+    <el-dialog
+      title="排课"
+      :visible.sync="isShowPaikeDialog"
+      :append-to-body="true"
+      :fullscreen="false"
+      width="500px"
+    >
       <div v-if="!isShowDeleteBtn">
         <div class="lineBox">
           <b class="icon">*</b>
           <b class="text">课程级别</b>
-          <el-select class="inputTitle" v-model="courseLevelValue" placeholder="请选择课程等级" @change="courseLevelChange" clearable>
+          <el-select
+            class="inputTitle"
+            v-model="courseLevelValue"
+            placeholder="请选择课程等级"
+            @change="courseLevelChange"
+            clearable
+          >
             <el-option
               v-for="item in courseLevelOption"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <div class="lineBox">
           <b class="icon">*</b>
           <b class="text">课程</b>
-          <el-select class="inputTitle" v-model="courseValue" placeholder="请选择课程" @change="courseChange" clearable>
+          <el-select
+            class="inputTitle"
+            v-model="courseValue"
+            placeholder="请选择课程"
+            @change="courseChange"
+            clearable
+          >
             <el-option
               v-for="item in coursesOption"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <div class="lineBox">
           <b class="icon">*</b>
           <b class="text">话题</b>
-          <el-select class="inputTitle" v-model="lessonValue" filterable remote reserve-keyword placeholder="请输入关键词" :loading="loading" clearable @change="lessonChange">
+          <el-select
+            class="inputTitle"
+            v-model="lessonValue"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入关键词"
+            :loading="loading"
+            clearable
+            @change="lessonChange"
+          >
             <el-option
               v-for="item in options4"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <div class="lineBox">
           <b class="icon"></b>
           <b class="text">教师</b>
-          <el-select class="inputTitle" v-model="teacherValue" placeholder="请选择教师" @change="getTeacherCourseEvent" clearable>
+          <el-select
+            class="inputTitle"
+            v-model="teacherValue"
+            placeholder="请选择教师"
+            @change="getTeacherCourseEvent"
+            multiple
+            clearable
+          >
             <el-option
               v-for="item in teachersOption"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <span class="dialog-footer">
-          <el-button @click="isShowPaikeDialog = false" class='right margT20'>取 消</el-button>
+          <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button class="right margT20 margR20" type="primary" @click="editClass">确 定</el-button>
           <div style="clear: both;"></div>
         </span>
       </div>
       <div v-else>
         <div class="lineBox">
-          <label class="width80">课程级别：</label>{{show.lessonLevelName}}
+          <label class="width80">课程级别：</label>
+          {{show.lessonLevelName}}
         </div>
         <div class="lineBox">
-          <label class="width80">课程：</label>{{show.courseName}}
+          <label class="width80">课程：</label>
+          {{show.courseName}}
         </div>
         <div class="lineBox">
-          <label class="width80">话题：</label>{{show.lessonName}}
+          <label class="width80">话题：</label>
+          {{show.lessonName}}
         </div>
         <div class="lineBox" v-if="show.tearcherName">
-          <label class="width80">教师：</label>{{show.tearcherName}}
+          <label class="width80">教师：</label>
+          {{show.tearcherName}}
         </div>
         <span class="dialog-footer">
-          <el-button @click="isShowPaikeDialog = false" class='right margT20'>取 消</el-button>
+          <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
           <div style="clear: both;"></div>
         </span>
@@ -211,53 +236,76 @@ $height:50px;
   </div>
 </template>
 <script>
-import { arrangingDeleteUrl,classListUrl,teacherFreeUrl,getRoomsUrl,teacherFreesUrl,getTeacherCourseUrl,lessonSearchUrl,editClassUrl,arrangingReleaseUrl,courseLevelListUrl,ERR_OK } from '@/api/index'
-import { getFullDate,getTime,getDay,getDaysInYearMonth,getMonth,getTodayDate } from '@/common/js/utils'
+import {
+  arrangingDeleteUrl,
+  classListUrl,
+  teacherFreeUrl,
+  getRoomsUrl,
+  teacherFreesUrl,
+  getTeacherCourseUrl,
+  lessonSearchUrl,
+  editClassUrl,
+  arrangingReleaseUrl,
+  courseLevelListUrl,
+  ERR_OK
+} from "@/api/index";
+import {
+  getFullDate,
+  getTime,
+  getDay,
+  getDaysInYearMonth,
+  getMonth,
+  getTodayDate
+} from "@/common/js/utils";
+import myTime  from '@/components/time'
 // 一天有多少毫秒
-var oneDayTime = 24*60*60*1000
-var oneDaySecond = 24*60*60
-var list = []
+var oneDayTime = 24 * 60 * 60 * 1000;
+var oneDaySecond = 24 * 60 * 60;
+var list = [];
 export default {
   data() {
     return {
       schoole_id: localStorage.getItem("_school_id"),
-      weekth:'',
-      courseValue: '',
-      courseLevelValue:'',
-      teacherValue: '',
-      isShowPaikeDialog:false,
-      week:1,
-      weekTime:'',
-      time1Options:[],
-      time2Options:[],
-      time1:"",
-      time2:"",
-      teachersOption:[],
-      coursesOption:[],
-      courseLevelOption:[],
-      lessonOption:[],
-      rooms:[],
-      list:[],
-      hour:'',
-      room_id:'',
-      lesson_id:'',
-      course_id:'',
-      lessonValue:'',
+      weekth: "",
+      courseValue: "",
+      courseLevelValue: "",
+      teacherValue: [],
+      isShowPaikeDialog: false,
+      week: 1,
+      weekTime: "",
+      time1Options: [],
+      time2Options: [],
+      time1: "",
+      time2: "",
+      teachersOption: [],
+      coursesOption: [],
+      courseLevelOption: [],
+      lessonOption: [],
+      rooms: [],
+      list: [],
+      hour: "",
+      room_id: "",
+      lesson_id: "",
+      course_id: "",
+      lessonValue: "",
       restaurants: [],
-      state1:'',
-      state2:'',
-      options4:[],
-      options5:[],
+      state1: "",
+      state2: "",
+      options4: [],
+      options5: [],
       loading: false,
-      arranging_ids:'',
+      arranging_ids: "",
       isShowDeleteBtn: false,
       show: {
-        lessonLevelName:'',
-        courseName:'',
-        lessonName:'',
-        tearcherName:''
+        lessonLevelName: "",
+        courseName: "",
+        lessonName: "",
+        tearcherName: ""
       }
-    }
+    };
+  },
+  components:{
+    myTime
   },
   created() {
     this.getRooms();
@@ -272,22 +320,21 @@ export default {
         time: that.weekTime,
         offset: 0,
         limit: 1000
-      }
+      };
       var url = teacherFreesUrl;
       // console.log(params,"params")
-      that.$axios.post(url,params).then((res)=>{
+      that.$axios.post(url, params).then(res => {
         var result = res.data;
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.teachersOption = result.data.teachers;
-          if(that.teachersOption){
-            for(var i=0;i<that.teachersOption.length;i++){
-              that.teachersOption[i].value = that.teachersOption[i].id
-              that.teachersOption[i].label = that.teachersOption[i].en_name
-            }  
-          }else{
-
+          if (that.teachersOption) {
+            for (var i = 0; i < that.teachersOption.length; i++) {
+              that.teachersOption[i].value = that.teachersOption[i].id;
+              that.teachersOption[i].label = that.teachersOption[i].en_name;
+            }
+          } else {
           }
-          console.log(that.teachersOption,'that.teachersOption')
+          console.log(that.teachersOption, "that.teachersOption");
         }
       });
     },
@@ -295,24 +342,24 @@ export default {
       let that = this;
       var params = {
         course_id: this.course_id,
-        course_level_id: this.course_level_id,
+        course_level_id: this.course_level_id
         // offset: 0,
         // limit: 1000
-      }
+      };
       var url = lessonSearchUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      console.log(params, "params");
+      this.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.lessonOption = result.data.lesson;
           var aaa = [];
-          for(var i=0;i<that.lessonOption.length;i++){
+          for (var i = 0; i < that.lessonOption.length; i++) {
             var item = {
-              label:that.lessonOption[i].name,
-              value:that.lessonOption[i].id
-            }
-            aaa.push(item)
+              label: that.lessonOption[i].name,
+              value: that.lessonOption[i].id
+            };
+            aaa.push(item);
           }
           that.options4 = aaa;
           that.lessonValue = that.lesson_id;
@@ -324,30 +371,29 @@ export default {
       this.lesson_id = value;
     },
     statistics() {
-      this.$router.push('./orderClassOne');
+      this.$router.push("./orderClassOne");
     },
     courseChange(value) {
-      console.log(value,"value");
+      console.log(value, "value");
       this.course_id = value;
-      this.lessonValue = ''
-      this.teacherValue = ''
+      this.lessonValue = "";
+      this.teacherValue = [];
       // 获取话题列表
       this.getlessonList();
     },
     getCourseList() {
       var that = this;
-      var params = {
-      }
+      var params = {};
       var url = getTeacherCourseUrl;
       // console.log(params,"=========params============")
-      that.$axios.post(url,params).then((res)=>{
+      that.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.coursesOption = result.data.course;
-          for(var i=0;i<that.coursesOption.length;i++){
-             that.coursesOption[i].value = that.coursesOption[i].id
-             that.coursesOption[i].label = that.coursesOption[i].name
+          for (var i = 0; i < that.coursesOption.length; i++) {
+            that.coursesOption[i].value = that.coursesOption[i].id;
+            that.coursesOption[i].label = that.coursesOption[i].name;
           }
           // console.log(that.coursesOption,"that.coursesOption")
         }
@@ -355,19 +401,22 @@ export default {
     },
     courseLevelChange(value) {
       var that = this;
-      this.course_level_id = value
-      this.lessonValue = ''
+      this.course_level_id = value;
+      this.lessonValue = "";
       this.getCourseList();
-      this.teacherValue = ''
-      console.log(value,"course_level_id")
-      console.log(that.courseLevelOption,"that.courseLevelOptionthat.courseLevelOption")
+      this.teacherValue = [];
+      console.log(value, "course_level_id");
+      console.log(
+        that.courseLevelOption,
+        "that.courseLevelOptionthat.courseLevelOption"
+      );
       for (var i = 0; i < that.courseLevelOption.length; i++) {
-        console.log(i,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
-        if(that.courseLevelOption[i].id==value) {
-          that.coursesOption = that.courseLevelOption[i].courses
-          for(var i=0;i<that.coursesOption.length;i++){
-             that.coursesOption[i].value = that.coursesOption[i].id
-             that.coursesOption[i].label = that.coursesOption[i].name
+        console.log(i, "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+        if (that.courseLevelOption[i].id == value) {
+          that.coursesOption = that.courseLevelOption[i].courses;
+          for (var i = 0; i < that.coursesOption.length; i++) {
+            that.coursesOption[i].value = that.coursesOption[i].id;
+            that.coursesOption[i].label = that.coursesOption[i].name;
           }
           break;
         }
@@ -379,18 +428,18 @@ export default {
       let that = this;
       var params = {
         schoole_id: localStorage.getItem("_school_id"),
-        area_id: localStorage.getItem('area_id')
-      }
+        area_id: localStorage.getItem("area_id")
+      };
       var url = courseLevelListUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      console.log(params, "params");
+      this.$axios.post(url, params).then(res => {
         var result = res.data;
-        console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        console.log(result.code, "--res.code--");
+        if (result.code == ERR_OK) {
           that.courseLevelOption = result.data.list;
-          for(var i=0;i<that.courseLevelOption.length;i++){
-             that.courseLevelOption[i].value = that.courseLevelOption[i].id
-             that.courseLevelOption[i].label = that.courseLevelOption[i].name
+          for (var i = 0; i < that.courseLevelOption.length; i++) {
+            that.courseLevelOption[i].value = that.courseLevelOption[i].id;
+            that.courseLevelOption[i].label = that.courseLevelOption[i].name;
           }
         }
       });
@@ -399,46 +448,45 @@ export default {
       var that = this;
       var params = {
         school_id: that.schoole_id
-      }
+      };
       var url = getRoomsUrl;
       // console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      this.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           // that.tableData = result.data.category;
           that.rooms = result.data.rooms;
           that.initList();
-          that.getTime1Option();
         }
-      })
+      });
     },
     getTeacherCourseEvent() {
       var that = this;
     },
     openDialogModel(item) {
       var that = this;
-      that.lessonValue = '';
-      if(item.id) {
+      that.lessonValue = "";
+      if (item.id) {
         that.isShowDeleteBtn = true;
-      }else{
+      } else {
         that.isShowDeleteBtn = false;
       }
       that.show.lessonLevelName = item.lessonLevelName;
       that.show.courseName = item.courseName;
       that.show.lessonName = item.lessonName;
       that.show.tearcherName = item.teacherName;
-      console.log(item,"itemtitemitem")
+      console.log(item, "itemtitemitem");
       that.room_id = item.room_id;
       that.hour = item.hour;
       that.arranging_ids = item.id;
       that.isShowPaikeDialog = true;
       that.courseLevelValue = item.level_id;
-      console.log(that.teachersOption,'that.teachersOption')
-      if(this.teachersOption) {
-        that.teacherValue = item.teacher_id;
-      }else{
-        that.teacherValue = '';
+      console.log(that.teachersOption, "that.teachersOption");
+      if (this.teachersOption) {
+        that.teacherValue.push2(item.teacher_id);
+      } else {
+        that.teacherValue = [];
       }
       that.courseValue = item.course_id;
       that.course_id = item.course_id;
@@ -446,161 +494,177 @@ export default {
       that.lesson_id = item.lesson_id;
 
       //获取时间 weekTime
-      var weekTime = getTime(that.time2.split('~')[0])+getTime(oneDayTime*(that.week-1))+getTime(oneDayTime*(that.hour/24))
-      console.log(weekTime,"weekTime")
-      that.weekTime = weekTime/1000
+      var weekTime =
+        getTime(that.time2.split("~")[0]) +
+        getTime(oneDayTime * (that.week - 1)) +
+        getTime(oneDayTime * (that.hour / 24));
+      console.log(weekTime, "weekTime");
+      that.weekTime = weekTime / 1000;
       // that.getlessonList();
       that.getTeacherList();
     },
     cancel() {
       var that = this;
-      var ids = []
-      ids.push(that.arranging_ids)
+      var ids = [];
+      ids.push(that.arranging_ids);
       var params = {
         arranging_ids: ids
-      }
+      };
       var url = arrangingDeleteUrl;
       // console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      this.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.isShowPaikeDialog = false;
           that.getList();
           that.$message({
-            type: 'success',
-            message: '操作成功!'
+            type: "success",
+            message: "操作成功!"
           });
         }
-      })
+      });
     },
-    editClass(){
+    editClass() {
       var that = this;
       // console.log(that.weekth.split(',')[0],"begin")
       // console.log(that.week,"week")
       var params = {
-        time:parseInt(that.weekth.split(',')[0]) + oneDaySecond*(that.week-1) + that.hour*60*60,// 当前选择方块的时间戳，比如：2018年 9月 24号 1点的课程
+        time:
+          parseInt(that.weekth.split(",")[0]) +
+          oneDaySecond * (that.week - 1) +
+          that.hour * 60 * 60, // 当前选择方块的时间戳，比如：2018年 9月 24号 1点的课程
         room_id: that.room_id,
         lesson_id: that.lesson_id,
         course_id: that.course_id,
         school_id: that.schoole_id,
-        teacher_id: that.teacherValue,
-      }
+        teacher_id: that.teacherValue
+      };
       var url = editClassUrl;
       // console.log(params,"=========params============")
 
-      that.$axios.post(url,params).then((res)=>{
-        console.log(res,"resresresres")
-        var result = res.data;
-        console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
-          // console.log("success")
-          that.clearPaikeDialog()
-          that.getList();
-          that.isShowPaikeDialog = false
-        }else if(result.code == 433) {
-          // that.$alert(result.message, '提示');
-          that.$alert('该教室已有课程', '提示');
-        }else if(result.code == 422){
-          that.$alert(result.message, '提示');
-        } 
-      }).catch(res=>{
-        that.$alert('参数错误', '提示');
-      });
+      that.$axios
+        .post(url, params)
+        .then(res => {
+          console.log(res, "resresresres");
+          var result = res.data;
+          console.log(result.code, "--res.code--");
+          if (result.code == ERR_OK) {
+            // console.log("success")
+            that.clearPaikeDialog();
+            that.getList();
+            that.isShowPaikeDialog = false;
+          } else if (result.code == 433) {
+            // that.$alert(result.message, '提示');
+            that.$alert("该教室已有课程", "提示");
+          } else if (result.code == 422) {
+            that.$alert(result.message, "提示");
+          }
+        })
+        .catch(res => {
+          that.$alert("参数错误", "提示");
+        });
     },
-    clearPaikeDialog(){
+    clearPaikeDialog() {
       var that = this;
       that.teacherValue = "";
-      that.courseValue ="";
+      that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
     },
-    initList(){
+    initList() {
       var that = this;
-      list = []
-      for ( var i = 0; i < 12; i++) { //一维长度为8
+      list = [];
+      for (var i = 0; i < 12; i++) {
+        //一维长度为8
         var item = {
-          hour: i+9
-        }
-        var blocks = []
-        for ( var j = 0; j < that.rooms.length; j++) {
+          hour: i + 9
+        };
+        var blocks = [];
+        for (var j = 0; j < that.rooms.length; j++) {
           var block = {
             room_id: that.rooms[j].id,
             roomName: that.rooms[j].name,
-            id:'',
-            course:'',
-            teacher:'',
-            courseName:'',
-            level_id:'',
-            teacher_id:'',
-            course_id:'',
-            lesson_id:'',
-            lessonName:'',
-            teacherName:'',
-            capacity:'',
-            hour:i+9
-          }
-          blocks.push(block)
+            id: "",
+            course: "",
+            teacher: "",
+            courseName: "",
+            level_id: "",
+            teacher_id: "",
+            course_id: "",
+            lesson_id: "",
+            lessonName: "",
+            teacherName: "",
+            capacity: "",
+            hour: i + 9
+          };
+          blocks.push(block);
         }
-        item.blocks=blocks
-        list.push(item)
+        item.blocks = blocks;
+        list.push(item);
       }
-      that.list = list
+      that.list = list;
     },
     getList() {
       var that = this;
       var params = {
         schoole_id: localStorage.getItem("_school_id"),
         weekth: that.weekth,
-        week:that.week,
-        is_released: 0,
-      }
+        week: that.week,
+        is_released: 0
+      };
       var url = classListUrl;
       // console.log(params,"params")
-      that.$axios.post(url,params).then((res)=>{
+      that.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result,'--result--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           // that.tableData = result.data.category;
           var arranging = result.data.arranging;
           // console.log(arranging,"arranging");
           // console.log(Object.keys(arranging),"keys");
           var keys = Object.keys(arranging);
           var arr = [];
-          for(var i=0;i<keys.length;i++){
+          for (var i = 0; i < keys.length; i++) {
             // console.log(arranging[keys[i]],"arranging")
             var obj = arranging[keys[i]];
-            console.log(obj,"obj")
-            for(var j=0;j<obj.length;j++){
+            console.log(obj, "obj");
+            for (var j = 0; j < obj.length; j++) {
               var item = {
-                week:obj[j].week,
-                hour:obj[j].hour,
-                id:obj[j].id,
-                lessonName:obj[j].lesson.name,
-                lessonLevelName:obj[j].lesson.level?obj[j].lesson.level.name:'',
-                courseSerial:obj[j].lesson.course?obj[j].lesson.course.serial:'',
-                courseName:obj[j].lesson.course?obj[j].lesson.course.name:'',
-                level_id:obj[j].lesson.level_id,
-                teacher_id:obj[j].teacher.id,
-                course_id:obj[j].lesson.course_id,
-                lesson_id:obj[j].lesson.id,
-                teacherName:obj[j].teacher?obj[j].teacher.en_name:'',
-                roomName:obj[j].room.name,
-                capacity:obj[j].capacity,
-                is_released:obj[j].is_released
-              }
-              arr.push(item)
+                week: obj[j].week,
+                hour: obj[j].hour,
+                id: obj[j].id,
+                lessonName: obj[j].lesson.name,
+                lessonLevelName: obj[j].lesson.level
+                  ? obj[j].lesson.level.name
+                  : "",
+                courseSerial: obj[j].lesson.course
+                  ? obj[j].lesson.course.serial
+                  : "",
+                courseName: obj[j].lesson.course
+                  ? obj[j].lesson.course.name
+                  : "",
+                level_id: obj[j].lesson.level_id,
+                teacher_id: obj[j].teacher.id,
+                course_id: obj[j].lesson.course_id,
+                lesson_id: obj[j].lesson.id,
+                teacherName: obj[j].teacher ? obj[j].teacher.en_name : "",
+                roomName: obj[j].room.name,
+                capacity: obj[j].capacity,
+                is_released: obj[j].is_released
+              };
+              arr.push(item);
             }
           }
           that.initList();
-          for(var i=0;i<arr.length;i++){
+          for (var i = 0; i < arr.length; i++) {
             // console.log(arr,"arr")
             // console.log(arr[i],"arr[i]")
             // console.log(arr[i].hour,"arr[i].hour")
-            for(var j=0;j<list.length;j++){
-              if(list[j].hour==arr[i].hour){
-                for(var k=0;k<list[j].blocks.length;k++){
-                  if(list[j].blocks[k].roomName==arr[i].roomName){
+            for (var j = 0; j < list.length; j++) {
+              if (list[j].hour == arr[i].hour) {
+                for (var k = 0; k < list[j].blocks.length; k++) {
+                  if (list[j].blocks[k].roomName == arr[i].roomName) {
                     list[j].blocks[k].id = arr[i].id;
                     list[j].blocks[k].hour = arr[i].hour;
                     list[j].blocks[k].level_id = arr[i].level_id;
@@ -613,7 +677,9 @@ export default {
                     list[j].blocks[k].lessonLevelName = arr[i].lessonLevelName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
                     list[j].blocks[k].is_released = arr[i].is_released;
-                    list[j].blocks[k].capacity = arr[i].capacity?arr[i].capacity:'--';
+                    list[j].blocks[k].capacity = arr[i].capacity
+                      ? arr[i].capacity
+                      : "--";
                   }
                 }
               }
@@ -638,18 +704,18 @@ export default {
         schoole_id: localStorage.getItem("_school_id"),
         weekth: this.weekth,
         week: this.week
-      }
+      };
       // Object.assign(params, params, p);
       var url = arrangingReleaseUrl;
       // console.log(params,"params")
-      that.$axios.post(url,params).then((res)=>{
+      that.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.getList();
           that.$message({
-            type: 'success',
-            message: '操作成功!'
+            type: "success",
+            message: "操作成功!"
           });
         }
       });
@@ -657,17 +723,19 @@ export default {
     publish() {
       // arrangingReleaseUrl
       var that = this;
-      this.$confirm('此操作将发布当天课程, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          that.publishEvent()
-        }).catch(() => {
+      this.$confirm("此操作将发布当天课程, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          that.publishEvent();
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
     publishWeekEvent() {
@@ -675,148 +743,60 @@ export default {
       var params = {
         schoole_id: localStorage.getItem("_school_id"),
         weekth: this.weekth
-      }
+      };
       // Object.assign(params, params, p);
       var url = arrangingReleaseUrl;
       // console.log(params,"params")
-      that.$axios.post(url,params).then((res)=>{
+      that.$axios.post(url, params).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
+        if (result.code == ERR_OK) {
           that.getList();
           that.$message({
-            type: 'success',
-            message: '操作成功!'
+            type: "success",
+            message: "操作成功!"
           });
         }
       });
     },
     publishWeek() {
       var that = this;
-      this.$confirm('此操作将发布当周课程, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          that.publishWeekEvent()
-        }).catch(() => {
+      this.$confirm("此操作将发布当周课程, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          that.publishWeekEvent();
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
-    time1Change(value) {// value: 2018/11
+    changeweek() {
       var that = this;
-      var isGetList = false;
-      //获取目前的时间戳
-      var timeNow = new Date().getTime()
-      var month = value.split('/')[1]
-      var firstDay = value.toString() + "/1"
-      var arr = []
-      var range = null
-      var time = getTime(firstDay)//获取时间戳
-      var firstD = getDay(time)
-      if(firstD!=1){
-          range = getFullDate(time-oneDayTime*(firstD-1)) + "~" + getFullDate(time+(7-firstD)*oneDayTime)
-          console.log(range,"rangerangerangerangerangerange===============================range")
-          var item = {label:range,value:range}
-          arr.push(item)//这是加上这个月的最后一周
-        }
-      var days = getDaysInYearMonth(value.split('/')[0],month)//这个月有多少天
-      // console.log(days,"天数")
-      for(var i=0;i<days;i++){
-        var d = getDay(time)
-        //判断d是否是星期一
-        if(d==1){
-          var lastRange = getFullDate(time) // 周一的年月日
-          var m = getMonth(lastRange)
-          if(month == m) {
-            range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
-            // var range = getFullDate(time)+"~"+getFullDate(time+oneDayTime*6)
-            var item = {label:range,value:range}
-            arr.push(item)
-            // getTodayDate(timeNow) - getTodayDate(time)<=6 && getTodayDate(timeNow) - getTodayDate(time)>=0
-            var endDate = range.split('~')[1]
-            var endDateTime = getTime(endDate)
-            console.log(endDate,getTodayDate(endDateTime))
-            console.log("================================================")
-            // if(getTodayDate(endDateTime)>20) {
-            //   if(days-getTodayDate(endDateTime)<7&&days-getTodayDate(endDateTime)!=0){
-            //   range = getFullDate(endDateTime+oneDayTime)+"~"+getFullDate(endDateTime+oneDayTime*7)
-            //   }
-            //   var item = {label:range,value:range}
-            //   arr.push(item)//这是加上这个月的最后一周
-            // }
-            
-            if(getTodayDate(timeNow)<=getTodayDate(endDateTime)) {
-              console.log(getTodayDate(timeNow),"getTodayDate(timeNow)")
-              console.log(getTodayDate(endDateTime+oneDayTime*6),"getTodayDate(endDateTime+oneDayTime*6)")
-              if(isGetList == false) {
-                that.time2 = range
-                that.time2Change(that.time2)
-                isGetList = true
-              }
-            }
-          }
-        }
-        time = time + oneDayTime
-      }
-      that.time2Options = arr
-    },
-    time2Change(value) {
-      var that = this;
-      // console.log(value,"value")
-      var time1 = getTime(value.split('~')[0]).toString()
-      var len1 = time1.length
-      var time2 = getTime(value.split('~')[1]).toString()
-      var len2 = time2.length
-      var timebegin = time1.substring(0,len1-3);
-      var timeend = parseInt(time2.substring(0,len2-3))+oneDaySecond;
-      var w = []
-      w.push(timebegin)
-      w.push(timeend)
-      that.weekth = w.join(',') //"1542946667,1543030763";
-      // console.log(that.weekth,"weekth")
-      that.week = 1
-      // console.log("intoGetList==============================================")
-      that.getList()
-    },
-    getTime1Option() {
-      var that = this;
-      var datatime = new Date()
-      var year = datatime.getFullYear();
-      var month = datatime.getMonth()
-      var monthNow = datatime.getMonth()+1
-      // console.log(month,"month now")
-      var arr = []
-      for(var i=month;i<12;i++){
-        if(monthNow == (i+1)){
-          that.time1 = `${year}/${i+1}`
-          that.time1Change(that.time1)
-        }
-        var item = {label:`${year}/${i+1}`,value: `${year}/${i+1}`}
-        arr.push(item)
-      }
-      var year2 = parseInt(year) + 1
-      for(var i=0;i<12;i++){
-        var item = {label:`${year2}/${i+1}`,value: `${year2}/${i+1}`}
-        arr.push(item)
-      }
-      // // console.log(arr,"arr")
-      that.time1Options = arr
-    },
-    changeweek(){
-      var that = this;
-      console.log(that.week,"week")
-      if(that.weekth==""){
-        that.$alert('请先选择排课周期', '提示');
-      }else{
-        that.getList()
+      console.log(that.week, "week");
+      if (that.weekth == "") {
+        that.$alert("请先选择排课周期", "提示");
+      } else {
+        that.getList();
       }
     }
   }
-}
+};
+Array.prototype.push2 = function (args) {
+  console.log(args,'123123');
+  for (var i = 0; i < args.length; i++) {
+    var ele = args[i];
+    if (this.indexOf(ele) == -1) {  
+      this.push(ele);
+    }
+  }
+};
+
 </script>
 
 

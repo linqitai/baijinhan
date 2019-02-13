@@ -120,6 +120,7 @@
 <!-- <script src="js/particles.min.js"></script>
   <script src="js/app.js"></script> -->
 <script>
+
 $(function(){
   $('.fotButton').click(function(){
     console.log("click me")
@@ -128,13 +129,13 @@ $(function(){
 
 // import { loginUrl } from '@/api/index'
 import { testlogin,loginUrl,ERR_OK } from '@/api/index'
-import axios from 'axios'
+// import axios from 'axios'
 // import pJS from 'pJS'
 export default {
   data: function() {
     return {
-      username: '17326052006', // 17326052006
-      password: 'dtc233', // dtc233
+      username: '', // 
+      password: '', // 
       ishover: false,
       autofocus: true,
       loginStatus: "",
@@ -168,57 +169,35 @@ export default {
       }
       var url = loginUrl;
       console.log(params)
-      $.ajax({ 
+      this.$axios.request({ 
         url : url, 
-        type : 'POST', 
+        method : 'POST', 
         data : params, 
-        beforeSend:function(){
-          console.log("正在进行，请稍候");
-        },
-        complete: function( xhr,data ){
-          this.authorization = xhr.getResponseHeader('authorization')
-          localStorage.setItem('authorization', xhr.getResponseHeader('authorization'));
-        },
-        success : function(res) { 
-          console.log(res.status_code,'==res.status_code==')
-          if(res.status_code===200){
-            localStorage.setItem('login_id',res.data.id);
-            localStorage.setItem('area_id',res.data.area_id);
-            localStorage.setItem('role_id',res.data.role_id);
-            localStorage.setItem('school_name',res.data.school.name);
-            localStorage.setItem("_school_id",res.data.school_id);
-            localStorage.setItem("areaName",res.data.area.name);
-            localStorage.setItem("en_name",res.data.en_name);
-            localStorage.setItem("roleName",res.data.role.name);
+      }).then(res=>{
+        var result = res.data;
+        if(result.status_code == 200){
+            localStorage.setItem('login_id',result.data.id);
+            localStorage.setItem('area_id',result.data.area_id);
+            localStorage.setItem('role_id',result.data.role_id);
+            localStorage.setItem('school_name',result.data.school.name);
+            localStorage.setItem("_school_id",result.data.school_id);
+            localStorage.setItem("areaName",result.data.area.name);
+            localStorage.setItem("en_name",result.data.en_name);
+            localStorage.setItem("roleName",result.data.role.name);
             that.$cookie.set('currentTitleId',0);
             that.$router.push('./orderClassList');
-          }else{
-            console.log("失败");
-          }
-        }, 
-        error : function(responseStr) { 
+        }
+        this.authorization = res.headers.authorization;
+        localStorage.setItem('authorization', this.authorization);
+      }).catch(err=>{ 
+          console.log(err);
           that.$message({
             type: 'info',
-              message: '出错了'
+            message: '出错了'
           });
-        } 
       });
-      /*this.$axios.post(url,params).then((res)=>{
-        var result = res.data;
-        console.log(ERR_OK,'--ERR_OK-')
-        console.log(result.status_code,'--res.status_code--')
-        if(result.status_code == ERR_OK){
-           this.$router.push('./setting')
-          // that.qrcode = result.data.url;
-          // console.info(that.directUrl,'--that.directUrl--');
-        }
-      }).catch((err)=>{
-        console.info(err);
-      });*/
     }
   }
 }
 </script>
 
-<style lang="scss">
-</style>

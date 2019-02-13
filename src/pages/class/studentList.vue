@@ -13,6 +13,19 @@
   .closeLesson {
     box-shadow: 3px 3px 20px 3px rgba(0, 0, 0, 0.5);
   }
+ 
+}
+.table-expand {
+  font-size: 0;
+}
+.table-expand label{
+  width: 90px;
+  color: #99a9bf;
+}
+.table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
 }
 </style>
 <template>
@@ -86,25 +99,65 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%" v-loading="loading">
+      <el-table
+        :data="tableData"
+        border
+        style="width: 100%"
+        v-loading="loading"
+        @sort-change="sortChange"
+        stripe
+        fit
+        highlight-current-row
+      >
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="table-expand">
+              <el-form-item>
+                <label>中文名：</label>
+                <span>{{ props.row.cn_name }}</span>
+              </el-form-item>
+              <el-form-item prop="props">
+                <label>性别：</label>
+                <span>
+                  <template slot-scope="scope">{{scope.sex | filterSex}}</template>
+                </span>
+              </el-form-item>
+              <el-form-item>
+                <label>家庭电话：</label>
+                <span>{{ props.row.mobile }}</span>
+              </el-form-item>
+              <el-form-item>
+                <label>开始级别：</label>
+                <span>{{ props.row.cn_name }}</span>
+              </el-form-item>
+              <el-form-item>
+                <label>结束级别：</label>
+                <span>{{ props.row.begin_level.name}}</span>
+              </el-form-item>
+              <el-form-item>
+                <label>结束级别</label>
+                <span>{{ props.row.end_level.name }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column prop="track_people.en_name" label="班主任" width="120"></el-table-column>
-        <el-table-column prop="contract_no" label="学号" width="140"></el-table-column>
-        <el-table-column prop="cn_name" label="中文名"></el-table-column>
+        <el-table-column prop="contract_no" label="学号" width="140" sortable="custom"></el-table-column>
         <el-table-column prop="en_name" label="英文名"></el-table-column>
         <el-table-column prop="sex" label="性别">
           <template slot-scope="scope">{{scope.row.sex | filterSex}}</template>
         </el-table-column>
-        <el-table-column prop="mobile" label="手机" width="120"></el-table-column>
-        <el-table-column prop="home_phone" label="家庭电话" width="120"></el-table-column>
-        <el-table-column prop="begin_level.name" label="开始级别" width="120"></el-table-column>
-        <el-table-column prop="end_level.name" label="结束级别" width="120"></el-table-column>
-        <el-table-column prop="level.name" label="当前级别" width="120"></el-table-column>
+        <el-table-column prop="mobile" label="手机" width="120" sortable></el-table-column>
+        <!-- <el-table-column prop="home_phone" label="家庭电话" width="120"></el-table-column> -->
+        <!-- <el-table-column prop="begin_level.name" label="开始级别" width="120" sortable></el-table-column> -->
+        <!-- <el-table-column prop="end_level.name" label="结束级别" width="120"></el-table-column> -->
+        <el-table-column prop="level.name" label="当前级别" width="120" sortable></el-table-column>
         <el-table-column prop="status" label="状态">
           <!-- 1未签,2执行3结束4冻结 -->
           <template slot-scope="scope">{{scope.row.status | filterStatus}}</template>
         </el-table-column>
-        <el-table-column prop="contract.name" label="合同类型" width="120"></el-table-column>
-        <el-table-column prop="begin_time" label="开始时间" width="120"></el-table-column>
+        <!-- <el-table-column prop="contract.name" label="合同类型" width="120"></el-table-column> -->
+        <el-table-column prop="begin_time" label="开始时间" width="120" sortable></el-table-column>
         <el-table-column prop="end_time" label="结束时间" width="120"></el-table-column>
         <el-table-column label="操作" width="140" fixed="right">
           <template slot-scope="scope">
@@ -188,14 +241,20 @@
         <el-option v-for="item in courseList" :key="item.id" :label="item.name" :value="item.id"></el-option>
       </el-select>
 
-      <el-tabs type="border-card" style="margin-top:10px" @tab-click="lessonTab" v-model="lessonStatus">
+      <el-tabs
+        type="border-card"
+        style="margin-top:10px"
+        @tab-click="lessonTab"
+        v-model="lessonStatus"
+      >
         <el-tab-pane label="未结课程" name="1">
           <el-table
             ref="multipleTable"
             :data="lessonList"
             tooltip-effect="dark"
             style="width: 100%"
-            @selection-change="lessonSelectionChange">
+            @selection-change="lessonSelectionChange"
+          >
             <el-table-column type="selection" width="55"></el-table-column>
             <!-- <el-table-column label="课程" width="120">
           <template slot-scope="scope">{{ scope.row.date }}</template>
@@ -224,13 +283,14 @@
             <small style="color:grey;font-size:12px">** 请每页结果都进行确认操作</small>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="已结课程"  name="2">
-            <el-table
+        <el-tab-pane label="已结课程" name="2">
+          <el-table
             ref="multipleTable"
             :data="lessonList"
             tooltip-effect="dark"
             style="width: 100%"
-            @selection-change="lessonSelectionChange">
+            @selection-change="lessonSelectionChange"
+          >
             <el-table-column type="selection" width="55"></el-table-column>
             <!-- <el-table-column label="课程" width="120">
           <template slot-scope="scope">{{ scope.row.date }}</template>
@@ -311,7 +371,7 @@
                 v-for="item in courseLevelOption"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
+                :value="{label:item.name,value:item.id}"
               ></el-option>
             </el-select>
           </div>
@@ -518,7 +578,7 @@ export default {
         home_phone: "",
         contract_type: "",
         contract_no: "",
-        level: {},
+        level: "",
         level_id: 0,
         begin_level: "",
         end_level: "",
@@ -530,27 +590,27 @@ export default {
       title: "",
       operate: "",
 
-// ----------- 2018.1.16 dtc新增
-      course_id: "",// 选课选取的课程id
-      courseList: [],//课程list
-      courseListItem: "",//选中的课程
-      lessonList: [],//话题list
-      chooseUser: {//选中的学生的数据
+      // ----------- 2018.1.16 dtc新增
+      course_id: "", // 选课选取的课程id
+      courseList: [], //课程list
+      courseListItem: "", //选中的课程
+      lessonList: [], //话题list
+      chooseUser: {
+        //选中的学生的数据
         level: { name: "" },
         en_name: "",
         cn_name: "",
         id: 0
       },
-      lessonPageIndex: 1,//话题列表页数
-      lessonPageSize: 10,//话题列表页面内容数量
-      lesson_ids: [],//选中的lesson_ids
-      lessonTotal: 0,//话题列表总数
-      tracksList: [],//班主任列表
-      tracksChoosed: "",//选中的班主任
-      lessonStatus:'1',//话题状态
-
+      lessonPageIndex: 1, //话题列表页数
+      lessonPageSize: 10, //话题列表页面内容数量
+      lesson_ids: [], //选中的lesson_ids
+      lessonTotal: 0, //话题列表总数
+      tracksList: [], //班主任列表
+      tracksChoosed: "", //选中的班主任
+      lessonStatus: "1" //话题状态
     };
-//-------------end
+    //-------------end
   },
   filters: {
     // <!-- 1未签,2执行3结束4冻结 -->
@@ -661,8 +721,8 @@ export default {
           home_phone: row.home_phone,
           contract_type: parseInt(row.contract_type),
           contract_no: row.contract_no,
-          level: row.level.name,
-          level_id: row.level.id,
+          level: row.level,
+          level_id: row.level.id ? row.level.id : row.level_id,
           begin_level: row.begin_level.id,
           end_level: row.end_level.id,
           status: parseInt(row.status),
@@ -693,8 +753,8 @@ export default {
               message: "操作成功",
               type: "success"
             });
-            that.getList();
             that.dialogFormVisible = false;
+            that.getList();
           } else {
             that.$alert("所填写的数据有误");
           }
@@ -784,7 +844,7 @@ export default {
       this.getList();
     },
 
-//-------------2019.1.16 dtc修改
+    //-------------2019.1.16 dtc修改
     handleLessonChange(val) {
       this.lessonPageIndex = val;
       this.lesson();
@@ -871,9 +931,9 @@ export default {
         }
       });
     },
-    lessonTab(res){
-      this.lessonStatus  = res.name
-      this.lesson()
+    lessonTab(res) {
+      this.lessonStatus = res.name;
+      this.lesson();
     },
     //select 班主任选中事件
     tracksChoose() {
@@ -884,8 +944,14 @@ export default {
       this.option = ""; //清空查找
       this.tracksChoosed = ""; //清空班主任筛选条件
       this.getList();
+    },
+
+    //排序
+    sortChange(res) {
+      console.log(res);
     }
   }
+
   //-------------------------------end
 };
 </script>

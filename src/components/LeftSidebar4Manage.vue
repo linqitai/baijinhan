@@ -38,6 +38,10 @@
       line-height: 50px;
       border-bottom: 1px solid #e8e8e8;
       cursor: pointer;
+       .iconStyle{
+        margin-left: 20px;
+        line-height: 50px;
+      }
       .title{
         margin-left: 24px;
       }
@@ -65,6 +69,7 @@
       <transition name='fade'>
         <ul v-show="flex[index]">
           <li class="item" v-for="(item,index) in item.subs" :class="[item.id==currentId?'selected':'']" @click="textClick(item)">
+            <i class="left iconStyle" :class="item.icon"></i>
             <div class="title left">{{item.text}}</div>
           </li>
         </ul>

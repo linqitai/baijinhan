@@ -93,7 +93,7 @@ export default {
     return {
       loading: true,
       pageIndex: 1,
-      pageSize: 8,
+      pageSize: 10,
       total: 100,
       showPageTag:false,
       no: '',

@@ -177,7 +177,7 @@ export default {
     return {
       loading: true,
       pageIndex: 1, // offset/10+1
-      pageSize: 8,
+      pageSize: 10,
       total: 100,
       title:'',
       dialogFormVisible: false,

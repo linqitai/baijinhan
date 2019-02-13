@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       pageIndex: 1, // offset/10+1
-      pageSize: 8,
+      pageSize: 10,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       tableData:[],
