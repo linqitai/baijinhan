@@ -146,7 +146,7 @@ export default {
   },
   methods: {
     savePEvent() {
-
+      
     },
     handleCommand(command) {
       let that = this;
