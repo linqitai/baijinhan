@@ -126,7 +126,7 @@
       :visible.sync="isShowPaikeDialog"
       :append-to-body="true"
       :fullscreen="false"
-      width="500px"
+      width="600px"
     >
       <div v-if="!isShowDeleteBtn">
         <div class="lineBox">
@@ -232,7 +232,17 @@
             ></el-option>
           </el-select>
         </div>
-
+        <div class="lineBox">
+          <b class="icon"></b>
+          <b class="text">学号</b>
+          <div class="width120">
+             <el-input v-model="serial" size="medium" placeholder="请输入学号" clearable></el-input>
+          </div>
+          <label class="inline" style="margin-left: 10px;margin-right: 10px;">{{studentInfo}}</label>
+          <div class="inline">
+            <el-button type="primary" size="medium" @click="searchBySerial">查询</el-button>
+          </div>
+        </div>
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button class="right margT20 margR20" type="primary" @click="editClass">确 定</el-button>
@@ -279,6 +289,7 @@ import {
   editClassUrl,
   arrangingReleaseUrl,
   courseLevelListUrl,
+  getStudentListUrl,
   ERR_OK
 } from "@/api/index";
 import {
@@ -301,7 +312,7 @@ export default {
       courseValue: "",
       courseLevelValue: "",
       teacherValue: 0,
-      helpTeacherValue:0,
+      helpTeacherValue:'',
       isShowPaikeDialog: false,
       isShowDeleteBtn: false, // 对话框 弹出内容切换 与 删除按钮显示隐藏 开关
 
@@ -323,6 +334,11 @@ export default {
       lesson_id: "",
       course_id: "",
       lessonValue: "",
+
+
+      studentInfo:"",
+      serial:"",
+      user_id:'',
   
       loading: false,
       arranging_ids: "",
@@ -344,6 +360,34 @@ export default {
     this.getCourseList();
   },
   methods: {
+    searchBySerial() {
+      var that = this;
+      if(that.serial=='') {
+        that.$alert('请先输入学号', '提示');
+      }
+      var params = {
+        serial: that.serial,
+      }
+      var url = getStudentListUrl;
+      console.log(params,"params")
+      this.$axios.post(url,params).then((res)=>{
+        var result = res.data;
+        console.log(result.code,'--res.code--')
+        if(result.code == ERR_OK){
+          var user = result.data.user;
+          console.log(user,"useruser")
+          if(user.length>0) {
+            // that.en_name = user[0].en_name;
+            that.user_id = user[0].id;
+            // that.level_id = user[0].level.id;
+            that.studentInfo = `英文名：${user[0].en_name},中文名：${user[0].cn_name}`
+          }else{
+            that.studentInfo = '并无此学生'
+          }
+          // that.getList()
+        }
+      })
+    },
     //单时间点所有空闲教师
     getTeacherList() {
       var that = this;
@@ -555,7 +599,8 @@ export default {
         lesson_id: that.lesson_id,
         course_id: that.course_id,
         teacher_id: that.teacherValue,
-        help_teacher_id:that.helpTeacherValue
+        help_teacher_id:that.helpTeacherValue,
+        user_id:that.user_id
       };
       var url = editClassUrl;
       // console.log(params,"=========params============")
