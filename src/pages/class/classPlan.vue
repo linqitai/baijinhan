@@ -56,16 +56,15 @@
       <div class="functionBox">
         <div class="element">
           <label class="inline">排课周期：</label>
-           <my-time v-model="weekth" @change="getList"> </my-time>
+          <my-time v-model="weekth" @change="getList"></my-time>
           <!-- <div class="inline">
             <el-button type="primary" size="">查询</el-button>
           </div>-->
         </div>
         <div style="margin-top: 10px;">
-          <!-- <el-button type="primary" size="medium" @click="preparePublish">预发布课程</el-button> -->
           <el-button type="primary" size="medium" @click="publish">发布当天课程</el-button>
           <el-button type="primary" size="medium" @click="publishWeek">发布当周课程</el-button>
-          <el-button type="primary" size="medium" @click="statistics">上周未定课程统计</el-button>
+          <!-- <el-button type="primary" size="medium" @click="statistics">上周未定课程统计</el-button> -->
         </div>
         <div style="margin-top: 18px;">
           <el-radio-group v-model="week" @change="changeweek">
@@ -99,10 +98,9 @@
           <table class="thatTable">
             <tr class="header">
               <th v-for="(item,index) in rooms">
-                  <p style="line-height:30px;font-size:12px">{{item.school.name}}</p>
+                <p style="line-height:30px;font-size:12px">{{item.school.name}}</p>
                 <p style="line-height:30px">{{item.name}}</p>
-                
-                </th>
+              </th>
             </tr>
             <tr v-for="(items,index) in list">
               <td v-for="(item,index) in items.blocks" @click="openDialogModel(item)">
@@ -122,6 +120,7 @@
         </div>
       </div>
     </div>
+
     <el-dialog
       title="排课"
       :visible.sync="isShowPaikeDialog"
@@ -181,38 +180,66 @@
             @change="lessonChange"
           >
             <el-option
-              v-for="item in options4"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in lessonOption"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"  
             ></el-option>
           </el-select>
         </div>
         <div class="lineBox">
           <b class="icon"></b>
-          <b class="text">教师</b>
+          <b class="text">教师1</b>
           <el-select
+            class="inputTitle"
+            v-model="teacherValue"
+            placeholder="请选择教师"
+            @change="getTeacherCourseEvent"
+            clearable
+          >
+          <!-- <el-select
             class="inputTitle"
             v-model="teacherValue"
             placeholder="请选择教师"
             @change="getTeacherCourseEvent"
             multiple
             clearable
-          >
+          > -->
             <el-option
               v-for="item in teachersOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.en_name"
+              :value="item.id"
             ></el-option>
           </el-select>
         </div>
+        
+        <div class="lineBox">
+          <b class="icon"></b>
+          <b class="text">教师2</b>
+          <el-select
+            class="inputTitle"
+            v-model="helpTeacherValue"
+            placeholder="请选择教师"
+            @change="getTeacherCourseEvent"
+            clearable
+          >
+            <el-option
+              v-for="item in teachersOption"
+              :key="item.id"
+              :label="item.en_name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </div>
+
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button class="right margT20 margR20" type="primary" @click="editClass">确 定</el-button>
           <div style="clear: both;"></div>
         </span>
       </div>
+
       <div v-else>
         <div class="lineBox">
           <label class="width80">课程级别：</label>
@@ -233,7 +260,7 @@
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
-          <el-button type="primary" @click="isShowDeleteBtn=false;courseLevelValue='';courseValue='';" class="right margR20 margT20">编 辑</el-button>
+          <el-button type="primary" @click="editArranging" class="right margR20 margT20">编 辑</el-button>
           <div style="clear: both;"></div>
         </span>
       </div>
@@ -262,7 +289,7 @@ import {
   getMonth,
   getTodayDate
 } from "@/common/js/utils";
-import myTime  from '@/components/time'
+import myTime from "@/components/time";
 // 一天有多少毫秒
 var oneDayTime = 24 * 60 * 60 * 1000;
 var oneDaySecond = 24 * 60 * 60;
@@ -270,22 +297,25 @@ var list = [];
 export default {
   data() {
     return {
-      schoole_id: localStorage.getItem("_school_id"),
-      weekth: "",
+      /*------弹出层内容展示-------*/
       courseValue: "",
       courseLevelValue: "",
-      teacherValue: [],
+      teacherValue: 0,
+      helpTeacherValue:0,
       isShowPaikeDialog: false,
+      isShowDeleteBtn: false, // 对话框 弹出内容切换 与 删除按钮显示隐藏 开关
+
+      /*------时间选择---------*/
+      weekth: "", //周时间区间  周一  00：00：00   -  周日  23：59：59
       week: 1,
-      weekTime: "",
-      time1Options: [],
-      time2Options: [],
-      time1: "",
-      time2: "",
+      weekTime: "", // 单时间点开始时间
+
+      /*------下拉资源---------- */
       teachersOption: [],
       coursesOption: [],
       courseLevelOption: [],
       lessonOption: [],
+    
       rooms: [],
       list: [],
       hour: "",
@@ -293,14 +323,10 @@ export default {
       lesson_id: "",
       course_id: "",
       lessonValue: "",
-      restaurants: [],
-      state1: "",
-      state2: "",
-      options4: [],
-      options5: [],
+  
       loading: false,
       arranging_ids: "",
-      isShowDeleteBtn: false,
+     
       show: {
         lessonLevelName: "",
         courseName: "",
@@ -309,16 +335,16 @@ export default {
       }
     };
   },
-  components:{
+  components: {
     myTime
   },
   created() {
     this.getRooms();
-    // this.getCourseList()
     this.getCourseLevelList();
-    // this.getlessonList();
+    this.getCourseList();
   },
   methods: {
+    //单时间点所有空闲教师
     getTeacherList() {
       var that = this;
       var params = {
@@ -327,73 +353,47 @@ export default {
         limit: 1000
       };
       var url = teacherFreesUrl;
-      // console.log(params,"params")
       that.$axios.post(url, params).then(res => {
         var result = res.data;
         if (result.code == ERR_OK) {
           that.teachersOption = result.data.teachers;
-          if (that.teachersOption) {
-            for (var i = 0; i < that.teachersOption.length; i++) {
-              that.teachersOption[i].value = that.teachersOption[i].id;
-              that.teachersOption[i].label = that.teachersOption[i].en_name;
-            }
-          } else {
-          }
-          console.log(that.teachersOption, "that.teachersOption");
+          // if (that.teachersOption) {
+          //   for (var i = 0; i < that.teachersOption.length; i++) {
+          //     that.teachersOption[i].value = that.teachersOption[i].id;
+          //     that.teachersOption[i].label = that.teachersOption[i].en_name;
+          //   }
+          // }
         }
       });
     },
+    //获取话题列表
     getlessonList() {
       let that = this;
       var params = {
         course_id: this.course_id,
-        course_level_id: this.course_level_id
-        // offset: 0,
-        // limit: 1000
+        course_level_id: this.course_level_id,
+        offset: 0,
+        limit: 1000
       };
       var url = lessonSearchUrl;
-      console.log(params, "params");
       this.$axios.post(url, params).then(res => {
         var result = res.data;
-        // console.log(result.code,'--res.code--')
         if (result.code == ERR_OK) {
           that.lessonOption = result.data.lesson;
-          var aaa = [];
-          for (var i = 0; i < that.lessonOption.length; i++) {
-            var item = {
-              label: that.lessonOption[i].name,
-              value: that.lessonOption[i].id
-            };
-            aaa.push(item);
-          }
-          that.options4 = aaa;
-          that.lessonValue = that.lesson_id;
-          // console.log(that.options4,"that.options4")
+          var arr = [];
         }
       });
-    },
-    lessonChange(value) {
-      this.lesson_id = value;
-    },
-    statistics() {
-      this.$router.push("./orderClassOne");
-    },
-    courseChange(value) {
-      console.log(value, "value");
-      this.course_id = value;
-      this.lessonValue = "";
-      this.teacherValue = [];
-      // 获取话题列表
-      this.getlessonList();
     },
     getCourseList() {
       var that = this;
       var params = {};
+      if(this.courseLevelValue){
+        params.courseLevelValue = that.courseLevelValue
+      }
       var url = getTeacherCourseUrl;
-      // console.log(params,"=========params============")
+      console.log(params,"=========params============")
       that.$axios.post(url, params).then(res => {
         var result = res.data;
-        // console.log(result.code,'--res.code--')
         if (result.code == ERR_OK) {
           that.coursesOption = result.data.course;
           for (var i = 0; i < that.coursesOption.length; i++) {
@@ -404,44 +404,60 @@ export default {
         }
       });
     },
+
+    /*----------------actions----------*/
+    lessonChange(lesson_id) {
+      this.lesson_id = lesson_id;
+    },
+    // statistics() {
+    //   this.$router.push("./orderClassOne");
+    // },
+    courseChange(value) {
+      console.log(value, "value");
+      this.course_id = value;
+      this.lessonValue = "";
+      this.teacherValue = '';
+      // 获取话题列表
+      this.getlessonList();
+    },
+
     courseLevelChange(value) {
       var that = this;
       this.course_level_id = value;
       this.lessonValue = "";
       this.getCourseList();
-      this.teacherValue = [];
+      this.teacherValue = '';
       console.log(value, "course_level_id");
-      
+
       for (var i = 0; i < that.courseLevelOption.length; i++) {
-        console.log(i, "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
         if (that.courseLevelOption[i].id == value) {
           that.coursesOption = that.courseLevelOption[i].courses;
           for (var i = 0; i < that.coursesOption.length; i++) {
             that.coursesOption[i].value = that.coursesOption[i].id;
             that.coursesOption[i].label = that.coursesOption[i].name;
-            console.log('coursesOption', that.coursesOption[i].value,that.coursesOption[i].label);
+            console.log(
+              "coursesOption",
+              that.coursesOption[i].value,
+              that.coursesOption[i].label
+            );
           }
           break;
         }
       }
+      this.getlessonList();
+      this.lessonValue =  '';
       // 获取话题列表
       // this.getlessonList();
     },
     getCourseLevelList() {
       let that = this;
-      var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        area_id: localStorage.getItem("area_id")
-      };
       var url = courseLevelListUrl;
-      console.log(params, "params");
-      this.$axios.post(url, params).then(res => {
+      this.$axios.post(url).then(res => {
         var result = res.data;
         console.log(result.code, "--res.code--");
         if (result.code == ERR_OK) {
           that.courseLevelOption = result.data.list;
-
-          that.courseLevelOption.unshift({id:'',name:'不限'})
+          that.courseLevelOption.unshift({ id: "", name: "不限" });
           for (var i = 0; i < that.courseLevelOption.length; i++) {
             that.courseLevelOption[i].value = that.courseLevelOption[i].id;
             that.courseLevelOption[i].label = that.courseLevelOption[i].name;
@@ -451,12 +467,8 @@ export default {
     },
     getRooms() {
       var that = this;
-      var params = {
-        school_id: that.schoole_id
-      };
       var url = getRoomsUrl;
-      // console.log(params,"params")
-      this.$axios.post(url, params).then(res => {
+      this.$axios.post(url).then(res => {
         var result = res.data;
         // console.log(result.code,'--res.code--')
         if (result.code == ERR_OK) {
@@ -469,6 +481,7 @@ export default {
     getTeacherCourseEvent() {
       var that = this;
     },
+    //打开排课对话框
     openDialogModel(item) {
       var that = this;
       that.lessonValue = "";
@@ -485,14 +498,15 @@ export default {
       that.room_id = item.room_id;
       that.hour = item.hour;
       that.arranging_ids = item.id;
-      that.isShowPaikeDialog = true;
+      that.isShowPaikeDialog = true; //对话框开关
       that.courseLevelValue = item.level_id;
       console.log(that.teachersOption, "that.teachersOption");
-      if (this.teachersOption) {
-        that.teacherValue.push2(item.teacher_id);
-      } else {
-        that.teacherValue = [];
-      }
+      // if (this.teachersOption) {
+      //   that.teacherValue.push2(item.teacher_id);
+      // } else {
+      //   that.teacherValue = [];
+      // }
+      that.teacherValue = item.teacher_id 
       that.courseValue = item.course_id;
       that.course_id = item.course_id;
       that.course_level_id = item.level_id;
@@ -500,7 +514,7 @@ export default {
 
       //获取时间 weekTime
       var weekTime =
-        that.weekth.split(",")[0]*1000+
+        that.weekth.split(",")[0] * 1000 +
         getTime(oneDayTime * (that.week - 1)) +
         getTime(oneDayTime * (that.hour / 24));
       console.log(weekTime, "weekTime");
@@ -532,8 +546,6 @@ export default {
     },
     editClass() {
       var that = this;
-      // console.log(that.weekth.split(',')[0],"begin")
-      // console.log(that.week,"week")
       var params = {
         time:
           parseInt(that.weekth.split(",")[0]) +
@@ -542,8 +554,8 @@ export default {
         room_id: that.room_id,
         lesson_id: that.lesson_id,
         course_id: that.course_id,
-        school_id: that.schoole_id,
-        teacher_id: that.teacherValue
+        teacher_id: that.teacherValue,
+        help_teacher_id:that.helpTeacherValue
       };
       var url = editClassUrl;
       // console.log(params,"=========params============")
@@ -613,7 +625,6 @@ export default {
     getList() {
       var that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         weekth: that.weekth,
         week: that.week,
         is_released: 0
@@ -695,18 +706,9 @@ export default {
         }
       });
     },
-    preparePublish() {
-      var that = this;
-      // if(that.time2){
-      //   that.isShowPaikeDialog = true;
-      // }else{
-      //   that.$message("请选择排课周期")
-      // }
-    },
     publishEvent() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         weekth: this.weekth,
         week: this.week
       };
@@ -746,7 +748,6 @@ export default {
     publishWeekEvent() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         weekth: this.weekth
       };
       // Object.assign(params, params, p);
@@ -789,19 +790,24 @@ export default {
       } else {
         that.getList();
       }
+    },
+    editArranging(res) {
+      console.log(res);
+      this.isShowDeleteBtn = false;
+      this.courseLevelValue = "";
+      this.courseValue = "";
     }
   }
 };
-Array.prototype.push2 = function (args) {
-  console.log(args,'123123');
+Array.prototype.push2 = function(args) {
+  console.log(args, "123123");
   for (var i = 0; i < args.length; i++) {
     var ele = args[i];
-    if (this.indexOf(ele) == -1) {  
+    if (this.indexOf(ele) == -1) {
       this.push(ele);
     }
   }
 };
-
 </script>
 
 

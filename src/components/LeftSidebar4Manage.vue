@@ -134,11 +134,9 @@ export default {
     getPermissions() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         user_id: localStorage.getItem('login_id')
       }
       var url = rolePermissionsUrl;
-      console.log(params,"params================================================")
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.code,'--res.code--')
@@ -155,53 +153,50 @@ export default {
           that.$router.push({
             path: href.split('#')[1]
           })
-          that.getRoleOneInfo();
+          // that.getRoleOneInfo();
         }
       });
     },
-    getRoleOneInfo() {
-      let that = this;
-      var params = {
-        schoole_id: localStorage.getItem("_school_id"),
-        role_id: localStorage.getItem('role_id')
-      }
-      var url = roleOneUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
-        that.loading = false;
-        var result = res.data;
-        console.log(result.code,'--res.code--')
-        if(result.code == ERR_OK){
-          that.roleOne = result.data;
+    // getRoleOneInfo() {
+    //   let that = this;
+    //   var params = {
+    //     role_id: localStorage.getItem('role_id')
+    //   }
+    //   var url = roleOneUrl;
+    //   this.$axios.post(url,params).then((res)=>{
+    //     that.loading = false;
+    //     var result = res.data;
+    //     if(result && result.code == ERR_OK){
+    //       that.roleOne = result.data;
           
-          // var permission_id_arr = []
-          // for(var i=0;i<that.roleOne.permissions.length;i++) {
-          //   var permission_id = that.roleOne.permissions[i].permission_id;
-          //   permission_id_arr.push(permission_id)
-          //   for(var j=0;j<that.roleOne.permissions[i].subs.length;j++) {
-          //     var permission_id =  that.roleOne.permissions[i].subs[j].permission_id
-          //     permission_id_arr.push(permission_id)
-          //   }
-          // }
-          // console.log(permission_id_arr,"permission_id_arr")
+    //       // var permission_id_arr = []
+    //       // for(var i=0;i<that.roleOne.permissions.length;i++) {
+    //       //   var permission_id = that.roleOne.permissions[i].permission_id;
+    //       //   permission_id_arr.push(permission_id)
+    //       //   for(var j=0;j<that.roleOne.permissions[i].subs.length;j++) {
+    //       //     var permission_id =  that.roleOne.permissions[i].subs[j].permission_id
+    //       //     permission_id_arr.push(permission_id)
+    //       //   }
+    //       // }
+    //       // console.log(permission_id_arr,"permission_id_arr")
 
-          // for(var k=0;k<rolePermissions.length;k++){
-          //   var permission_id = rolePermissions[k].permission_id;
-          //   console.log(permission_id_arr.indexOf(permission_id),permission_id)
-          //   if(permission_id_arr.indexOf(permission_id)>-1){
-          //     rolePermissions[k].check = true;
-          //   }
-          //   for(var q=0;q<rolePermissions[k].subs.length;q++) {
-          //     var permission_id = rolePermissions[k].subs[q].permission_id;
-          //     if(permission_id_arr.indexOf(permission_id)>-1){
-          //       rolePermissions[k].subs[q].check = true;
-          //     }
-          //   }
-          // }
-          // that.rolePermissions = rolePermissions;
-        }
-      })
-    },
+    //       // for(var k=0;k<rolePermissions.length;k++){
+    //       //   var permission_id = rolePermissions[k].permission_id;
+    //       //   console.log(permission_id_arr.indexOf(permission_id),permission_id)
+    //       //   if(permission_id_arr.indexOf(permission_id)>-1){
+    //       //     rolePermissions[k].check = true;
+    //       //   }
+    //       //   for(var q=0;q<rolePermissions[k].subs.length;q++) {
+    //       //     var permission_id = rolePermissions[k].subs[q].permission_id;
+    //       //     if(permission_id_arr.indexOf(permission_id)>-1){
+    //       //       rolePermissions[k].subs[q].check = true;
+    //       //     }
+    //       //   }
+    //       // }
+    //       // that.rolePermissions = rolePermissions;
+    //     }
+    //   })
+    // },
     setRouter(currentTitleId,currentId) {
       var that = this;
       this.$router.push(that.mSidebar[currentTitleId].subs[currentId].path); 

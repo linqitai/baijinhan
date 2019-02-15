@@ -132,12 +132,13 @@ export default {
       sheng:'',
       number:'',
       school_id:'',
-      editPDialog: false
+      editPDialog: false,
+      newP:'',
+      oldP:'',
     }
   },
   created() {
     this.provincesList = getProvinces();
-    // console.log(this.provincesList);
     for(var i=0;i<this.provincesList.length;i++) {
       this.provincesList[i].label =  this.provincesList[i].name;
       this.provincesList[i].value = this.provincesList[i].name;
@@ -199,13 +200,8 @@ export default {
     },
     getSchoolList() {
       let that = this;
-      // console.log(JSON.stringify(this.coordinates),"--=-=-=-=-=-=-=")
-      var params = {
-        area_id: localStorage.getItem("area_id")
-      }
       var url = schoolListUrl;
-      console.log(params,"params")
-      this.$axios.post(url,params).then((res)=>{
+      this.$axios.post(url).then((res)=>{
         var result = res.data;
         // console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
