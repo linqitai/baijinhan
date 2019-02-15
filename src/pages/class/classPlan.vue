@@ -233,6 +233,7 @@
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
           <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
+          <el-button type="primary" @click="isShowDeleteBtn=false;courseLevelValue='';courseValue='';" class="right margR20 margT20">编 辑</el-button>
           <div style="clear: both;"></div>
         </span>
       </div>
@@ -410,10 +411,7 @@ export default {
       this.getCourseList();
       this.teacherValue = [];
       console.log(value, "course_level_id");
-      console.log(
-        that.courseLevelOption,
-        "that.courseLevelOptionthat.courseLevelOption"
-      );
+      
       for (var i = 0; i < that.courseLevelOption.length; i++) {
         console.log(i, "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
         if (that.courseLevelOption[i].id == value) {
@@ -421,6 +419,7 @@ export default {
           for (var i = 0; i < that.coursesOption.length; i++) {
             that.coursesOption[i].value = that.coursesOption[i].id;
             that.coursesOption[i].label = that.coursesOption[i].name;
+            console.log('coursesOption', that.coursesOption[i].value,that.coursesOption[i].label);
           }
           break;
         }
@@ -441,6 +440,8 @@ export default {
         console.log(result.code, "--res.code--");
         if (result.code == ERR_OK) {
           that.courseLevelOption = result.data.list;
+
+          that.courseLevelOption.unshift({id:'',name:'不限'})
           for (var i = 0; i < that.courseLevelOption.length; i++) {
             that.courseLevelOption[i].value = that.courseLevelOption[i].id;
             that.courseLevelOption[i].label = that.courseLevelOption[i].name;

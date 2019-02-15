@@ -1,9 +1,22 @@
 <style lang="scss" scoped>
+@import '../../common/scss/common.scss';
 .apply{
   .operateTableBox{
     .functionBox{
     }
   }
+}
+.checkLabel{
+  color: #646464;
+  font-size: 12px;
+  padding:4px 3px;
+  display: block;
+}
+.checked{
+  color: $mainColor;
+}
+.el-checkbox+.el-checkbox{
+  margin-left: 0px !important;
 }
 </style>
 <template>
@@ -78,14 +91,14 @@
             <th>二级</th>
             <th>权限配置细则</th>
           </tr>
-          <tr v-for="(items,index) in rolePermissions">
+          <tr v-for="(items,index1) in rolePermissions">
             <td>
               <el-checkbox v-model="items.check">{{items.text}}</el-checkbox>
+              <!-- <label class="checkLabel" :class="[items.check?'checked':'']" @click="clickLevel1(index1)">{{items.text}}</label> -->
             </td>
             <td>
-              <div v-for="(item,index) in items.subs">
-                <el-checkbox v-model="item.check">{{item.text}}</el-checkbox>
-              </div>
+              <el-checkbox class="checkLabel" v-for="(item,index2) in items.subs" v-model="item.check">{{item.text}}</el-checkbox>
+              <!-- <label v-for="(item,index2) in items.subs" class="checkLabel" :class="[item.check?'checked':'']" @click="clickLevel2(index1,index2)">{{item.text}}</label> -->
             </td>
             <td>
               <!-- <div v-for="(item,index) in items.subs">
@@ -106,7 +119,7 @@
 </template>
 <script>
 import { roleListUrl,roleEditUrl,roleBindUrl,rolePermissionsUrl,roleChooseUrl,roleOneUrl,ERR_OK } from '@/api/index'
-
+var rolePermissions = []
 export default {
   data() {
     return {
@@ -139,6 +152,19 @@ export default {
     this.getPermissionInfo();
   },
   methods: {
+    clickLevel1(index1) {
+      let that = this;
+      rolePermissions[index1].check = !rolePermissions[index1].check;
+      that.rolePermissions = rolePermissions
+      console.log(that.rolePermissions[index1].check,"check")
+      // that.rolePermissions[i].subs[j].check = false;
+    },
+    clickLevel2(index1,index2) {
+      let that = this;
+      rolePermissions[index1].subs[index2].check = !rolePermissions[index1].subs[index2].check;
+      that.rolePermissions = rolePermissions
+      console.log(that.rolePermissions[index1].subs[index2].check,"check")
+    },
     closePermissionDialog() {
       this.setPermissionDialog = false;
       this.clearPermission();
@@ -146,7 +172,6 @@ export default {
     getPermissionInfo() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         user_id:localStorage.getItem('login_id'),
         // role_id:row.role_id
       }
@@ -158,6 +183,7 @@ export default {
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
           that.rolePermissions = result.data;
+          rolePermissions = result.data;
           console.log(that.rolePermissions,"that.rolePermissions");
          
           // for(var i=0;i<that.rolePermissions.length;i++) {
@@ -184,7 +210,6 @@ export default {
         }
       }
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         role_id: this.role_id,
         permissions:JSON.stringify(permission)
       }
@@ -234,7 +259,6 @@ export default {
     getRoleOneInfo() {
       let that = this;
       var params = {
-        schoole_id: localStorage.getItem("_school_id"),
         role_id:this.role_id
       }
       var url = roleOneUrl;
@@ -245,39 +269,40 @@ export default {
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
           that.roleOne = result.data;
-          console.log(that.rolePermissions,"rolePermissions")
+          // console.log(that.rolePermissions,"rolePermissions")
           console.log(that.roleOne,"roleOne")
           
-          // var permission_id_arr = []
-          // for(var i=0;i<that.roleOne.permissions.length;i++) {
-          //   var permission_id = that.roleOne.permissions[i].permission_id;
-          //   permission_id_arr.push(permission_id)
-          //   for(var j=0;j<that.roleOne.permissions[i].subs.length;j++) {
-          //     var permission_id =  that.roleOne.permissions[i].subs[j].permission_id
-          //     permission_id_arr.push(permission_id)
-          //   }
-          // }
-          // console.log(permission_id_arr,"permission_id_arr")
+          var permission_id_arr = []
+          for(var i=0;i<that.roleOne.permissions.length;i++) {
+            var permission_id1 = that.roleOne.permissions[i].permission_id;
+            permission_id_arr.push(permission_id1)
+            for(var j=0;j<that.roleOne.permissions[i].subs.length;j++) {
+              var permission_id2 =  that.roleOne.permissions[i].subs[j].permission_id
+              permission_id_arr.push(permission_id2)
+            }
+          }
+          console.log(permission_id_arr,"permission_id_arr")
 
-          // for(var k=0;k<rolePermissions.length;k++){
-          //   var permission_id = rolePermissions[k].permission_id;
-          //   console.log(permission_id_arr.indexOf(permission_id),permission_id)
-          //   if(permission_id_arr.indexOf(permission_id)>-1){
-          //     rolePermissions[k].check = true;
-          //   }
-          //   for(var q=0;q<rolePermissions[k].subs.length;q++) {
-          //     var permission_id = rolePermissions[k].subs[q].permission_id;
-          //     if(permission_id_arr.indexOf(permission_id)>-1){
-          //       rolePermissions[k].subs[q].check = true;
-          //     }
-          //   }
-          // }
+          for(var k=0;k<that.rolePermissions.length;k++){
+            var permission_id =that.rolePermissions[k].permission_id;
+            console.log(permission_id_arr.indexOf(permission_id),permission_id)
+            if(permission_id_arr.indexOf(permission_id)>-1){
+              that.rolePermissions[k].check = true;
+            }
+            for(var q=0;q<that.rolePermissions[k].subs.length;q++) {
+              var permission_id = that.rolePermissions[k].subs[q].permission_id;
+              if(permission_id_arr.indexOf(permission_id)>-1){
+                that.rolePermissions[k].subs[q].check = true;
+              }
+            }
+          }
           // that.rolePermissions = rolePermissions;
+          console.log(that.rolePermissions,"that.rolePermissions")
+          that.setPermissionDialog = true;
         }
       })
     },
     setPermissionClick(row) {
-      this.setPermissionDialog = true;
       this.roleName = row.name;
       this.role_id = row.id;
       this.getRoleOneInfo();

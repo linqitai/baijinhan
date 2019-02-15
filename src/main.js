@@ -93,6 +93,7 @@ axios.interceptors.response.use(function (res) {
   if (err.response.data) {
     if (err.response.data.status_code == 433 || err.response.data.code == 433) {
       alert('错误信息：' + err.response.data.message)
+
     }
     if (err.response.data.status_code == 401) {
       router.replace({
