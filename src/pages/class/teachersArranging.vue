@@ -210,6 +210,9 @@ export default {
   data() {
     return {
       teachers:[],
+      hours:[
+        9,10,11,12,13,14,15,16,17,18,19,20
+      ],
       name:"",
       time1Options:[],
       date:"",
@@ -294,6 +297,23 @@ export default {
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
           var resultObj = result.data.teacher;
+          // var resultArray = result.data.teacher;
+          //除了help_arranging  与 填充 空白
+          // console.log(resultArray.length,'llllll');
+          // for(var k=0; k<resultArray.length; k++){
+          //   var arr1 = resultArray[k].arrangings;
+          //   var arr2 = resultArray[k].help_arrangings;
+          //   var arr = arr1.concat(arr2);
+          //   resultArray[k].arrangings = arr;
+          //   for(var i =0 ;i<resultArray[k].arrangings.length;i++){
+          //     for(var j=0;j<that.hours.length;j++){
+          //        if(resultArray[k].arrangings[i].hour != that.hours[j]){
+          //         //  console.log(123123);
+          //          resultArray[k].arrangings.push({})
+          //       }
+          //     }
+          //   }
+          // }   
           console.log(resultObj,"resultObj")
           var keys = Object.keys(resultObj)
           console.log(keys,"keys");
@@ -305,6 +325,10 @@ export default {
             var blocks = []
             for(var j=0;j<obj.arrangings.length;j++){
               var item = obj.arrangings[j]
+              blocks.push(item)
+            }
+            for(var k=0;k<obj.help_arrangings.length;k++){
+              var item = obj.help_arrangings[j]
               blocks.push(item)
             }
             object.blocks = blocks
@@ -336,7 +360,7 @@ export default {
             }
           }
           that.teachers = list;
-          console.log(that.teachers,"that.teachers")
+          // that.teachers =resultArray
         }
       });
     },
