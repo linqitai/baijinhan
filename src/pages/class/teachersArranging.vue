@@ -186,9 +186,10 @@ $tableLeft:100px;
             <tr v-for="(items,index) in teachers">
               <td v-for="(item,index) in items.blocks" class="width120">
                 <div v-show="item.course" class="item">
-                  <div class="line1 ellipsis">{{item.lesson}}({{item.course}})</div>
-                  <div class="line2 ellipsis">地点：{{item.school_id}}{{item.room}}</div>
-                  <div class="line3 ellipsis">订课人数：{{item.users_count}}</div>
+                  <div class="line1 ellipsis">{{item.course}}</div>
+                  <div class="line2 ellipsis">{{item.school}}</div>
+                  <!-- <div class="line2 ellipsis">{{item.room}}</div> -->
+                  <div class="line3 ellipsis">订课人数：{{item.users_count}}/{{item.capacity}}</div>
                 </div>
               </td>
             </tr>
@@ -323,9 +324,10 @@ export default {
                         hour:arr[i].blocks[k].hour,
                         lesson:arr[i].blocks[k].lesson.serial,
                         course:arr[i].blocks[k].lesson.name,
-                        school:arr[i].blocks[k].school_id,
+                        school:arr[i].blocks[k].school.name,
                         room:arr[i].blocks[k].room.name,
-                        users_count:arr[i].blocks[k].capacity
+                        capacity:arr[i].blocks[k].capacity,
+                        users_count:arr[i].blocks[k].users_count
                       }
                     }
                   }

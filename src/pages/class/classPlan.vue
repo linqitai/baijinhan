@@ -1,6 +1,6 @@
 <style lang="scss" scoped>
 @import "../../common/scss/common.scss";
-$height: 50px;
+// $height: 50px;
 .apply {
   .operateTableBox {
     min-height: 820px;
@@ -98,7 +98,11 @@ $height: 50px;
         <div class="tableWrapper">
           <table class="thatTable">
             <tr class="header">
-              <th v-for="(item,index) in rooms">{{item.name}}</th>
+              <th v-for="(item,index) in rooms">
+                  <p style="line-height:30px;font-size:12px">{{item.school.name}}</p>
+                <p style="line-height:30px">{{item.name}}</p>
+                
+                </th>
             </tr>
             <tr v-for="(items,index) in list">
               <td v-for="(item,index) in items.blocks" @click="openDialogModel(item)">
@@ -495,7 +499,7 @@ export default {
 
       //获取时间 weekTime
       var weekTime =
-        getTime(that.time2.split("~")[0]) +
+        that.weekth.split(",")[0]*1000+
         getTime(oneDayTime * (that.week - 1)) +
         getTime(oneDayTime * (that.hour / 24));
       console.log(weekTime, "weekTime");

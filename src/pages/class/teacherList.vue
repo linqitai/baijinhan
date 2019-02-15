@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column prop="en_name" label="英文名称"></el-table-column>
         <el-table-column prop="cn_name" label="中文名称"></el-table-column>
-        <el-table-column prop="serial" label="编码"></el-table-column>
+        <el-table-column prop="serial" label="工作编号"></el-table-column>
         <el-table-column prop="type.name" label="教师类型"></el-table-column>
         <el-table-column prop="role.name" label="角色名称" width="100">
           <template slot-scope="scope">{{scope.row.role_id|filterRole}}</template>
@@ -113,8 +113,9 @@
         </el-table-column>-->
         <el-table-column prop="mobile" label="手机" width="120"></el-table-column>
         <el-table-column prop="address" label="住址"></el-table-column>
-        <el-table-column prop="school_id" label="所在校区">
-          <template slot-scope="scope">{{scope.row.school_id|filterSchool}}</template>
+        <el-table-column prop="area.name" label="所在地区">
+          
+          <!-- <template slot-scope="scope">{{scope.row.school_id|filterSchool}}</template> -->
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right">
           <template slot-scope="scope">

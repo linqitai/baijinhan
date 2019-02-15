@@ -69,7 +69,7 @@
       <transition name='fade'>
         <ul v-show="flex[index]">
           <li class="item" v-for="(item,index) in item.subs" :class="[item.id==currentId?'selected':'']" @click="textClick(item)">
-            <i class="left iconStyle" :class="item.icon"></i>
+            <i class="left iconStyle" v-bind:class="item.icon"></i>
             <div class="title left">{{item.text}}</div>
           </li>
         </ul>

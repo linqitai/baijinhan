@@ -117,15 +117,19 @@
         <div class="tableWrapper">
           <table class="thatTable">
             <tr class="header">
-              <th v-for="(item,index) in rooms">{{item.name}}</th>
+              <th v-for="(item,index) in rooms">
+                   <p style="line-height:30px;font-size:12px">{{item.school.name}}</p>
+                <p style="line-height:30px">{{item.name}}</p>
+              </th>
             </tr>
             <tr v-for="(items,index) in list">
               <td v-for="(item,index) in items.blocks" :class="[item.users_count>0?'orderBgColor':'']" @click="showDetail(item)">
                 <div style="min-width: 160px;">
                   <div :class="[item.is_released==1?'blue':'gray']" v-if="item.lessonName">
-                    <div class="">{{item.lessonSerial}}({{item.users_count}}-{{item.capacity}})</div>
+                    <div>{{item.lessonName}}</div>
+                    <div style="color:black">{{item.teacherName}}</div>
                     <div>{{item.courseName}}</div>
-                    <div>{{item.lessonName}} {{item.teacherName}}</div>
+                    <div class="">({{item.users_count}}-{{item.capacity}})</div>
                   </div>
                 </div>
               </td>

@@ -17,6 +17,7 @@ import './common/scss/common.scss'
 // import utils from './common/js/utils'
 import axios from "axios"
 import Cookies from 'js-cookie'
+
 //将axios挂载到原型上
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookie = Cookies;
@@ -75,6 +76,14 @@ axios.interceptors.response.use(function (res) {
     var val = errors[keyArr[0]];
     return alert(val);
   }
+  if (res.data.status_code == 433 || res.data.code == 433) {
+    // this.$message('这是一条消息提示');
+    ElementUI.MessageBox({
+      message:res.data.message,
+      title:'提示'
+    })
+  }
+  
   return res;
 }, function (err) {
   console.log("请求失败", err)
@@ -82,7 +91,7 @@ axios.interceptors.response.use(function (res) {
   //   path: '/login'
   // })
   if (err.response.data) {
-    if (err.response.data.status_code == 433) {
+    if (err.response.data.status_code == 433 || err.response.data.code == 433) {
       alert('错误信息：' + err.response.data.message)
     }
     if (err.response.data.status_code == 401) {

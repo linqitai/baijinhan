@@ -75,6 +75,13 @@
             {{scope.row.type | filterTeacherType}}
           </template>
         </el-table-column>
+         <el-table-column
+          prop="type"
+          label="是否允许自助退课" width="110">
+          <template slot-scope="scope">
+            {{scope.row.is_auth_drop | filterAutoDrop}}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="is_use_level"
           label="是否区分等级" width="110">
@@ -277,6 +284,9 @@ export default {
     },
     filterTeacherType(t){
       return t==1?'中教':t==2?'外教':t==3?'中外教':t==4?'班主任':''
+    },
+    filterAutoDrop(t){
+      return t==1?'允许':'不允许'
     }
   },
   created() {

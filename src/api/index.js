@@ -1,5 +1,6 @@
 // import http from './public'
-export const host = 'http://bjh.chinaxywl.com/'
+// export const host = 'http://bjh.chinaxywl.com/'
+export const host = 'http://localhost/'
 // const host = '/xywl'
 
 export const ERR_OK = 201
