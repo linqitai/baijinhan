@@ -129,125 +129,148 @@
       width="600px"
     >
       <div v-if="!isShowDeleteBtn">
-        <div class="lineBox">
-          <b class="icon">*</b>
-          <b class="text">课程级别</b>
-          <el-select
-            class="inputTitle"
-            v-model="courseLevelValue"
-            placeholder="请选择课程等级"
-            @change="courseLevelChange"
-            clearable
-          >
-            <el-option
-              v-for="item in courseLevelOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="lineBox">
-          <b class="icon">*</b>
-          <b class="text">课程</b>
-          <el-select
-            class="inputTitle"
-            v-model="courseValue"
-            placeholder="请选择课程"
-            @change="courseChange"
-            clearable
-          >
-            <el-option
-              v-for="item in coursesOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="lineBox">
-          <b class="icon">*</b>
-          <b class="text">话题</b>
-          <el-select
-            class="inputTitle"
-            v-model="lessonValue"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入关键词"
-            :loading="loading"
-            clearable
-            @change="lessonChange"
-          >
-            <el-option
-              v-for="item in lessonOption"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"  
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="lineBox">
-          <b class="icon"></b>
-          <b class="text">教师1</b>
-          <el-select
-            class="inputTitle"
-            v-model="teacherValue"
-            placeholder="请选择教师"
-            @change="getTeacherCourseEvent"
-            clearable
-          >
-          <!-- <el-select
-            class="inputTitle"
-            v-model="teacherValue"
-            placeholder="请选择教师"
-            @change="getTeacherCourseEvent"
-            multiple
-            clearable
-          > -->
-            <el-option
-              v-for="item in teachersOption"
-              :key="item.id"
-              :label="item.en_name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </div>
-        
-        <div class="lineBox">
-          <b class="icon"></b>
-          <b class="text">教师2</b>
-          <el-select
-            class="inputTitle"
-            v-model="helpTeacherValue"
-            placeholder="请选择教师"
-            @change="getTeacherCourseEvent"
-            clearable
-          >
-            <el-option
-              v-for="item in teachersOption"
-              :key="item.id"
-              :label="item.en_name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="lineBox">
-          <b class="icon"></b>
-          <b class="text">学号</b>
-          <div class="width120">
-             <el-input v-model="serial" size="medium" placeholder="请输入学号" clearable></el-input>
+            <div style="font-weight: bold;">旧的信息</div>
+            <div class="lineBox">
+              <label class="width80">课程级别：</label>
+              {{show.lessonLevelName}}
+            </div>
+            <div class="lineBox">
+              <label class="width80">课程：</label>
+              {{show.courseName}}
+            </div>
+            <div class="lineBox">
+              <label class="width80">话题：</label>
+              {{show.lessonName}}
+            </div>
+            <div class="lineBox" v-if="show.tearcherName">
+              <label class="width80">教师1：</label>
+              {{show.tearcherName}}
+            </div>
+            <div class="lineBox" v-if="show.tearcherName2">
+              <label class="width80">教师2：</label>
+              {{show.tearcherName2}}
+            </div>
+            <hr style="margin-top: 12px;">
+            <div style="font-weight: bold; margin-top: 12px;">新的信息</div>
+            <div class="lineBox">
+            <b class="icon">*</b>
+            <b class="text">课程级别</b>
+            <el-select
+              class="inputTitle"
+              v-model="courseLevelValue"
+              placeholder="请选择课程等级"
+              @change="courseLevelChange"
+              clearable
+            >
+              <el-option
+                v-for="item in courseLevelOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </div>
-          <label class="inline" style="margin-left: 10px;margin-right: 10px;">{{studentInfo}}</label>
-          <div class="inline">
-            <el-button type="primary" size="medium" @click="searchBySerial" :loading="loadingSearch">查询</el-button>
+          <div class="lineBox">
+            <b class="icon">*</b>
+            <b class="text">课程</b>
+            <el-select
+              class="inputTitle"
+              v-model="courseValue"
+              placeholder="请选择课程"
+              @change="courseChange"
+              clearable
+            >
+              <el-option
+                v-for="item in coursesOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </div>
-        </div>
-        <span class="dialog-footer">
-          <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
-          <el-button class="right margT20 margR20" type="primary" @click="editClass" :loading="loadingSureEdit">确 定</el-button>
-          <div style="clear: both;"></div>
-        </span>
+          <div class="lineBox">
+            <b class="icon">*</b>
+            <b class="text">话题</b>
+            <el-select
+              class="inputTitle"
+              v-model="lessonValue"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入关键词"
+              :loading="loading"
+              clearable
+              @change="lessonChange"
+            >
+              <el-option
+                v-for="item in lessonOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"  
+              ></el-option>
+            </el-select>
+          </div>
+          <div class="lineBox">
+            <b class="icon"></b>
+            <b class="text">教师1</b>
+            <el-select
+              class="inputTitle"
+              v-model="teacherValue"
+              placeholder="请选择教师"
+              @change="getTeacherCourseEvent"
+              clearable
+            >
+            <!-- <el-select
+              class="inputTitle"
+              v-model="teacherValue"
+              placeholder="请选择教师"
+              @change="getTeacherCourseEvent"
+              multiple
+              clearable
+            > -->
+              <el-option
+                v-for="item in teachersOption"
+                :key="item.id"
+                :label="item.en_name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </div>
+          
+          <div class="lineBox">
+            <b class="icon"></b>
+            <b class="text">教师2</b>
+            <el-select
+              class="inputTitle"
+              v-model="helpTeacherValue"
+              placeholder="请选择教师"
+              @change="getTeacherCourseEvent"
+              clearable
+            >
+              <el-option
+                v-for="item in teachersOption"
+                :key="item.id"
+                :label="item.en_name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </div>
+          <div class="lineBox">
+            <b class="icon"></b>
+            <b class="text">学号</b>
+            <div class="width120">
+               <el-input v-model="serial" size="medium" placeholder="请输入学号" clearable></el-input>
+            </div>
+            <label class="inline" style="margin-left: 10px;margin-right: 10px;">{{studentInfo}}</label>
+            <div class="inline">
+              <el-button type="primary" size="medium" @click="searchBySerial" :loading="loadingSearch">查询</el-button>
+            </div>
+          </div>
+          <span class="dialog-footer">
+            <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
+            <el-button class="right margT20 margR20" type="primary" @click="editClass" :loading="loadingSureEdit">确 定</el-button>
+            <div style="clear: both;"></div>
+          </span>
       </div>
 
       <div v-else>
@@ -269,7 +292,7 @@
         </div>
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
-          <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
+          <el-button type="danger" class="margT20 margR20 right" @click="cancel" :loading="loadingDelete">删 除</el-button>
           <el-button type="primary" @click="editArranging" class="right margR20 margT20">编 辑</el-button>
           <div style="clear: both;"></div>
         </span>
@@ -341,6 +364,7 @@ export default {
       serial:"",
       user_id:'',
       
+      loadingDelete: false,
       getListLoading: false,
       loadingSureEdit: false,
       loadingSearch: false,
@@ -351,7 +375,8 @@ export default {
         lessonLevelName: "",
         courseName: "",
         lessonName: "",
-        tearcherName: ""
+        tearcherName: "",
+        tearcherName2: ""
       }
     };
   },
@@ -550,12 +575,6 @@ export default {
       that.arranging_ids = item.id;
       that.isShowPaikeDialog = true; //对话框开关
       that.courseLevelValue = item.level_id;
-      console.log(that.teachersOption, "that.teachersOption");
-      // if (this.teachersOption) {
-      //   that.teacherValue.push2(item.teacher_id);
-      // } else {
-      //   that.teacherValue = [];
-      // }
       that.teacherValue = item.teacher_id 
       that.courseValue = item.course_id;
       that.course_id = item.course_id;
@@ -575,6 +594,7 @@ export default {
     },
     cancel() {
       var that = this;
+      that.loadingDelete = true;
       var ids = [];
       ids.push(that.arranging_ids);
       var params = {
@@ -583,6 +603,7 @@ export default {
       var url = arrangingDeleteUrl;
       // console.log(params,"params")
       this.$axios.post(url, params).then(res => {
+        that.loadingDelete = false;
         var result = res.data;
         // console.log(result.code,'--res.code--')
         if (result.code == ERR_OK) {
@@ -636,16 +657,34 @@ export default {
           that.$alert("参数错误", "提示");
         });
     },
+
+    editArranging(res) {
+      let that = this;
+      this.isShowDeleteBtn = false;
+
+      that.courseValue = "";
+      that.courseLevelValue = "";
+      this.teacherValue = "";
+      this.helpTeacherValue = "";
+    },
     clearPaikeDialog() {
       var that = this;
-      that.teacherValue = "";
       that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
-      that.helpTeacherValue ="";
+
+
+      that.room_id = "";
+      that.lesson_id = "";
+      that.course_id = "";
+      that.teacherValue = "";
+      that.helpTeacherValue = "";
       that.user_id = "";
-      that.studentInfo ="";
-      that.serial ="";
+
+      that.serial = "";
+      that.user_id = "";
+      that.studentInfo = "";
+
     },
     initList() {
       var that = this;
@@ -670,6 +709,7 @@ export default {
             lesson_id: "",
             lessonName: "",
             teacherName: "",
+            teacherName2: "",
             capacity: "",
             hour: i + 9
           };
@@ -725,6 +765,7 @@ export default {
                 course_id: obj[j].lesson.course_id,
                 lesson_id: obj[j].lesson.id,
                 teacherName: obj[j].teacher ? obj[j].teacher.en_name : "",
+                teacherName2: obj[j].help_teacher ? obj[j].help_teacher.en_name : "",
                 roomName: obj[j].room.name,
                 capacity: obj[j].capacity,
                 is_released: obj[j].is_released
@@ -752,6 +793,7 @@ export default {
                     list[j].blocks[k].lessonName = arr[i].lessonName;
                     list[j].blocks[k].lessonLevelName = arr[i].lessonLevelName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
+                    list[j].blocks[k].teacherName2 = arr[i].teacherName2;
                     list[j].blocks[k].is_released = arr[i].is_released;
                     list[j].blocks[k].capacity = arr[i].capacity
                       ? arr[i].capacity
@@ -851,12 +893,6 @@ export default {
         that.getList();
       }
     },
-    editArranging(res) {
-      console.log(res);
-      this.isShowDeleteBtn = false;
-      this.courseLevelValue = "";
-      this.courseValue = "";
-    }
   }
 };
 Array.prototype.push2 = function(args) {
