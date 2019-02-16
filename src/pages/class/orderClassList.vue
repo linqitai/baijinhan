@@ -153,7 +153,7 @@
         </el-row>
         <div class="users" v-for="(item,index) in oneInfo.users">
           <img class="avater" :src="item.head_img_url">
-          <label class="name">{{item.en_name}} {{item.cn_name}}</label>
+          <label class="name">{{item.en_name}} {{item.cn_name}}  {{item.serial}}</label>
         </div>
       </div>
     </el-dialog>

@@ -633,6 +633,10 @@ export default {
       that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
+      that.helpTeacherValue ="";
+      that.user_id = "";
+      that.studentInfo ="";
+      that.serial ="";
     },
     initList() {
       var that = this;
