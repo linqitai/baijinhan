@@ -60,6 +60,10 @@
           prop="arranging.course.name"
           label="课程名称" width="140">
         </el-table-column>
+         <el-table-column
+          prop="arranging.lesson.name"
+          label="话题名称" width="200">
+        </el-table-column>
         <el-table-column
           prop="arranging.course.type_id"
           label="课程类型">
@@ -88,7 +92,7 @@
 </template>
 <script>
 import { dropsListUrl,agreeDropUrl,ERR_OK } from '@/api/index'
-import { getFullDate,getFullTime } from '@/common/js/utils'
+import { getFullDate,getFullTime,getFullDateTime } from '@/common/js/utils'
 export default {
   data() {
     return {
@@ -109,7 +113,7 @@ export default {
       return getFullDate(t)
     },
     filterTime(t){
-      return getFullTime(t)
+      return getFullDateTime(t)
     }
   },
   created() {

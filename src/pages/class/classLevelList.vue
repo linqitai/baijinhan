@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column prop="updatad_at" label="修改时间" width="160">
         </el-table-column>
-        <el-table-column prop="name" label="操作" width="120" fixed="right">
+        <el-table-column prop="name" label="操作" width="250" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">修改</el-button>
             <el-button @click="handleEditClick(scope.row)" type="text" size="small" icon="el-icon-edit-outline">等级可见课程</el-button>

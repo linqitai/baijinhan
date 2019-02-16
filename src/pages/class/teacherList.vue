@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column prop="en_name" label="英文名称"></el-table-column>
         <el-table-column prop="cn_name" label="中文名称"></el-table-column>
-        <el-table-column prop="serial" label="工作编号"></el-table-column>
+        <el-table-column prop="id" label="工作编号"></el-table-column>
         <el-table-column prop="type.name" label="教师类型"></el-table-column>
         <el-table-column prop="role.name" label="角色名称" width="100">
           <template slot-scope="scope">{{scope.row.role_id|filterRole}}</template>
