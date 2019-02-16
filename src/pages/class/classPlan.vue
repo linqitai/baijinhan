@@ -94,7 +94,7 @@
           <li>19:00</li>
           <li>20:00</li>
         </ul>
-        <div class="tableWrapper">
+        <div class="tableWrapper" v-loading="getListLoading">
           <table class="thatTable">
             <tr class="header">
               <th v-for="(item,index) in rooms">
@@ -240,12 +240,12 @@
           </div>
           <label class="inline" style="margin-left: 10px;margin-right: 10px;">{{studentInfo}}</label>
           <div class="inline">
-            <el-button type="primary" size="medium" @click="searchBySerial">查询</el-button>
+            <el-button type="primary" size="medium" @click="searchBySerial" :loading="loadingSearch">查询</el-button>
           </div>
         </div>
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
-          <el-button class="right margT20 margR20" type="primary" @click="editClass">确 定</el-button>
+          <el-button class="right margT20 margR20" type="primary" @click="editClass" :loading="loadingSureEdit">确 定</el-button>
           <div style="clear: both;"></div>
         </span>
       </div>
@@ -334,12 +334,16 @@ export default {
       lesson_id: "",
       course_id: "",
       lessonValue: "",
+      arranging_id: '',
 
 
       studentInfo:"",
       serial:"",
       user_id:'',
-  
+      
+      getListLoading: false,
+      loadingSureEdit: false,
+      loadingSearch: false,
       loading: false,
       arranging_ids: "",
      
@@ -370,10 +374,12 @@ export default {
       }
       var url = getStudentListUrl;
       console.log(params,"params")
+      that.loadingSearch = true
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
+          that.loadingSearch = false
           var user = result.data.user;
           console.log(user,"useruser")
           if(user.length>0) {
@@ -555,6 +561,7 @@ export default {
       that.course_id = item.course_id;
       that.course_level_id = item.level_id;
       that.lesson_id = item.lesson_id;
+      that.arranging_id = item.id;
 
       //获取时间 weekTime
       var weekTime =
@@ -590,7 +597,9 @@ export default {
     },
     editClass() {
       var that = this;
+      that.loadingSureEdit = true;
       var params = {
+
         time:
           parseInt(that.weekth.split(",")[0]) +
           oneDaySecond * (that.week - 1) +
@@ -600,7 +609,8 @@ export default {
         course_id: that.course_id,
         teacher_id: that.teacherValue,
         help_teacher_id:that.helpTeacherValue,
-        user_id:that.user_id
+        user_id:that.user_id,
+        arranging_id:that.arranging_id // 编辑的时候需要添加arranging_id
       };
       var url = editClassUrl;
       // console.log(params,"=========params============")
@@ -608,9 +618,8 @@ export default {
       that.$axios
         .post(url, params)
         .then(res => {
-          console.log(res, "resresresres");
+          that.loadingSureEdit = false;
           var result = res.data;
-          console.log(result.code, "--res.code--");
           if (result.code == ERR_OK) {
             // console.log("success")
             that.clearPaikeDialog();
@@ -669,6 +678,7 @@ export default {
     },
     getList() {
       var that = this;
+      that.getListLoading = true;
       var params = {
         weekth: that.weekth,
         week: that.week,
@@ -677,6 +687,7 @@ export default {
       var url = classListUrl;
       // console.log(params,"params")
       that.$axios.post(url, params).then(res => {
+        that.getListLoading = false;
         var result = res.data;
         // console.log(result,'--result--')
         if (result.code == ERR_OK) {

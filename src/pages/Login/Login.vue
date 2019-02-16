@@ -186,6 +186,7 @@ export default {
             localStorage.setItem("en_name",result.data.en_name);
             localStorage.setItem("roleName",result.data.role.name);
             that.$cookie.set('currentTitleId',0);
+            that.$cookie.set('currentId',0);
             that.$router.push('./orderClassList');
         }
         if(result.code == 433) {
