@@ -366,12 +366,12 @@
           <label class="inline labelWidth">当前级别：</label>
           <div class="inline">
             <!-- <el-input v-model="form.begin_level" size="medium" placeholder="请输入内容"></el-input> -->
-            <el-select size="medium" v-model="form.level" placeholder="请选择">
+            <el-select size="medium" v-model="form.level_id" placeholder="请选择">
               <el-option
                 v-for="item in courseLevelOption"
                 :key="item.value"
                 :label="item.label"
-                :value="{label:item.name,value:item.id}"
+                :value="item.value"
               ></el-option>
             </el-select>
           </div>
@@ -730,6 +730,7 @@ export default {
           begin_time: row.begin_time,
           end_time: row.end_time
         };
+        console.log(this.form.level,'level')
       } else {
         this.title = "新增学生信息";
         formClear(this.form);
