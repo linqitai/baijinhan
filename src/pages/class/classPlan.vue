@@ -269,7 +269,7 @@
         </div>
         <span class="dialog-footer">
           <el-button @click="isShowPaikeDialog = false" class="right margT20">取 消</el-button>
-          <el-button type="danger" class="margT20 margR20 right" @click="cancel">删 除</el-button>
+          <el-button type="danger" class="margT20 margR20 right" @click="cancel" :loading="loadingDelete">删 除</el-button>
           <el-button type="primary" @click="editArranging" class="right margR20 margT20">编 辑</el-button>
           <div style="clear: both;"></div>
         </span>
@@ -341,6 +341,7 @@ export default {
       serial:"",
       user_id:'',
       
+      loadingDelete: false,
       getListLoading: false,
       loadingSureEdit: false,
       loadingSearch: false,
@@ -575,6 +576,7 @@ export default {
     },
     cancel() {
       var that = this;
+      that.loadingDelete = true;
       var ids = [];
       ids.push(that.arranging_ids);
       var params = {
@@ -583,6 +585,7 @@ export default {
       var url = arrangingDeleteUrl;
       // console.log(params,"params")
       this.$axios.post(url, params).then(res => {
+        that.loadingDelete = false;
         var result = res.data;
         // console.log(result.code,'--res.code--')
         if (result.code == ERR_OK) {
@@ -638,10 +641,21 @@ export default {
     },
     clearPaikeDialog() {
       var that = this;
-      that.teacherValue = "";
       that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
+
+      that.room_id = "";
+      that.lesson_id = "";
+      that.course_id = "";
+      that.teacherValue = "";
+      that.helpTeacherValue = "";
+      that.user_id = "";
+      that.arranging_id = "";
+
+      that.serial = "";
+      that.user_id = "";
+      that.studentInfo = "";
     },
     initList() {
       var that = this;
@@ -850,8 +864,8 @@ export default {
     editArranging(res) {
       console.log(res);
       this.isShowDeleteBtn = false;
-      this.courseLevelValue = "";
-      this.courseValue = "";
+      this.teacherValue = "";
+      this.helpTeacherValue = "";
     }
   }
 };
