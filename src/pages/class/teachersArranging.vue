@@ -343,7 +343,12 @@ export default {
               if(list[i].teacher==arr[j].teacher){
                 for(var k=0;k<arr[i].blocks.length;k++){
                   for(var t=0;t<list[i].blocks.length;t++){
-                    if(arr[i].blocks[k].hour == list[i].blocks[t].hour){
+                    // console.log(k);
+                    // console.log(arr[i].blocks,'11111');
+                    // console.log(i);
+                    // console.log(list,'22222');
+                    //这里blocks 里面会存在 viod 0  具体原因未知
+                    if(void 0 != arr[i].blocks[k] && arr[i].blocks[k].hour == list[i].blocks[t].hour){
                       list[i].blocks[t] = {
                         hour:arr[i].blocks[k].hour,
                         lesson:arr[i].blocks[k].lesson.serial,

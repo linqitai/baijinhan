@@ -121,5 +121,8 @@ export const closeLessonUrl = host+'api/admin/user/close-lesson'
 //个人可以结课列表
 export const waitCloseLessonUrl = host+'api/admin/user/wait-close-lesson'
 //个人已结课
+export const TeacherCloseLessonUrl = host+'api/admin/teacher/close-lesson'
+//教师结课
+
 
 
