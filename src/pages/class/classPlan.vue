@@ -1,41 +1,6 @@
-<style lang="scss" scoped>
-@import "../../common/scss/common.scss";
-// $height: 50px;
-.apply {
-  .operateTableBox {
-    min-height: 820px;
-    .tableBox {
-      clear: both;
-      // display: flex;
-      text-align: center;
-      position: relative;
-      .tableLeft {
-        // flex: 0 0 60px;
-        width: 60px;
-        border-left: 1px solid $tableBorderColor;
-        border-right: 1px solid $tableBorderColor;
-        border-bottom: 1px solid $tableBorderColor;
-        position: absolute;
-        left: 0;
-        top: 0;
-        background-color: $mainColor;
-        color: white;
-        li {
-          height: $height;
-          line-height: $height;
-          border-top: 1px solid $tableBorderColor;
-          display: block;
-        }
-      }
-      .tableWrapper {
-        overflow: scroll;
-      }
-    }
-  }
-}
-</style>
 <template>
   <div class="apply" ref="apply">
+    <!-- 标题 -->
     <div class="breadcrumbWrapper">
       <div class="breadcrumb">
         <i class="iconfont icon-home iconhomestyle nocurrent"></i>
@@ -52,6 +17,7 @@
         </el-breadcrumb>
       </div>
     </div>
+    <!-- 功能菜单 -->
     <div class="operateTableBox">
       <div class="functionBox">
         <div class="element">
@@ -142,6 +108,10 @@
               <label class="width80">话题：</label>
               {{show.lessonName}}
             </div>
+             <div class="lineBox">
+              <label class="width80">教室：</label>
+              {{show.schoolName}}{{show.roomName}}
+            </div>
             <div class="lineBox" v-if="show.tearcherName">
               <label class="width80">教师1：</label>
               {{show.tearcherName}}
@@ -164,9 +134,9 @@
             >
               <el-option
                 v-for="item in courseLevelOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </div>
@@ -182,9 +152,9 @@
             >
               <el-option
                 v-for="item in coursesOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </div>
@@ -204,6 +174,28 @@
             >
               <el-option
                 v-for="item in lessonOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"  
+              ></el-option>
+            </el-select>
+          </div>
+           <div class="lineBox">
+            <b class="icon">*</b>
+            <b class="text">教室</b>
+            <el-select
+              class="inputTitle"
+              v-model="roomValue"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请选择教室"
+              :loading="loading"
+              clearable
+              @change="roomChange"
+            >
+              <el-option
+                v-for="item in roomOption"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"  
@@ -286,6 +278,10 @@
           <label class="width80">话题：</label>
           {{show.lessonName}}
         </div>
+        <div class="lineBox">
+          <label class="width80">教室：</label>
+          {{show.schoolName}} {{show.roomName}}
+        </div>
         <div class="lineBox" v-if="show.tearcherName">
           <label class="width80">教师：</label>
           {{show.tearcherName}}
@@ -313,6 +309,8 @@ import {
   arrangingReleaseUrl,
   courseLevelListUrl,
   getStudentListUrl,
+  getOneArrangingUrl,
+  getFreeRoomsUrl,
   ERR_OK
 } from "@/api/index";
 import {
@@ -336,12 +334,13 @@ export default {
       courseLevelValue: "",
       teacherValue: 0,
       helpTeacherValue:'',
+      roomValue:'',
       isShowPaikeDialog: false,
       isShowDeleteBtn: false, // 对话框 弹出内容切换 与 删除按钮显示隐藏 开关
 
       /*------时间选择---------*/
       weekth: "", //周时间区间  周一  00：00：00   -  周日  23：59：59
-      week: 1,
+      week: (new Date()).getDay(),
       weekTime: "", // 单时间点开始时间
 
       /*------下拉资源---------- */
@@ -349,6 +348,7 @@ export default {
       coursesOption: [],
       courseLevelOption: [],
       lessonOption: [],
+      roomOption:[],
     
       rooms: [],
       list: [],
@@ -376,8 +376,11 @@ export default {
         courseName: "",
         lessonName: "",
         tearcherName: "",
-        tearcherName2: ""
-      }
+        tearcherName2: "",
+        roomName:""
+      },
+      one:{},
+    
     };
   },
   components: {
@@ -389,6 +392,7 @@ export default {
     this.getCourseList();
   },
   methods: {
+    //查找学生
     searchBySerial() {
       var that = this;
       if(that.serial=='') {
@@ -432,12 +436,6 @@ export default {
         var result = res.data;
         if (result.code == ERR_OK) {
           that.teachersOption = result.data.teachers;
-          // if (that.teachersOption) {
-          //   for (var i = 0; i < that.teachersOption.length; i++) {
-          //     that.teachersOption[i].value = that.teachersOption[i].id;
-          //     that.teachersOption[i].label = that.teachersOption[i].en_name;
-          //   }
-          // }
         }
       });
     },
@@ -459,6 +457,7 @@ export default {
         }
       });
     },
+    //课程列表
     getCourseList() {
       var that = this;
       var params = {};
@@ -479,51 +478,6 @@ export default {
         }
       });
     },
-
-    /*----------------actions----------*/
-    lessonChange(lesson_id) {
-      this.lesson_id = lesson_id;
-    },
-    // statistics() {
-    //   this.$router.push("./orderClassOne");
-    // },
-    courseChange(value) {
-      console.log(value, "value");
-      this.course_id = value;
-      this.lessonValue = "";
-      this.teacherValue = '';
-      // 获取话题列表
-      this.getlessonList();
-    },
-
-    courseLevelChange(value) {
-      var that = this;
-      this.course_level_id = value;
-      this.lessonValue = "";
-      this.getCourseList();
-      this.teacherValue = '';
-      console.log(value, "course_level_id");
-
-      for (var i = 0; i < that.courseLevelOption.length; i++) {
-        if (that.courseLevelOption[i].id == value) {
-          that.coursesOption = that.courseLevelOption[i].courses;
-          for (var i = 0; i < that.coursesOption.length; i++) {
-            that.coursesOption[i].value = that.coursesOption[i].id;
-            that.coursesOption[i].label = that.coursesOption[i].name;
-            console.log(
-              "coursesOption",
-              that.coursesOption[i].value,
-              that.coursesOption[i].label
-            );
-          }
-          break;
-        }
-      }
-      this.getlessonList();
-      this.lessonValue =  '';
-      // 获取话题列表
-      // this.getlessonList();
-    },
     getCourseLevelList() {
       let that = this;
       var url = courseLevelListUrl;
@@ -533,13 +487,28 @@ export default {
         if (result.code == ERR_OK) {
           that.courseLevelOption = result.data.list;
           that.courseLevelOption.unshift({ id: "", name: "不限" });
-          for (var i = 0; i < that.courseLevelOption.length; i++) {
-            that.courseLevelOption[i].value = that.courseLevelOption[i].id;
-            that.courseLevelOption[i].label = that.courseLevelOption[i].name;
-          }
         }
       });
     },
+    getTeacherCourseEvent() {
+
+    },
+    getFreeRooms(time){
+      var that = this;
+      var url = getFreeRoomsUrl;
+      var params = {
+        time:time
+      }
+      this.$axios.post(url,params).then(res => {
+        var result = res.data;
+        // console.log(result.code,'--res.code--')
+        if (result.code == ERR_OK) {
+          // that.tableData = result.data.category;
+          that.roomOption = result.data;
+        }
+      });
+    },
+
     getRooms() {
       var that = this;
       var url = getRoomsUrl;
@@ -553,9 +522,37 @@ export default {
         }
       });
     },
-    getTeacherCourseEvent() {
-      var that = this;
+    
+   
+
+    /*----------------actions---------------------------------------------------------*/
+    lessonChange(lesson_id) {
+      this.lesson_id = lesson_id;
     },
+    courseChange(value) {
+      console.log(value, "value");
+      this.course_id = value;
+      this.lessonValue = "";
+      this.teacherValue = '';
+      // 获取话题列表
+      this.getlessonList();
+    },
+    roomChange(value){
+      this.room_id = value;
+    },
+    courseLevelChange(value) {
+      var that = this;
+      this.course_level_id = value;
+      this.lessonValue = "";
+      this.getCourseList();
+      this.teacherValue = '';
+  
+      this.getlessonList();
+      this.lessonValue =  '';
+      // 获取话题列表
+      // this.getlessonList();
+    },
+    
     //打开排课对话框
     openDialogModel(item) {
       var that = this;
@@ -569,6 +566,9 @@ export default {
       that.show.courseName = item.courseName;
       that.show.lessonName = item.lessonName;
       that.show.tearcherName = item.teacherName;
+      that.show.tearcherName2 = item.teacherName2;
+      that.show.roomName = item.roomName;
+      that.show.schoolName = item.schoolName;
       console.log(item, "itemtitemitem");
       that.room_id = item.room_id;
       that.hour = item.hour;
@@ -577,10 +577,12 @@ export default {
       that.courseLevelValue = item.level_id;
       that.teacherValue = item.teacher_id 
       that.courseValue = item.course_id;
+      that.roomValue = item.room_id;
       that.course_id = item.course_id;
       that.course_level_id = item.level_id;
       that.lesson_id = item.lesson_id;
       that.arranging_id = item.id;
+      that.helpTeacherValue = item.help_teacher_id;
 
       //获取时间 weekTime
       var weekTime =
@@ -591,6 +593,7 @@ export default {
       that.weekTime = weekTime / 1000;
       // that.getlessonList();
       that.getTeacherList();
+      that.getFreeRooms(weekTime/1000);
     },
     cancel() {
       var that = this;
@@ -616,6 +619,7 @@ export default {
         }
       });
     },
+    //编辑
     editClass() {
       var that = this;
       that.loadingSureEdit = true;
@@ -657,7 +661,7 @@ export default {
           that.$alert("参数错误", "提示");
         });
     },
-
+    //打开编辑框
     editArranging(res) {
       let that = this;
       this.isShowDeleteBtn = false;
@@ -666,13 +670,14 @@ export default {
       that.courseLevelValue = "";
       this.teacherValue = "";
       this.helpTeacherValue = "";
+      this.roomValue = "";
     },
+
     clearPaikeDialog() {
       var that = this;
       that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
-
 
       that.room_id = "";
       that.lesson_id = "";
@@ -766,6 +771,7 @@ export default {
                 lesson_id: obj[j].lesson.id,
                 teacherName: obj[j].teacher ? obj[j].teacher.en_name : "",
                 teacherName2: obj[j].help_teacher ? obj[j].help_teacher.en_name : "",
+                schoolName: obj[j].school ? obj[j].school.name : "",
                 roomName: obj[j].room.name,
                 capacity: obj[j].capacity,
                 is_released: obj[j].is_released
@@ -794,6 +800,8 @@ export default {
                     list[j].blocks[k].lessonLevelName = arr[i].lessonLevelName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
                     list[j].blocks[k].teacherName2 = arr[i].teacherName2;
+                    list[j].blocks[k].schoolName = arr[i].schoolName;
+                    list[j].blocks[k].roomName = arr[i].roomName;
                     list[j].blocks[k].is_released = arr[i].is_released;
                     list[j].blocks[k].capacity = arr[i].capacity
                       ? arr[i].capacity
@@ -905,5 +913,41 @@ Array.prototype.push2 = function(args) {
   }
 };
 </script>
+
+
+<style lang="scss" scoped>
+@import "../../common/scss/common.scss";
+.apply {
+  .operateTableBox {
+    min-height: 820px;
+    .tableBox {
+      clear: both;
+      text-align: center;
+      position: relative;
+      .tableLeft {
+        // flex: 0 0 60px;
+        width: 60px;
+        border-left: 1px solid $tableBorderColor;
+        border-right: 1px solid $tableBorderColor;
+        border-bottom: 1px solid $tableBorderColor;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: $mainColor;
+        color: white;
+        li {
+          height: $height;
+          line-height: $height;
+          border-top: 1px solid $tableBorderColor;
+          display: block;
+        }
+      }
+      .tableWrapper {
+        overflow: scroll;
+      }
+    }
+  }
+}
+</style>
 
 

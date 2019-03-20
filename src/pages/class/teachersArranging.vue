@@ -328,7 +328,7 @@ export default {
               blocks.push(item)
             }
             for(var k=0;k<obj.help_arrangings.length;k++){
-              var item = obj.help_arrangings[j]
+              var item = obj.help_arrangings[k]
               blocks.push(item)
             }
             object.blocks = blocks

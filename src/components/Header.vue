@@ -40,7 +40,7 @@
         <label class="inline">地区：{{areaName}}</label>
     </div>
       <div class="element margL20" v-if="role_id==0">
-        <label class="inline">地区：</label>
+        <!-- <label class="inline">地区：</label>
         <div class="inline">
           <el-select class="width140" size="small" v-model="sheng" @change="shengChange" placeholder="请选择">
             <el-option
@@ -60,11 +60,11 @@
               :value="item.value">
             </el-option>
           </el-select>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="left manage-box">
-      <div class="element margL20">
+      <!-- <div class="element margL20">
         <label class="inline">选择校区：</label>
         <div class="inline">
           <el-select class="width140" size="small" v-model="school_id" @change="schoolChange" placeholder="请选择">
@@ -76,7 +76,7 @@
             </el-option>
           </el-select>
         </div>
-      </div>
+      </div> -->
     </div>
     <el-dropdown class="right manage-box margR20" @command="handleCommand">
       <span class="el-dropdown-link">
@@ -116,7 +116,7 @@
   </div>
 </template>
 <script>
-import { logoutUrl,schoolListUrl, ERR_OK } from '@/api/index'
+import { logoutUrl,schoolListUrl, resetUrl,ERR_OK } from '@/api/index'
 import { getProvinces } from '@/common/js/city'
 export default {
   data() {
@@ -147,7 +147,37 @@ export default {
   },
   methods: {
     savePEvent() {
-      
+      if(this.oldP == ''){
+         this.$message({
+            message: '旧密码不能为空',
+            type: 'warning'
+          });
+      }
+       if(this.oldP == ''){
+         this.$message({
+            message: '新密码不能为空',
+            type: 'warning'
+          });
+      }
+      var url = resetUrl,
+          param = {
+            old_pwd:this.oldP,
+            new_pwd:this.newP
+          },
+          that = this;
+      this.$axios.post(url,param).then(function(res){
+         var result = res.data;
+         if(result.code == ERR_OK){
+              that.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+          that.editPDialog = false;
+          that.newP = '';
+          that.oldP = '';
+          that.logout();
+         }
+      })
     },
     handleCommand(command) {
       let that = this;

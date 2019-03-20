@@ -1,6 +1,6 @@
 // import http from './public'
-// export const host = 'http://bjh.chinaxywl.com/'
-export const host = 'http://localhost/'
+export const host = 'http://bjh.chinaxywl.com/'
+// export const host = 'http://bjh.com/' 
 // const host = '/xywl'
 
 export const ERR_OK = 201
@@ -55,6 +55,7 @@ export const classListUrl = host + 'api/admin/arranging/list';
 export const editClassUrl = host + 'api/admin/arranging/edit';
 // 教师列表
 export const teacherListUrl = host + 'api/admin/teacher/list';
+
 export const teacherFreesUrl = host + 'api/admin/teacher/frees';
 // 教师添加空闲时间
 export const teacherFreeEditUrl = host + 'api/admin/teacher/free-edit';
@@ -100,6 +101,10 @@ export const bookCourseListUrl = host + 'api/admin/arranging/book-list';
 export const courseEditUrl = host + 'api/admin/course/edit';
 // 课程等级列表
 export const courseLevelListUrl = host + 'api/admin/course/level-list';
+// 课程等级修改
+export const courseLevelEditUrl = host + 'api/admin/course/level-edit';
+// 课程等级删除
+export const courseLevelDeleteUrl = host + 'api/admin/course/level-delete';
 // 课程类型列表
 export const courseTypeListUrl = host + 'api/admin/course/type-list';
 // 教师类型列表
@@ -123,6 +128,17 @@ export const waitCloseLessonUrl = host+'api/admin/user/wait-close-lesson'
 //个人已结课
 export const TeacherCloseLessonUrl = host+'api/admin/teacher/close-lesson'
 //教师结课
-
+export const restoreLessonUrl = host+'api/admin/user/restore-lesson'
+//恢复结课
+export const resetUrl = host+'api/admin/auth/reset'
+//修改密码
+export const ListLevelCoursetUrl = host+'api/admin/course/list-level-course'
+//修改密码
+export const LevelBindCoursetUrl = host+'api/admin/course/level-bind-course'
+//修改密码
+export const getOneArrangingUrl = host+'api/admin/arranging/one'
+//获取单节课程
+export const getFreeRoomsUrl = host+'api/admin/room/free'
+//获取时间点空闲教室
 
 

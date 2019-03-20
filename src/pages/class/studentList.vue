@@ -179,6 +179,12 @@
               size="small"
               icon="el-icon-edit-outline"
             >修改状态</el-button>
+             <el-button
+              @click="handleEditTypeClick(scope.row)"
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+            >学生类型</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -219,6 +225,28 @@
     </el-dialog>
 
     <el-dialog
+      class="changeStatusDialog"
+      title="修改学生类型"
+      :visible.sync="isShowTypeDialog"
+      :modal="true"
+      :append-to-body="true"
+      width="400px"
+    >
+      <div class="lineBox">
+        <el-radio-group v-model="status">
+          <el-radio :label="1">未签</el-radio>
+          <el-radio :label="2">执行</el-radio>
+          <el-radio :label="3">结束</el-radio>
+          <el-radio :label="4">冻结</el-radio>
+        </el-radio-group>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowTypeDialog = false">取 消</el-button>
+        <el-button type="primary" @click="sureTypeBtn">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
       class="closeLesson"
       title="学生结课"
       :visible.sync="closeLesson"
@@ -249,6 +277,7 @@
       >
         <el-tab-pane label="未结课程" name="1">
           <el-table
+            v-loading="lessonLoading"
             ref="multipleTable"
             :data="lessonList"
             tooltip-effect="dark"
@@ -285,6 +314,7 @@
         </el-tab-pane>
         <el-tab-pane label="已结课程" name="2">
           <el-table
+            v-loading="lessonLoading"
             ref="multipleTable"
             :data="lessonList"
             tooltip-effect="dark"
@@ -295,7 +325,14 @@
             <!-- <el-table-column label="课程" width="120">
           <template slot-scope="scope">{{ scope.row.date }}</template>
             </el-table-column>-->
-            <el-table-column prop="name" label="话题" width="650px"></el-table-column>
+            <el-table-column prop="name" label="话题" width="450px"></el-table-column>
+            <el-table-column  label="操作" width="200px">
+              <template slot-scope="scope">
+                <el-button @click="restore(scope.row)" size="small">恢复</el-button>
+              </template>
+               
+            </el-table-column>
+          
             <!-- <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column> -->
           </el-table>
 
@@ -314,7 +351,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-
+<!-- 学生编辑 -->
     <el-dialog
       :title="title"
       :visible.sync="dialogFormVisible"
@@ -495,6 +532,7 @@ import {
   getTeacherCourseUrl,
   waitCloseLessonUrl,
   closeLessonUrl,
+  restoreLessonUrl,
   ERR_OK
 } from "@/api/index";
 import {
@@ -608,7 +646,9 @@ export default {
       lessonTotal: 0, //话题列表总数
       tracksList: [], //班主任列表
       tracksChoosed: "", //选中的班主任
-      lessonStatus: "1" //话题状态
+      lessonStatus: "1" ,//话题状态
+      lessonLoading : true,
+      isShowTypeDialog:false //是否显示学生类型
     };
     //-------------end
   },
@@ -690,6 +730,10 @@ export default {
         }
       });
     },
+    //获取学生列表
+    getStudentTypeList(){
+      
+    },
     handleListClick(row, operate) {
       (this.courseListItem = ""),
         (this.lessonList = []),
@@ -768,6 +812,10 @@ export default {
       this.isShowStatusDialog = true;
       this.form.user_id = row.id;
     },
+    handleEditTypeClick(row) {
+      this.isShowTypeDialog = true;
+      this.form.user_id = row.id;
+    },
     sureBtn() {
       this.isShowStatusDialog = false;
       this.maskIsShow = false;
@@ -790,6 +838,9 @@ export default {
           that.getList();
         }
       });
+    },
+    sureTypeBtn(){
+       this.isShowTypeDialog = false;
     },
     search() {
       this.getList();
@@ -876,6 +927,8 @@ export default {
     },
     //获取结课列表
     lesson(res) {
+      this.lessonLoading = true;
+      console.log(this.loading);
       if (res != void 0 && res != this.course_id) {
         this.lessonPageIndex = 1;
         this.course_id = res;
@@ -902,7 +955,9 @@ export default {
           that.lessonList = result.data.lesson;
           that.lessonTotal = result.data.count;
         }
+         this.lessonLoading = false;
       });
+       
     },
     toggleSelection(res) {
       console.log(res);
@@ -945,6 +1000,33 @@ export default {
       this.option = ""; //清空查找
       this.tracksChoosed = ""; //清空班主任筛选条件
       this.getList();
+    },
+    //恢复已结课程
+    restore(row){
+      var params = {
+        user_id:this.chooseUser.id,
+        lesson_ids : [row.id]
+      },
+      url = restoreLessonUrl,
+      that = this;
+      this.$axios.post(url,params).then(function(res){
+           var result = res.data;
+        if (result.code == ERR_OK) {
+          that.$message({
+            showClose: true,
+            message: "操作成功",
+            type: "success"
+          });
+          that.lesson();
+        } else {
+          that.$message({
+            showClose: true,
+            message: "操作失败",
+            type: "error"
+          });
+        }
+      })
+      console.log(row,'restore ------------')
     },
 
     //排序

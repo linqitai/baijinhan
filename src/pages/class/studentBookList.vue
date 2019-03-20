@@ -24,7 +24,11 @@
     <div class="operateTableBox">
       <div class="functionBox">
         <div class="element">
-          <label class="inline">学号：</label>
+           <label class="inline"></label>
+          <div class="inline">
+             <myTime v-model="time"></myTime>
+          </div>
+          <label class="inline margL20">学号：</label>
           <div class="inline">
              <el-input class="width160" v-model="no" size="medium" placeholder="请输入学号" clearable></el-input>
           </div>
@@ -38,17 +42,23 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%" v-loading="loading">
+         <el-table-column
+          prop="user.contract_no"
+          label="学号">
+        </el-table-column>
+
         <el-table-column
           prop="user.en_name"
           label="订课学生">
         </el-table-column>
-        <el-table-column
+    
+        <!-- <el-table-column
           prop="user.sex"
           label="性别">
             <template slot-scope="scope">
               {{scope.row.user.sex|filterSex}}
             </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="arranging.begin_time" label="订课时间" width="100">
           <template slot-scope="scope">
               {{scope.row.arranging.begin_time|filterDate}}
@@ -62,6 +72,11 @@
           <template slot-scope="scope">
               <label class="ellipsis">{{scope.row.arranging.lesson.name}}</label>
           </template>
+        </el-table-column>
+        <el-table-column prop="arranging.school.name" label="校区" width="200">
+          <!-- <template slot-scope="scope">
+              <label class="ellipsis">{{scope.row.arranging.lesson.name}}</label>
+          </template> -->
         </el-table-column>
         <el-table-column prop="arranging.begin_time" label="上课时间" width="140">
           <template slot-scope="scope">
@@ -79,7 +94,7 @@
         </el-table-column>
       </el-table>
       <div class="tableBottom" v-show="showPageTag">
-        <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[4,6,8]" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" :page-sizes="[4,6,8,10]" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
     </div>
@@ -88,6 +103,7 @@
 <script>
 import { studentBookListUrl,dropArrangingUrl,ERR_OK } from '@/api/index'
 import { getSex,getFullDate } from '@/common/js/utils'
+import myTime from '@/components/time.vue'
 export default {
   data() {
     return {
@@ -98,7 +114,37 @@ export default {
       showPageTag:false,
       no: '',
       courseName: '',
-      tableData: []
+      tableData: [],
+      time:'',
+    }
+  },
+  components:{
+    myTime
+  },
+  watch:{
+    time:function(){
+        var that = this;
+
+            that.$nextTick(function () {
+
+                that.getList()
+
+            });
+
+
+    }
+  },
+  watch:{
+    time:function(){
+        var that = this;
+
+            that.$nextTick(function () {
+
+                that.getList()
+
+            });
+
+
     }
   },
   created() {
@@ -158,8 +204,9 @@ export default {
         serial: that.no,
         course_name: that.courseName,
         offset: (that.pageIndex-1)*that.pageSize,
-        limit: that.pageSize
-      }
+        limit: that.pageSize,
+        weekth:that.time
+      } 
       var url = studentBookListUrl;
       console.log(params,"params")
       this.$axios.post(url,params).then((res)=>{

@@ -154,6 +154,19 @@ export default {
   components: {
     mTime
   },
+  watch:{
+      weekth:function(){
+        var that = this;
+
+            that.$nextTick(function () {
+
+                that.getList()
+
+            });
+
+
+    }
+  },
   created() {
     this.getList();
   },
@@ -251,7 +264,8 @@ export default {
         level_id: that.level_id,
         week: that.week,
         offset: (that.pageIndex-1)*that.pageSize,
-        limit: that.pageSize
+        limit: that.pageSize,
+        user_id:that.user_id
       }
       var url = alterSelectListUrl;
       console.log(params,"params")
