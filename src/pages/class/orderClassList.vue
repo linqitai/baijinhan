@@ -115,6 +115,7 @@
           <li>16:00</li>
           <li>17:00</li>
           <li>18:00</li>
+          <li>18:30</li>
           <li>19:00</li>
           <li>20:00</li>
         </ul>
@@ -244,7 +245,7 @@
         <div>
           <span class="demonstration">results:</span>
           <el-radio-group v-model="results">
-          <el-radio  label="0">reset</el-radio>
+          <el-radio  label="2">repeat</el-radio>
           <el-radio  label="1">pass</el-radio>
           </el-radio-group>
         </div>
@@ -304,6 +305,9 @@ export default {
       teachersOption: [],
       coursesOption: [],
       rooms: [],
+      hours:[
+        9,10,11,12,13,14,15,16,17,18,18.5,19,20,
+      ],
       list: [],
       hour: "",
       room_id: "",
@@ -350,10 +354,10 @@ export default {
       }
     },
     filterResults(t) {
-      if (t == 0) {
-        return "未通过";
-      } else if (t == 1) {
+      if (t == 1) {
         return "已通过";
+      } else{
+        return "未通过";
       }
     },
     filterSign(t){
@@ -521,10 +525,10 @@ export default {
     initList() {
       var that = this;
       list = [];
-      for (var i = 0; i < 12; i++) {
+      for (var i = 0; i < this.hours.length; i++) {
         //一维长度为8
         var item = {
-          hour: i + 9
+          hour: this.hours[i]+''
         };
         var blocks = [];
         for (var j = 0; j < that.rooms.length; j++) {
@@ -537,7 +541,7 @@ export default {
             lessonSerial: "",
             lessonName: "",
             teacherName: "",
-            hour: i + 9,
+            hour: this.hours[i],
             users_count: "",
             capacity: ""
           };
@@ -595,7 +599,7 @@ export default {
                 users_count: obj[j].users_count,
                 capacity: obj[j].capacity,
                 lessonType: obj[j].lesson.teacher_type,
-                teacherType: obj[j].teacher.type_id,
+                teacherType: obj[j].teacher?obj[j].teacher.type_id:0,
                 id: obj[j].id,
                 area_id: obj[j].area_id
               };

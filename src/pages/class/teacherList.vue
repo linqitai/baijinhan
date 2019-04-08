@@ -282,7 +282,7 @@
             :data-hour="checkeds.hour"
           >
             <el-checkbox
-              v-model="coordinatesAttr[checkeds.week][checkeds.hour].check"
+              v-model="coordinatesAttr[checkeds.week][checkeds.hour].check"   @change="checkboxChange(coordinatesAttr[checkeds.week][checkeds.hour].check,checkeds.week,checkeds.hour)"
             ></el-checkbox>
           </td>
         </tr>
@@ -370,7 +370,7 @@
             v-for="(checkeds,index) in item.checkeds"
             :data-week="checkeds.week"
             :data-hour="checkeds.hour"
-            :class="[coordinatesAttr[checkeds.week][checkeds.hour].check==true?'freeColor':'']"
+            :class="[coordinatesAttr[checkeds.week][checkeds.hour+''].check==true?'freeColor':'']"
           >
             <!-- <template v-if="coordinatesAttr[checkeds.week][checkeds.hour]">
               <el-checkbox v-model="coordinatesAttr[checkeds.week][checkeds.hour]"></el-checkbox>
@@ -531,16 +531,21 @@ import {
 import { getFullDate, getTime, hasNull, formClear } from "@/common/js/utils";
 import { getTeacherTypeOptions } from "@/common/js/teacherType";
 import mTime from "../../components/time.vue";
+import Vue from "vue";
 var coordinatesAttr = new Array(); //先声明一维
-for (var i = 0; i < 8; i++) {
+for (var i = 1; i < 8; i++) {
   //一维长度为8
   coordinatesAttr[i] = new Array(); //再声明二维
-  for (var j = 0; j < 21; j++) {
+  for (var j = 9; j < 21; j++) {
     //二维长度为21
     coordinatesAttr[i][j] = {}; // 赋值，每个数组元素的值为i+j
     coordinatesAttr[i][j].check = false;
   }
+  coordinatesAttr[i]['18.5'] = {}; // 赋值，每个数组元素的值为i+j
+  coordinatesAttr[i]['18.5'].check = false;
+  
 }
+console.log(coordinatesAttr,'!!!!!'); 
 var coordinatesAttr2 = new Array(); //先声明一维
 for (var i = 0; i < 8; i++) {
   //一维长度为8
@@ -549,7 +554,10 @@ for (var i = 0; i < 8; i++) {
     //二维长度为21
     coordinatesAttr2[i][j] = {}; // 赋值，每个数组元素的值为i+j
     coordinatesAttr2[i][j].check = false;
+    coordinatesAttr2[i]['18.5'] = {}; // 赋值，每个数组元素的值为i+j
+    coordinatesAttr2[i]['18.5'].check = false;
   }
+  // coordinatesAttr2[]
 }
 var coordinates = [];
 var oneDayTime = 24 * 60 * 60 * 1000;
@@ -675,6 +683,18 @@ var list2 = [
     ]
   },
   {
+    time: "18:30~19:00",
+    checkeds: [
+      { week: "1", hour: "18.5" },
+      { week: "2", hour: "18.5" },
+      { week: "3", hour: "18.5" },
+      { week: "4", hour: "18.5" },
+      { week: "5", hour: "18.5" },
+      { week: "6", hour: "18.5" },
+      { week: "7", hour: "18.5" }
+    ]
+  },
+  {
     time: "19:00~20:00",
     checkeds: [
       { week: "1", hour: "19" },
@@ -718,7 +738,7 @@ export default {
       dialogVisible: false,
       isShowTableDialog: false,
       eidtDialogFormVisible: false,
-      teacherTypeOptions: getTeacherTypeOptions(),
+      teacherTypeOptions: getTeacherTypeOptions(), 
       sexOption: [
         {
           value: 1,
@@ -741,6 +761,7 @@ export default {
       ],
       teachers: [],
       teacherValue: "",
+      ttt:coordinatesAttr,
       coordinatesAttr: coordinatesAttr,
       coordinatesAttr2: coordinatesAttr2,
       weekth: "",
@@ -853,6 +874,18 @@ export default {
           this.getList();
         }
       });
+    },
+    checkboxChange(value,week,hour){
+      // console.log(this.coordinatesAttr[week][hour].check);
+     
+      if(hour == '18.5'){
+         let one = this.coordinatesAttr[week];
+         
+         Vue.set(this.coordinatesAttr,week, one);
+      }
+       
+
+      console.log(this.coordinatesAttr[week][hour+''].check);
     },
     deleteBtn(row) {
       var that = this;
@@ -1160,6 +1193,9 @@ export default {
             con.push(`${i},${j}`);
           }
         }
+        if (this.coordinatesAttr[i]['18.5'].check == true) {
+            con.push(`${i},18.5`);
+          }
       }
       this.coordinates = con;
       this.save();
@@ -1209,6 +1245,13 @@ export default {
           this.coordinatesAttr[i][j].room = "";
           this.coordinatesAttr[i][j].teacher = "";
         }
+          // this.coordinatesAttr2[i]['18.5'].check = false;
+          // this.coordinatesAttr[i]['18.5'].check = false;
+          // this.coordinatesAttr[i]['18.5'].arranging = "";
+          // this.coordinatesAttr[i]['18.5'].course = "";
+          // this.coordinatesAttr[i]['18.5'].lesson = "";
+          // this.coordinatesAttr[i]['18.5'].room = "";
+          // this.coordinatesAttr[i]['18.5'].teacher = "";
       }
     },
     getTimeData() {

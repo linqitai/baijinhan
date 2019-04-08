@@ -57,6 +57,7 @@
           <li>16:00</li>
           <li>17:00</li>
           <li>18:00</li>
+          <li>18:30</li>
           <li>19:00</li>
           <li>20:00</li>
         </ul>
@@ -351,6 +352,9 @@ export default {
       roomOption:[],
     
       rooms: [],
+      hours:[
+        9,10,11,12,13,14,15,16,17,18,18.5,19,20,
+      ],
       list: [],
       hour: "",
       room_id: "",
@@ -678,6 +682,7 @@ export default {
       that.courseValue = "";
       that.courseLevelValue = "";
       that.lessonValue = "";
+      this.roomValue ="";
 
       that.room_id = "";
       that.lesson_id = "";
@@ -691,13 +696,14 @@ export default {
       that.studentInfo = "";
 
     },
+    //整理二维数组
     initList() {
       var that = this;
       list = [];
-      for (var i = 0; i < 12; i++) {
+      for (var i = 0; i < this.hours.length; i++) {
         //一维长度为8
         var item = {
-          hour: i + 9
+          hour: this.hours[i]
         };
         var blocks = [];
         for (var j = 0; j < that.rooms.length; j++) {
@@ -716,7 +722,7 @@ export default {
             teacherName: "",
             teacherName2: "",
             capacity: "",
-            hour: i + 9
+            hour: this.hours[i]
           };
           blocks.push(block);
         }
@@ -755,20 +761,20 @@ export default {
                 week: obj[j].week,
                 hour: obj[j].hour,
                 id: obj[j].id,
-                lessonName: obj[j].lesson.name,
-                lessonLevelName: obj[j].lesson.level
+                lessonName: obj[j].lesson?obj[j].lesson.name:'',
+                lessonLevelName: obj[j].lesson && obj[j].lesson.level
                   ? obj[j].lesson.level.name
                   : "",
-                courseSerial: obj[j].lesson.course
-                  ? obj[j].lesson.course.serial
+                courseSerial: obj[j].course
+                  ? obj[j].course.serial
                   : "",
-                courseName: obj[j].lesson.course
-                  ? obj[j].lesson.course.name
+                courseName: obj[j].course
+                  ? obj[j].course.name
                   : "",
-                level_id: obj[j].lesson.level_id,
-                teacher_id: obj[j].teacher.id,
-                course_id: obj[j].lesson.course_id,
-                lesson_id: obj[j].lesson.id,
+                level_id: obj[j].lesson?obj[j].lesson.level_id:0,
+                teacher_id: obj[j].teacher?obj[j].teacher.id:obj[j].teacher_id,
+                course_id: obj[j].lesson?obj[j].lesson.course_id:0,
+                lesson_id: obj[j].lesson?obj[j].lesson.id:0,
                 teacherName: obj[j].teacher ? obj[j].teacher.en_name : "",
                 teacherName2: obj[j].help_teacher ? obj[j].help_teacher.en_name : "",
                 schoolName: obj[j].school ? obj[j].school.name : "",
@@ -919,7 +925,7 @@ Array.prototype.push2 = function(args) {
 @import "../../common/scss/common.scss";
 .apply {
   .operateTableBox {
-    min-height: 820px;
+    min-height: 880px;
     .tableBox {
       clear: both;
       text-align: center;
