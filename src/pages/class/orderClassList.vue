@@ -297,7 +297,7 @@ export default {
       courseValue: "",
       teacherValue: "",
       isShowPaikeDialog: false,
-      week: (new Date()).getDay(),
+      week: (new Date()).getDay()==0?7:(new Date()).getDay(),
       time1Options: [],
       time2Options: [],
       time1: "",

@@ -341,7 +341,7 @@ export default {
 
       /*------时间选择---------*/
       weekth: "", //周时间区间  周一  00：00：00   -  周日  23：59：59
-      week: (new Date()).getDay(),
+      week: (new Date()).getDay()==0?7:(new Date()).getDay(),
       weekTime: "", // 单时间点开始时间
 
       /*------下拉资源---------- */
@@ -406,15 +406,12 @@ export default {
         serial: that.serial,
       }
       var url = getStudentListUrl;
-      console.log(params,"params")
       that.loadingSearch = true
       this.$axios.post(url,params).then((res)=>{
         var result = res.data;
-        console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
           that.loadingSearch = false
           var user = result.data.user;
-          console.log(user,"useruser")
           if(user.length>0) {
             // that.en_name = user[0].en_name;
             that.user_id = user[0].id;
@@ -469,7 +466,6 @@ export default {
         params.courseLevelValue = that.courseLevelValue
       }
       var url = getTeacherCourseUrl;
-      console.log(params,"=========params============")
       that.$axios.post(url, params).then(res => {
         var result = res.data;
         if (result.code == ERR_OK) {
@@ -478,7 +474,6 @@ export default {
             that.coursesOption[i].value = that.coursesOption[i].id;
             that.coursesOption[i].label = that.coursesOption[i].name;
           }
-          // console.log(that.coursesOption,"that.coursesOption")
         }
       });
     },

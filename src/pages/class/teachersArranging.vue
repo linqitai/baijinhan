@@ -180,6 +180,7 @@ $tableLeft:100px;
               <th>16:00</th>
               <th>17:00</th>
               <th>18:00</th>
+              <th>18:30</th>
               <th>19:00</th>
               <th>20:00</th>
             </tr>
@@ -211,7 +212,7 @@ export default {
     return {
       teachers:[],
       hours:[
-        9,10,11,12,13,14,15,16,17,18,19,20
+        9,10,11,12,13,14,15,16,17,18,18.5,19,20
       ],
       name:"",
       time1Options:[],
@@ -377,9 +378,9 @@ export default {
           teacher: arr[i].teacher
         }
         var blocks = []
-        for ( var j = 0; j < 12; j++) {
+        for ( var j = 0; j < this.hours.length; j++) {
           var block = {
-            hour: j+9,
+            hour: this.hours[j]+'',
             lesson:'',
             course:'',
             school:'',

@@ -23,7 +23,7 @@
   color: #99a9bf;
 }
 .table-expand .el-form-item {
-  margin-right: 0;
+  margin-right: 0; 
   margin-bottom: 0;
   width: 50%;
 }
@@ -72,6 +72,7 @@
             <el-checkbox class>叠加查询</el-checkbox>
           </div>
           <div class="inline margL20">
+             <label class="inline">班主任筛选</label>
             <el-select
               v-model="tracksChoosed"
               placeholder="请选择"
@@ -119,19 +120,16 @@
               <el-form-item prop="props">
                 <label>性别：</label>
                 <span>
-                  <template slot-scope="scope">{{scope.sex | filterSex}}</template>
+                  {{props.row.sex==1?"男":"女"}}
+                  <!-- <template slot-scope="scope">{{scope.row.sex | filterSex}}</template> -->
                 </span>
               </el-form-item>
               <el-form-item>
-                <label>家庭电话：</label>
+                <label>联系电话：</label>
                 <span>{{ props.row.mobile }}</span>
               </el-form-item>
               <el-form-item>
                 <label>开始级别：</label>
-                <span>{{ props.row.cn_name }}</span>
-              </el-form-item>
-              <el-form-item>
-                <label>结束级别：</label>
                 <span>{{ props.row.begin_level.name}}</span>
               </el-form-item>
               <el-form-item>
@@ -141,25 +139,30 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="track_people.en_name" label="班主任" width="120"></el-table-column>
-        <el-table-column prop="contract_no" label="学号" width="140" sortable="custom"></el-table-column>
-        <el-table-column prop="en_name" label="英文名"></el-table-column>
-        <el-table-column prop="sex" label="性别">
+        <el-table-column prop="contract_no" label="学号" width="100" sortable="custom"></el-table-column>
+        <el-table-column prop="track_people.en_name" label="班主任" width="120" class-name="fontsize12"></el-table-column>
+        <el-table-column prop="en_name" label="英文名"  width="100"></el-table-column>
+        <el-table-column prop="cn_name" label="中文名"  width="80"></el-table-column>
+        <el-table-column prop="mobile" label="联系电话"  width="120"></el-table-column>
+        <!-- <el-table-column prop="sex" label="性别" width="60">
           <template slot-scope="scope">{{scope.row.sex | filterSex}}</template>
-        </el-table-column>
-        <el-table-column prop="mobile" label="手机" width="120" sortable></el-table-column>
+        </el-table-column> -->
+      
         <!-- <el-table-column prop="home_phone" label="家庭电话" width="120"></el-table-column> -->
         <!-- <el-table-column prop="begin_level.name" label="开始级别" width="120" sortable></el-table-column> -->
         <!-- <el-table-column prop="end_level.name" label="结束级别" width="120"></el-table-column> -->
         <el-table-column prop="level.name" label="当前级别" width="120" sortable></el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" label="状态" width="80">
           <!-- 1未签,2执行3结束4冻结 -->
           <template slot-scope="scope">{{scope.row.status | filterStatus}}</template>
         </el-table-column>
         <!-- <el-table-column prop="contract.name" label="合同类型" width="120"></el-table-column> -->
         <el-table-column prop="begin_time" label="开始时间" width="120" sortable></el-table-column>
         <el-table-column prop="end_time" label="结束时间" width="120"></el-table-column>
-        <el-table-column label="操作" width="140" fixed="right">
+        <el-table-column prop="end_time" label="学生类型" width="120">
+          <template slot-scope="scope">{{scope.row.type_id|filterType}}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="270" fixed="right">
           <template slot-scope="scope">
             <el-button
               @click="handleEditClick(scope.row,'edit')"
@@ -185,6 +188,12 @@
               size="small"
               icon="el-icon-edit-outline"
             >学生类型</el-button>
+                <el-button
+              @click="handleEditPassworldClick(scope.row)"
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+            >重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -230,14 +239,15 @@
       :visible.sync="isShowTypeDialog"
       :modal="true"
       :append-to-body="true"
-      width="400px"
+      width="500px"
     >
       <div class="lineBox">
-        <el-radio-group v-model="status">
-          <el-radio :label="1">未签</el-radio>
-          <el-radio :label="2">执行</el-radio>
-          <el-radio :label="3">结束</el-radio>
-          <el-radio :label="4">冻结</el-radio>
+        <el-radio-group v-model="type">
+          <el-radio :label="1">TM</el-radio>
+          <el-radio :label="2">新常规</el-radio>
+          <el-radio :label="3">VIP</el-radio>
+          <el-radio :label="4">精英汇</el-radio>
+          <el-radio :label="5">蓝标</el-radio>
         </el-radio-group>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -245,6 +255,27 @@
         <el-button type="primary" @click="sureTypeBtn">确 定</el-button>
       </span>
     </el-dialog>
+      <el-dialog
+      class="changeStatusDialog"
+      title="重置学生密码"
+      :visible.sync="isShowPasswordDialog"
+      :modal="true"
+      :append-to-body="true"
+      width="500px"
+    >
+      <div class="lineBox">
+        
+        <el-radio-group v-model="type">
+          <el-radio :label="1">TM</el-radio>
+         
+        </el-radio-group>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowTypeDialog = false">取 消</el-button>
+        <el-button type="primary" @click="sureTypeBtn">确 定</el-button>
+      </span>
+    </el-dialog>
+
 
     <el-dialog
       class="closeLesson"
@@ -533,6 +564,8 @@ import {
   waitCloseLessonUrl,
   closeLessonUrl,
   restoreLessonUrl,
+  studentTypeListUrl,
+  updateStudentTypeUrl,
   ERR_OK
 } from "@/api/index";
 import {
@@ -565,6 +598,14 @@ export default {
         {
           value: "en_name",
           label: "英文名"
+        },
+         {
+          value: "cn_name",
+          label: "中文名"
+        },
+        {
+          value:"mobile",
+          label:"联系电话"
         }
       ],
       sexOption: [
@@ -599,12 +640,14 @@ export default {
       courseLevelOption: [],
       teacherTrackOption: [],
       contract_typeOption: [],
+      studentTypeOptions:[],
       value: "",
       isShowStatusDialog: false, //编辑状态
       dialogFormVisible: false, //编辑学生信息
       closeLesson: false,
       maskIsShow: false,
       status: "",
+      type:"",
       serial: "",
       en_name: "",
       form: {
@@ -648,7 +691,8 @@ export default {
       tracksChoosed: "", //选中的班主任
       lessonStatus: "1" ,//话题状态
       lessonLoading : true,
-      isShowTypeDialog:false //是否显示学生类型
+      isShowTypeDialog:false, //是否显示学生类型
+      isShowPasswordDialog:false//是否显示重置密码
     };
     //-------------end
   },
@@ -665,12 +709,45 @@ export default {
     },
     filterTime(t) {
       return getFullTime(t);
+    },
+    filterType(t){
+      var res = '未知';
+      switch (t){
+        case 1:
+          res = "TM";
+          break;
+        case 2:
+          res="新常规";
+          break;
+        case 3:
+          res="VIP";
+          break;
+        case 4:
+          res="精英汇";
+          break;
+        case 5:
+          res="蓝标";
+          break;   
+      }
+      return res;
+      // console.log('TTTTTTTTTTTTT');
+      // var res = '未知';
+      // for(var i =0 ; i<vm.studentTypeOptions.length;i++){
+      //   if(vm.studentTypeOptions[i].id == t){
+      //     res = vm.studentTypeOptions[i].name
+      //     break;
+      //   }
+      // }
+      // return res;
     }
   },
   created() {
-    this.getList();
+    this.getStudentTypeList();
     this.getCourseList();
     this.getTeacherTrackList();
+    this.getList();
+    
+   
   },
   methods: {
     // 获取合同类型数据 contractTypeUrl
@@ -732,7 +809,18 @@ export default {
     },
     //获取学生列表
     getStudentTypeList(){
-      
+      let that = this;
+      var params = {
+        offset:0,
+        limit:999
+      };
+      var url = studentTypeListUrl;
+      this.$axios.post(url, params).then(res => {
+        var result = res.data;
+        if (result.code == ERR_OK) {
+          that.studentTypeOptions = result.data.list;
+        }
+      });
     },
     handleListClick(row, operate) {
       (this.courseListItem = ""),
@@ -816,6 +904,10 @@ export default {
       this.isShowTypeDialog = true;
       this.form.user_id = row.id;
     },
+      handleEditPasswordClick(row) {
+      this.isShowPasswordDialog = true;
+      this.form.user_id = row.id;
+    },
     sureBtn() {
       this.isShowStatusDialog = false;
       this.maskIsShow = false;
@@ -839,8 +931,26 @@ export default {
         }
       });
     },
+    //修改类型按钮
     sureTypeBtn(){
        this.isShowTypeDialog = false;
+        var that = this;
+        var params = {
+          user_id: this.form.user_id,
+          type: that.type
+        };
+        var url = updateStudentTypeUrl;
+        this.$axios.post(url, params).then(res => {
+          var result = res.data;
+          if (result.code == ERR_OK) {
+            that.$message({
+              showClose: true,
+              message: "操作成功",
+              type: "success"
+            });
+            that.getList();
+          }
+        });
     },
     search() {
       this.getList();
@@ -850,17 +960,35 @@ export default {
       if (that.option == "serial") {
         that.serial = that.value;
         that.en_name = "";
+        that.cn_name = "";
+        that.mobile = "";
       } else if (that.option == "en_name") {
         that.serial = "";
         that.en_name = that.value;
-      } else {
+        that.cn_name = "";
+        that.mobile = "";
+      } else if (that.option == "cn_name"){
         that.serial = "";
         that.en_name = "";
+        that.cn_name = that.value;
+        that.mobile = "";
+      }else if(that.option == "mobile"){
+        that.serial = "";
+        that.en_name = ""
+        that.cn_name = ""
+        that.mobile = that.value;
+      }else {
+        that.serial = "";
+        that.en_name = "";
+        that.cn_name = "";
+        that.mobile = "";
       }
 
       var params = {
         serial: that.serial,
         en_name: that.en_name,
+        cn_name:that.cn_name,
+        mobile:that.mobile,
         offset: (that.pageIndex - 1) * that.pageSize,
         limit: that.pageSize
       };

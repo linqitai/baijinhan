@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" v-loading="loading">
         <el-table-column prop="user.serial" label="学号" width="100">
         </el-table-column>
         <el-table-column
@@ -102,7 +102,8 @@ export default {
       schoole_id: localStorage.getItem("_school_id"),
       showPageTag:false,
       serial: '',
-      tableData: []
+      tableData: [],
+      loading:true
     }
   },
   filters:{
@@ -171,6 +172,7 @@ export default {
     },
     getList() {
       var that = this;
+          that.loading=true;
       var params = {
         serial: that.serial
         // school_id: that.schoole_id
@@ -182,7 +184,7 @@ export default {
         console.log(result.code,'--res.code--')
         if(result.code == ERR_OK){
           that.tableData = result.data;
-          
+          that.loading=false;
         }
       })
     },

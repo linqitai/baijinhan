@@ -54,15 +54,15 @@ export default new Router({
             })
           }
         },
-        {
-          path: '/orderClassOne',
-          name: '上周未定课程统计',
-          component: (resolve) => {
-            import('../pages/class/orderClassOne').then((module) => {
-              resolve(module)
-            })
-          }
-        },
+        // {
+        //   path: '/orderClassOne',
+        //   name: '上周未定课程统计',
+        //   component: (resolve) => {
+        //     import('../pages/class/orderClassOne').then((module) => {
+        //       resolve(module)
+        //     })
+        //   }
+        // },
         {
           path: '/orderClassList',
           name: '订课总览',
@@ -194,6 +194,33 @@ export default new Router({
           name: '角色列表',
           component: (resolve) => {
             import('../pages/class/trackStudent').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/studentClass',
+          name: '学生课程',
+          component: (resolve) => {
+            import('../pages/class/studentClass').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/studentArranging',
+          name: '学生待上课程',
+          component: (resolve) => {
+            import('../pages/class/studentArranging').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/dateArranging',
+          name: '课程操作日志',
+          component: (resolve) => {
+            import('../pages/class/dateArranging').then((module) => {
               resolve(module)
             })
           }

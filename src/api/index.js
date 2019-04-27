@@ -1,6 +1,8 @@
 // import http from './public'
-export const host = 'http://bjh.chinaxywl.com/'
+// export const host = 'http://admin.chinaxywl.com/'
 // export const host = 'http://bjh.com/' 
+export const host = 'http://bjh.chinaxywl.com/' 
+// export const host = 'http://localhost/';
 // const host = '/xywl'
 
 export const ERR_OK = 201
@@ -140,5 +142,21 @@ export const getOneArrangingUrl = host+'api/admin/arranging/one'
 //获取单节课程
 export const getFreeRoomsUrl = host+'api/admin/room/free'
 //获取时间点空闲教室
+export const ListCustomCourseUrl = host+'api/admin/course/custom-list'
+//custom course 列表
+export const ListUsersWithClassUrl = host+'api/admin/user/users-with-class'
+//custom course 列表
+export const ListMyClassUrl = host+'api/admin/user/my-arrangings'
+//custom course 列表
+export const ListUserOrderUrl = host+'api/admin/user/order'
+//custom course 列表
+
+
+// 学生类型列表
+export const studentTypeListUrl = host + 'api/admin/user/type-list';
+// 学生类型修改
+export const updateStudentTypeUrl = host + 'api/admin/user/save-student-type';
+// 课程操作日志
+export const ListDateArrangingList = host + 'api/admin/date/arrangings';
 
 

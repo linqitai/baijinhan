@@ -6,7 +6,6 @@ import qs from 'qs'
 import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
-// import $ from 'jquery'
 import 'element-ui/lib/theme-chalk/index.css'
 // import './common/font-awesome-4.7.0/css/font-awesome.css'
 import 'babel-polyfill'
@@ -83,10 +82,9 @@ axios.interceptors.response.use(function (res) {
       title:'提示'
     })
   }
-  
   return res;
 }, function (err) {
-  console.log("请求失败", err)
+  console.log("请求失败", err.response)
   // router.replace({
   //   path: '/login'
   // })
@@ -100,7 +98,9 @@ axios.interceptors.response.use(function (res) {
         path: '/login'
       })
     }
-    if (err.response.data.message == "Token has expired" || err.response.data.message == "The token has been blacklisted" || err.response.data.message == "The token could not be parsed from the request") {
+    if (err.response.data.message == "Token has expired" 
+        || err.response.data.message == "The token has been blacklisted" 
+        || err.response.data.message == "The token could not be parsed from the request") {
       router.replace({
         path: '/login'
       })
