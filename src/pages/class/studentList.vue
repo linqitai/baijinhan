@@ -160,7 +160,7 @@
         <el-table-column prop="begin_time" label="开始时间" width="120" sortable></el-table-column>
         <el-table-column prop="end_time" label="结束时间" width="120"></el-table-column>
         <el-table-column prop="end_time" label="学生类型" width="120">
-          <template slot-scope="scope">{{scope.row.type_id|filterType}}</template>
+          <template slot-scope="scope">{{scope.row.student_type_id|filterType}}</template>
         </el-table-column>
         <el-table-column label="操作" width="270" fixed="right">
           <template slot-scope="scope">
