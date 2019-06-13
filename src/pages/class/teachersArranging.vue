@@ -92,14 +92,15 @@ $tableLeft:100px;
                 word-break:break-all;
                 word-wrap:break-word;
                 display: flex;
-                flex-direction: column;
-                align-content: space-between;
+                // flex-direction: column;
+                // align-content: space-between;
                 flex-wrap:wrap;
                 .line1,.line2,.line3{
                   flex: auto;
                 }
                 .line1{
                   margin-top: 8px;
+                  min-width: 50px;
                 }
                 .line3{
                   margin-bottom: 3px;
@@ -188,7 +189,7 @@ $tableLeft:100px;
               <td v-for="(item,index) in items.blocks" class="width120">
                 <div v-show="item.course" class="item">
                   <div class="line1 ellipsis">{{item.course}}</div>
-                  <div class="line2 ellipsis">{{item.school}}</div>
+                  <div class="line2 ellipsis" :style="{'color':item.school=='财富校区'?'#f37b1d':'black'}">（{{item.school}}){{item.room}}</div>
                   <!-- <div class="line2 ellipsis">{{item.room}}</div> -->
                   <div class="line3 ellipsis">订课人数：{{item.users_count}}/{{item.capacity}}</div>
                 </div>

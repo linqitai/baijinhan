@@ -106,9 +106,11 @@ export default {
       var isGetList = false;
       var time = dayBeginTime(this.month).getTime(); //默认为当日，选择月后为月开始日（日开始时间戳）
       var day = this.month.getDay(); //默认为当日，选择月后为月开始日 (周几)
+      if(day == 0){
+        day = 7
+      }
       var arr = [];
       var weekBegin = time - (day - 1) * oneDayTime;
-
       arr = getWeeksInMonth(new Date(time));
       //默认时间展示
       if (this.month.getMonth() == new Date().getMonth()) {

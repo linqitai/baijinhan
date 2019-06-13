@@ -39,65 +39,37 @@ $height:50px;
 }
 .calendar{
   padding:20px; 
-  overflow:auto;
 }
- .el-row{
-    border-bottom: solid grey 1px;
+ .el-row {
+    margin-bottom: 10px;
+    border-bottom: solid #000 1px;
     &:last-child {
       margin-bottom: 0;
-    };
-    &:first-child {
-      margin-bottom: 0;
-    };
-    overflow-y:auto;
-     white-space:nowrap;
-  }
-  .el-row:nth-of-type(odd){
-    background: #effcfe;
-  }
-  .el-row:nth-of-type(even){
-    background: #fff;
+    }
   }
   .el-col {
-    // border-radius: 4px;
-    padding: 5px;
-    border-right:grey solid 1px;
-    height: 82px;
-    cursor:pointer;
-    &:first-child{
-    text-align: center;
-    background: #4e97d5;
-    width: 50px;
-    padding:0;
-    border-left:0
-    };  
+    border-radius: 4px;
   }
-  .el-col:hover{
-    background: #4e97d5;
-    color: white;
-  }
-
   .bg-purple-dark {
-    // background: #99a9bf;
+    background: #99a9bf;
   }
   .bg-purple {
-    
+    background: #d3dce6;
   }
   .bg-purple-light {
     background: #e5e9f2;
   }
   .grid-content {
-    // border-radius: 4px;
-    min-height: 72px;
-    line-height: 72px;
-    // text-align: center;
-    // background: #4e97d5;
+    border-radius: 4px;
+    min-height: 36px;
+    line-height: 36px;
+    text-align: center;
     width: 50px
   }
   .grid-content2 {
     // border-radius: 4px;
-    min-height: 18px;
-    line-height: 18px;
+    min-height: 26px;
+    line-height: 26px;
     text-align: center;
     width: 50px;
     overflow: hidden;
@@ -150,26 +122,24 @@ $height:50px;
 	    </div>
        <div class="calendar">
         <!-- 小时 -->
-        <el-row class="table" v-for="item in hours" :key="item.value">
-          <el-col >
-            <div class="grid-content bg-purple" style="">
+        <el-row class="table" v-for="item in hours" :key="item.value" :gutter="8">
+          <el-col :span="2">
+            <div class="grid-content bg-purple">
             {{item.label}}
             </div>
           </el-col>
-          <el-col  v-for="subItem in item.data" :key="subItem.id" style="width:150px" :style="{background:(subItem.users.length>0?'#4e97d5':'transparent'),color:(subItem.users.length>0?'#fff':'#000')}">
-            <div @click="alterSelectBtn(subItem)">
-             <div class="grid-content2 bg-purple" style="width:150px">
+          <el-col :span="1" v-for="subItem in item.data" :key="subItem.id" style="width:200px">
+             <div class="grid-content2 bg-purple" style="width:200px">
                {{subItem.course.name}}
             </div>
-              <div class="grid-content2 bg-purple" style="width:150px">
+              <div class="grid-content2 bg-purple" style="width:200px">
                {{subItem.lesson.name}}
             </div>
-              <div class="grid-content2 bg-purple" style="width:150px">
+              <div class="grid-content2 bg-purple" style="width:200px">
                {{subItem.teacher.en_name}}
             </div>
-              <div class="grid-content2 bg-purple" style="width:150px">
+              <div class="grid-content2 bg-purple" style="width:200px">
                {{subItem.users_count}} / {{subItem.capacity}}
-            </div>
             </div>
           </el-col>
         </el-row>

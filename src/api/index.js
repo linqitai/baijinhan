@@ -11,10 +11,7 @@ export const ERR_OK = 201
 export const loginUrl = host + 'api/admin/auth/login';
 // 退出登录
 export const logoutUrl = host + 'api/admin/auth/logout';
-// 教师课程到课率月统计
-export const lastMonthSignUrl = host + 'api/admin/statistical/last-month-sign';
 
-export const trackArranging = host + 'api/admin/statistical/track-arranging';
 // 同意退课
 export const agreeDropUrl = host + 'api/admin/arranging/agree';
 // 教师编辑
@@ -160,3 +157,41 @@ export const updateStudentTypeUrl = host + 'api/admin/user/save-student-type';
 export const ListDateArrangingList = host + 'api/admin/date/arrangings';
 
 
+/*----------------------------
+ *   资源类接口
+ *
+ ----------------------------*/
+
+
+/*----------------------------
+ *   统计部分接口
+ *
+ ----------------------------*/
+
+export const lastMonthSignUrl = host + 'api/admin/statistical/last-month-sign'; //上月 满课率统计
+
+export const trackArranging = host + 'api/admin/statistical/track-arranging';  //学生上课统计
+
+export const userArrangingCountUrl = host +'api/admin/statistical/user-arranging-count';//学生上课统计(总览)（新平台）
+
+export const userArrangingdetailUrl = host +'api/admin/statistical/user-arranging-detail';//学生上课统计（明细）（新平台）
+
+/*----------------------------
+ *   日志部分接口
+ *
+ ----------------------------*/
+
+ export const dateArrangingDetailUrl = host+'api/admin/date/arrangings-detail'
+
+
+ /*----------------------------
+ *   学生部分接口
+ *
+ ----------------------------*/
+ export const resetPasswordUrl = host+"api/admin/user/reset"
+
+/*----------------------------
+ *   课程部分接口
+ *
+ ----------------------------*/
+export const ListCourseUsedByLevel = host+"api/admin/course/course-level"

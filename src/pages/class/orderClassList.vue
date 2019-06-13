@@ -122,14 +122,15 @@
         <div class="tableWrapper">
           <table class="thatTable">
             <tr class="header">
-              <th v-for="(item,index) in rooms">
+              <th v-for="item in rooms" :key="item.id">
                 <p style="line-height:30px;font-size:12px">{{item.school.name}}</p>
                 <p style="line-height:30px">{{item.name}}</p>
               </th>
             </tr>
-            <tr v-for="(items,index) in list">
+            <tr v-for="(items,index) in list" :key="index">
               <td
-                v-for="(item,index) in items.blocks"
+                v-for="item in items.blocks"
+                :key="item.id"
                 :class="[item.users_count>0?'orderBgColor':'']"
                 @click="showDetail(item)"
               >
@@ -138,7 +139,7 @@
                     <div>{{item.lessonName}}({{item.lessonType}})</div>
                     <div
                       style="color:black"
-                    >{{item.teacherName}} ({{item.teacherType|filterTeacherType}})</div>
+                    >{{item.teacherName}} ({{item.teacherType|filterTeacherType}}) {{item.helpTeacherName?'、'+item.helpTeacherName:''}}</div>
                     <div>{{item.courseName}}</div>
                     <div class>({{item.users_count}}-{{item.capacity}})</div>
                   </div>
@@ -541,6 +542,7 @@ export default {
             lessonSerial: "",
             lessonName: "",
             teacherName: "",
+            helpTeacherName:"",
             hour: this.hours[i],
             users_count: "",
             capacity: ""
@@ -594,6 +596,7 @@ export default {
                 lessonName: obj[j].lesson.name,
                 courseName: obj[j].course.name,
                 teacherName: obj[j].teacher ? obj[j].teacher.en_name : "",
+                helpTeacherName:obj[j].help_teacher?obj[j].help_teacher.en_name:"",
                 roomName: obj[j].room.name,
                 is_released: obj[j].is_released,
                 users_count: obj[j].users_count,
@@ -619,6 +622,7 @@ export default {
                     list[j].blocks[k].lessonName = arr[i].lessonName;
                     list[j].blocks[k].courseName = arr[i].courseName;
                     list[j].blocks[k].teacherName = arr[i].teacherName;
+                    list[j].blocks[k].helpTeacherName = arr[i].helpTeacherName;
                     list[j].blocks[k].is_released = arr[i].is_released;
                     list[j].blocks[k].users_count = arr[i].users_count;
                     list[j].blocks[k].capacity = arr[i].capacity;

@@ -143,7 +143,7 @@
                 <label v-for="(permission,index) in item.subs">
                   <el-checkbox v-model="permission.check">{{permission.text}}</el-checkbox>
                 </label>        
-                <div>123</div>      
+                <div>-</div>      
               </div>
             </td>
           </tr>

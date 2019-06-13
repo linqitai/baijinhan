@@ -189,12 +189,12 @@ export default {
             that.$cookie.set('currentId',0);
             that.$router.push('./orderClassList');
         }
-        if(result.code == 433) {
-          that.$message({
-            type: 'info',
-            message: result.message
-          });
-        }
+        // if(result.code == 433) {
+        //   that.$message({
+        //     type: 'info',
+        //     message: result.message
+        //   });
+        // }
         this.authorization = res.headers.authorization;
         localStorage.setItem('authorization', this.authorization);
       }).catch(err=>{ 

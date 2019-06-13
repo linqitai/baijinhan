@@ -12,7 +12,7 @@
             <span class="nocurrent">课程</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item>
-            <span>课程安排</span>
+            <span>课程安排</span> 
           </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -117,7 +117,8 @@
               <label class="width80">教师1：</label>
               {{show.tearcherName}}
             </div>
-            <div class="lineBox" v-if="show.tearcherName2">
+            <div class="lineBox" v-if="show.tearcherName2" >
+              <!-- v-show="show.courseName=='Oral Test'" -->
               <label class="width80">教师2：</label>
               {{show.tearcherName2}}
             </div>
@@ -437,6 +438,7 @@ export default {
         var result = res.data;
         if (result.code == ERR_OK) {
           that.teachersOption = result.data.teachers;
+          that.teachersOption.unshift({id:0,en_name:"留空"})
         }
       });
     },
@@ -652,13 +654,8 @@ export default {
           } else if (result.code == 433) {
             // that.$alert(result.message, '提示');
             that.$alert("该教室已有课程", "提示");
-          } else if (result.code == 422) {
-            that.$alert(result.message, "提示");
           }
         })
-        .catch(res => {
-          that.$alert("参数错误", "提示");
-        });
     },
     //打开编辑框
     editArranging(res) {

@@ -224,6 +224,33 @@ export default new Router({
               resolve(module)
             })
           }
+        },
+        {
+          path: '/userArrangingCount',
+          name: '学生上课统计（总览）',
+          component: (resolve) => {
+            import('../pages/class/statisticalUserArrangingCount').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/studentListMore',
+          name: '学生上课统计',
+          component: (resolve) => {
+            import('../pages/class/studentListMore').then((module) => {
+              resolve(module)
+            })
+          }
+        },
+        {
+          path: '/userArrangingDetail',
+          name: '学生上课统计(明细)',
+          component: (resolve) => {
+            import('../pages/class/statisticalUserArrangingDetail').then((module) => {
+              resolve(module)
+            })
+          }
         }
       ]
     }

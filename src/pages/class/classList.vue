@@ -50,14 +50,14 @@
         </el-table-column>
         <el-table-column prop="absent_count" label="允许缺课次数" width="110"></el-table-column>
         <el-table-column prop="selection_count" label="允许选课次数" width="110"></el-table-column>
-        <el-table-column prop="capacity" label="课程容量"></el-table-column>
+        <el-table-column prop="capacity" label="课堂人数"></el-table-column>
         <el-table-column prop="is_use_level" label="是否区分等级" width="110">
           <template slot-scope="scope">{{scope.row.is_use_level==1?'是':'否'}}</template>
         </el-table-column>
         <el-table-column prop="type" label="课程教师类型" width="110">
           <template slot-scope="scope">{{scope.row.type | filterTeacherType}}</template>
         </el-table-column>
-        <el-table-column prop="type" label="是否允许自助退课" width="110">
+        <el-table-column prop="type" label="自助退课" width="110">
           <template slot-scope="scope">{{scope.row.is_auth_drop | filterAutoDrop}}</template>
         </el-table-column>
         <el-table-column prop="is_use_level" label="是否常规课程" width="110">
@@ -81,7 +81,13 @@
               icon="el-icon-edit-outline"
             >修改</el-button>
             <el-button
-              @click="handleDeleteClick(scope.row)"
+              @click="handleEditClick(scope.row,'edit')"
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+            >课程限制</el-button>
+            <el-button
+              @click="courseLimit(scope.row)"
               type="text"
               size="small"
               icon="el-icon-close"
@@ -96,7 +102,7 @@
           @current-change="handleCurrentChange"
           :current-page.sync="pageIndex"
           :page-size="pageSize"
-          :page-sizes="[6,8,10]"
+          :page-sizes="[6,8,10,20]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
         ></el-pagination>
@@ -129,7 +135,7 @@
                 ></el-option>
               </el-select>
         </el-form-item>
-         <el-form-item label="课程容量：" prop="capacity">
+         <el-form-item label="课堂人数：" prop="capacity">
           <el-input v-model="form.capacity"></el-input>
            <div style="color:pink;font-size:12px;">#话题的容量优先，如果话题一节课程上课人数未设置，使用课程容量</div>
         </el-form-item>
@@ -157,7 +163,7 @@
                <div style="color:pink;font-size:12px;">#课程不区分等级，所有学生都可以看到（vip课程 除外）</div>
         </el-form-item>
        
-         <el-form-item label="是否允许自助退课：" prop="is_auth_dropOptions">
+         <el-form-item label="自助退课：" prop="is_auth_dropOptions">
           <el-select
                 class="width140"
                 size="mini"
@@ -195,11 +201,15 @@
           <el-button type="primary" @click="addCourseEvent">提 交</el-button>
         </div>
     </el-dialog>
+    <el-dialog title="课程限制">
+        <el-tag>levelTable.name</el-tag>
+        <el-table :data="levelTable.level" border style="width: 100%" v-loading="levelTableLoading">
+          <el-table-column label="levelTable."></el-table-column>
+        </el-table>
+    </el-dialog>
   </div>
 </template>
 <script>
-// import { ERR_OK } from '@/api/index'
-// import { getFullDate } from '@/common/js/utils'
 import {
   courseListUrl,
   courseEditUrl,
@@ -207,11 +217,13 @@ import {
   courseTypeListUrl,
   teacherTypeListUrl,
   courseDeleteUrl,
+  ListCourseUsedByLevel,
   ERR_OK
 } from "@/api/index";
 export default {
   data() {
     return {
+      // 课程table部分
       loading: true,
       pageIndex: 1,
       pageSize: 10,
@@ -220,6 +232,7 @@ export default {
       course_id: "",
       title: "",
       tableData: [],
+      //课程编辑部分
       isShowAddCourseDialog: false,
       schoolOptions: JSON.parse(localStorage.getItem("_schoolsOptions")),
       levelOptions: [],
@@ -271,9 +284,12 @@ export default {
           selection_count:[
             {required:true,'message':'请输入选课次数',trigger:'blur'}
           ]
+      },
+        // 课程限制部分
+      levelTable:{
+        levelTableLoading:false
       }
-      
-    };
+    }
   },
   filters: {
     filterSchool(t) {
@@ -497,9 +513,32 @@ export default {
       this.getList();
     },
     handleCurrentChange(val) {
+      this.loading = true;
       this.pageIndex = val;
       console.log(val);
       this.getList();
+    },
+    // 选课限制
+    courseLimit(row){
+      let courseId = row.id;
+      let url = ListCourseUsedByLevel;
+      let param = {
+        course_id:courseId
+      }
+      this.$axios.post(url, params).then(res => {
+      that.loading = false;
+      var result = res.data;
+      console.log(result.code, "--res.code--");
+      if (result.code == ERR_OK) {
+        that.tableData = result.data.course;
+        that.total = result.data.count;
+        if (that.total < that.pageSize) {
+          that.showPageTag = false;
+        } else {
+          that.showPageTag = true;
+        }
+      }
+    });
     }
   }
 };

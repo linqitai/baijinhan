@@ -100,7 +100,8 @@ axios.interceptors.response.use(function (res) {
     }
     if (err.response.data.message == "Token has expired" 
         || err.response.data.message == "The token has been blacklisted" 
-        || err.response.data.message == "The token could not be parsed from the request") {
+        || err.response.data.message == "The token could not be parsed from the request"
+        || err.response.data.message == "Token has expired and can no longer be refreshed") {
       router.replace({
         path: '/login'
       })

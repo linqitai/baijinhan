@@ -13,16 +13,17 @@
   .closeLesson {
     box-shadow: 3px 3px 20px 3px rgba(0, 0, 0, 0.5);
   }
+ 
 }
 .table-expand {
   font-size: 0;
 }
-.table-expand label {
+.table-expand label{
   width: 90px;
   color: #99a9bf;
 }
 .table-expand .el-form-item {
-  margin-right: 0;
+  margin-right: 0; 
   margin-bottom: 0;
   width: 50%;
 }
@@ -71,7 +72,7 @@
             <el-checkbox class>叠加查询</el-checkbox>
           </div>
           <div class="inline margL20">
-            <label class="inline">班主任筛选</label>
+             <label class="inline">班主任筛选</label>
             <el-select
               v-model="tracksChoosed"
               placeholder="请选择"
@@ -139,19 +140,14 @@
           </template>
         </el-table-column>
         <el-table-column prop="contract_no" label="学号" width="100" sortable="custom"></el-table-column>
-        <el-table-column
-          prop="track_people.en_name"
-          label="班主任"
-          width="120"
-          class-name="fontsize12"
-        ></el-table-column>
-        <el-table-column prop="en_name" label="英文名" width="100"></el-table-column>
-        <el-table-column prop="cn_name" label="中文名" width="80"></el-table-column>
-        <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
+        <el-table-column prop="track_people.en_name" label="班主任" width="120" class-name="fontsize12"></el-table-column>
+        <el-table-column prop="en_name" label="英文名"  width="100"></el-table-column>
+        <el-table-column prop="cn_name" label="中文名"  width="80"></el-table-column>
+        <el-table-column prop="mobile" label="联系电话"  width="120"></el-table-column>
         <!-- <el-table-column prop="sex" label="性别" width="60">
           <template slot-scope="scope">{{scope.row.sex | filterSex}}</template>
-        </el-table-column>-->
-
+        </el-table-column> -->
+      
         <!-- <el-table-column prop="home_phone" label="家庭电话" width="120"></el-table-column> -->
         <!-- <el-table-column prop="begin_level.name" label="开始级别" width="120" sortable></el-table-column> -->
         <!-- <el-table-column prop="end_level.name" label="结束级别" width="120"></el-table-column> -->
@@ -168,31 +164,31 @@
         </el-table-column>
         <el-table-column label="操作" width="270" fixed="right">
           <template slot-scope="scope">
-            <!-- <el-button
+            <el-button
               @click="handleEditClick(scope.row,'edit')"
               type="text"
               size="small"
               icon="el-icon-edit-outline"
-            >编辑</el-button>-->
+            >编辑</el-button>
             <el-button
               @click="handleListClick(scope.row,'edit')"
               type="text"
               size="small"
               icon="el-icon-edit-outline"
             >结课</el-button>
-            <!-- <el-button
+            <el-button
               @click="handleEditStatusClick(scope.row)"
               type="text"
               size="small"
               icon="el-icon-edit-outline"
-            >修改状态</el-button>-->
-            <!-- <el-button
+            >修改状态</el-button>
+             <el-button
               @click="handleEditTypeClick(scope.row)"
               type="text"
               size="small"
               icon="el-icon-edit-outline"
-            >学生类型</el-button>-->
-            <el-button
+            >学生类型</el-button>
+                <el-button
               @click="handleEditPassworldClick(scope.row)"
               type="text"
               size="small"
@@ -259,7 +255,7 @@
         <el-button type="primary" @click="sureTypeBtn">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
+      <el-dialog
       class="changeStatusDialog"
       title="重置学生密码"
       :visible.sync="isShowPasswordDialog"
@@ -268,8 +264,10 @@
       width="500px"
     >
       <div class="lineBox">
+        
         <el-radio-group v-model="type">
           <el-radio :label="1">TM</el-radio>
+         
         </el-radio-group>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -277,6 +275,7 @@
         <el-button type="primary" @click="sureTypeBtn">确 定</el-button>
       </span>
     </el-dialog>
+
 
     <el-dialog
       class="closeLesson"
@@ -358,12 +357,13 @@
           <template slot-scope="scope">{{ scope.row.date }}</template>
             </el-table-column>-->
             <el-table-column prop="name" label="话题" width="450px"></el-table-column>
-            <el-table-column label="操作" width="200px">
+            <el-table-column  label="操作" width="200px">
               <template slot-scope="scope">
                 <el-button @click="restore(scope.row)" size="small">恢复</el-button>
               </template>
+               
             </el-table-column>
-
+          
             <!-- <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column> -->
           </el-table>
 
@@ -382,7 +382,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <!-- 学生编辑 -->
+<!-- 学生编辑 -->
     <el-dialog
       :title="title"
       :visible.sync="dialogFormVisible"
@@ -566,7 +566,6 @@ import {
   restoreLessonUrl,
   studentTypeListUrl,
   updateStudentTypeUrl,
-  resetPasswordUrl,
   ERR_OK
 } from "@/api/index";
 import {
@@ -600,13 +599,13 @@ export default {
           value: "en_name",
           label: "英文名"
         },
-        {
+         {
           value: "cn_name",
           label: "中文名"
         },
         {
-          value: "mobile",
-          label: "联系电话"
+          value:"mobile",
+          label:"联系电话"
         }
       ],
       sexOption: [
@@ -641,14 +640,14 @@ export default {
       courseLevelOption: [],
       teacherTrackOption: [],
       contract_typeOption: [],
-      studentTypeOptions: [],
+      studentTypeOptions:[],
       value: "",
       isShowStatusDialog: false, //编辑状态
       dialogFormVisible: false, //编辑学生信息
       closeLesson: false,
       maskIsShow: false,
       status: "",
-      type: "",
+      type:"",
       serial: "",
       en_name: "",
       form: {
@@ -690,10 +689,10 @@ export default {
       lessonTotal: 0, //话题列表总数
       tracksList: [], //班主任列表
       tracksChoosed: "", //选中的班主任
-      lessonStatus: "1", //话题状态
-      lessonLoading: true,
-      isShowTypeDialog: false, //是否显示学生类型
-      isShowPasswordDialog: false //是否显示重置密码
+      lessonStatus: "1" ,//话题状态
+      lessonLoading : true,
+      isShowTypeDialog:false, //是否显示学生类型
+      isShowPasswordDialog:false//是否显示重置密码
     };
     //-------------end
   },
@@ -711,24 +710,24 @@ export default {
     filterTime(t) {
       return getFullTime(t);
     },
-    filterType(t) {
-      var res = "未知";
-      switch (t) {
+    filterType(t){
+      var res = '未知';
+      switch (t){
         case 1:
           res = "TM";
           break;
         case 2:
-          res = "新常规";
+          res="新常规";
           break;
         case 3:
-          res = "VIP";
+          res="VIP";
           break;
         case 4:
-          res = "精英汇";
+          res="精英汇";
           break;
         case 5:
-          res = "蓝标";
-          break;
+          res="蓝标";
+          break;   
       }
       return res;
       // console.log('TTTTTTTTTTTTT');
@@ -747,6 +746,8 @@ export default {
     this.getCourseList();
     this.getTeacherTrackList();
     this.getList();
+    
+   
   },
   methods: {
     // 获取合同类型数据 contractTypeUrl
@@ -807,11 +808,11 @@ export default {
       });
     },
     //获取学生列表
-    getStudentTypeList() {
+    getStudentTypeList(){
       let that = this;
       var params = {
-        offset: 0,
-        limit: 999
+        offset:0,
+        limit:999
       };
       var url = studentTypeListUrl;
       this.$axios.post(url, params).then(res => {
@@ -861,7 +862,7 @@ export default {
           begin_time: row.begin_time,
           end_time: row.end_time
         };
-        console.log(this.form.level, "level");
+        console.log(this.form.level,'level')
       } else {
         this.title = "新增学生信息";
         formClear(this.form);
@@ -903,7 +904,7 @@ export default {
       this.isShowTypeDialog = true;
       this.form.user_id = row.id;
     },
-    handleEditPasswordClick(row) {
+      handleEditPasswordClick(row) {
       this.isShowPasswordDialog = true;
       this.form.user_id = row.id;
     },
@@ -931,25 +932,25 @@ export default {
       });
     },
     //修改类型按钮
-    sureTypeBtn() {
-      this.isShowTypeDialog = false;
-      var that = this;
-      var params = {
-        user_id: this.form.user_id,
-        type: that.type
-      };
-      var url = updateStudentTypeUrl;
-      this.$axios.post(url, params).then(res => {
-        var result = res.data;
-        if (result.code == ERR_OK) {
-          that.$message({
-            showClose: true,
-            message: "操作成功",
-            type: "success"
-          });
-          that.getList();
-        }
-      });
+    sureTypeBtn(){
+       this.isShowTypeDialog = false;
+        var that = this;
+        var params = {
+          user_id: this.form.user_id,
+          type: that.type
+        };
+        var url = updateStudentTypeUrl;
+        this.$axios.post(url, params).then(res => {
+          var result = res.data;
+          if (result.code == ERR_OK) {
+            that.$message({
+              showClose: true,
+              message: "操作成功",
+              type: "success"
+            });
+            that.getList();
+          }
+        });
     },
     search() {
       this.getList();
@@ -966,17 +967,17 @@ export default {
         that.en_name = that.value;
         that.cn_name = "";
         that.mobile = "";
-      } else if (that.option == "cn_name") {
+      } else if (that.option == "cn_name"){
         that.serial = "";
         that.en_name = "";
         that.cn_name = that.value;
         that.mobile = "";
-      } else if (that.option == "mobile") {
+      }else if(that.option == "mobile"){
         that.serial = "";
-        that.en_name = "";
-        that.cn_name = "";
+        that.en_name = ""
+        that.cn_name = ""
         that.mobile = that.value;
-      } else {
+      }else {
         that.serial = "";
         that.en_name = "";
         that.cn_name = "";
@@ -986,8 +987,8 @@ export default {
       var params = {
         serial: that.serial,
         en_name: that.en_name,
-        cn_name: that.cn_name,
-        mobile: that.mobile,
+        cn_name:that.cn_name,
+        mobile:that.mobile,
         offset: (that.pageIndex - 1) * that.pageSize,
         limit: that.pageSize
       };
@@ -1082,8 +1083,9 @@ export default {
           that.lessonList = result.data.lesson;
           that.lessonTotal = result.data.count;
         }
-        this.lessonLoading = false;
+         this.lessonLoading = false;
       });
+       
     },
     toggleSelection(res) {
       console.log(res);
@@ -1128,15 +1130,15 @@ export default {
       this.getList();
     },
     //恢复已结课程
-    restore(row) {
+    restore(row){
       var params = {
-          user_id: this.chooseUser.id,
-          lesson_ids: [row.id]
-        },
-        url = restoreLessonUrl,
-        that = this;
-      this.$axios.post(url, params).then(function(res) {
-        var result = res.data;
+        user_id:this.chooseUser.id,
+        lesson_ids : [row.id]
+      },
+      url = restoreLessonUrl,
+      that = this;
+      this.$axios.post(url,params).then(function(res){
+           var result = res.data;
         if (result.code == ERR_OK) {
           that.$message({
             showClose: true,
@@ -1151,44 +1153,17 @@ export default {
             type: "error"
           });
         }
-      });
-      console.log(row, "restore ------------");
+      })
+      console.log(row,'restore ------------')
     },
 
     //排序
     sortChange(res) {
       console.log(res);
-    },
-    handleEditPassworldClick(row) {
-      this.$confirm("此操作将重置为初始密码, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        var url = resetPasswordUrl,
-          that = this,
-          params = {
-            user_id: row.id
-          };
-        this.$axios.post(url, params).then(function(res) {
-          var result = res.data;
-          if (result.code == ERR_OK) {
-            that.$message({
-              showClose: true,
-              message: result.message,
-              type: "success"
-            });
-          }
-        });
-      });
-      console.log(row);
     }
   }
 
   //-------------------------------end
-  // ---------2019年 5月30日
-
-  // --------------end
 };
 </script>
 

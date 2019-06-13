@@ -27,13 +27,6 @@
           <div class="inline">
             <el-button type="primary" size="medium" @click="handleEditClick(null,'add')">新增</el-button>
           </div>
-          <!-- <label class="inline margL20">课程编号：</label>
-          <div class="inline">
-             <el-input v-model="course_id" size="medium" placeholder="查询内容" clearable></el-input>
-          </div>
-          <div class="inline">
-            <el-button type="primary" size="medium" @click="search">查询</el-button>
-          </div> -->
         </div>
       </div>
       <el-table :data="tableData" border style="width: 100%" v-loading="loading">
@@ -78,9 +71,23 @@
         <div class="element margT10">
           <label class="inline">教室名：</label>
           <div class="inline">
-             <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
+            <el-input v-model="form.name" size="medium" placeholder="请输入内容"></el-input>
           </div>
         </div>
+        <div class="element margT10">
+          <label class="inline">上课点：</label>
+          <div class="inline">
+             <el-select v-model="form.school_id" placeholder="请选择校区">
+            <el-option
+              v-for="item in schools"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+          </div>
+        </div>
+         
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShowAddCourseDialog = false">取 消</el-button>
@@ -92,7 +99,7 @@
 <script>
 // import { ERR_OK } from '@/api/index'
 // import { getFullDate } from '@/common/js/utils'
-import {roomListUrl,roomEditUrl,roomDeleteUrl,ERR_OK} from "@/api/index"
+import {roomListUrl,roomEditUrl,roomDeleteUrl,schoolListUrl,ERR_OK} from "@/api/index"
 export default {
   data() {
     return {
@@ -108,7 +115,9 @@ export default {
       form: {
         room_id:'',
         name:"",//ok
-      }
+        school_id:""
+      },
+      schools:[]
     }
   },
   filters:{
@@ -127,6 +136,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getSchoolList()
   },
   methods: {
     search() {
@@ -151,11 +161,14 @@ export default {
       }
       this.isShowAddCourseDialog = true;
       if(operate == 'edit') {
+        this.form.school_id = row.school_id;
         this.form.room_id = row.id;
         this.form.name = row.name;
       }else if(operate == 'add') {
+
+        this.form.school_id = '';
         this.form.room_id = '';
-        this.form.name = row.name;
+        this.form.name = '';
       }
     },
     deleteEvent(row) {
@@ -229,6 +242,18 @@ export default {
       this.pageIndex = val;
       console.log(val);
       this.getList();
+    },
+    //校区
+    getSchoolList()
+    {
+      let that = this;
+      var url = schoolListUrl;
+      this.$axios.post(url).then((res)=>{
+        var result = res.data;
+        if(result.code == ERR_OK){
+          that.schools = result.data.school;
+        }
+      });
     }
   }
 }

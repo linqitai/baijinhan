@@ -235,7 +235,7 @@ export default {
       this.getList();
     }
   }
-}
+};
 </script>
 
 
